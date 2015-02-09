@@ -12,9 +12,4 @@ public class InfoList extends BaseList{
     ListAdapter createListAdapter() {
         return null;
     }
-
-    @Override
-    AdapterView.OnItemClickListener getItemClickListener() {
-        return null;
-    }
 }
