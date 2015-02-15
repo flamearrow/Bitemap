@@ -47,4 +47,20 @@ public class Schedule implements Comparable<Schedule> {
         sb.append(" Address: " + mAddress + "\n");
         return sb.toString();
     }
+
+    public Calendar getStart() {
+        return mStart;
+    }
+
+    public Calendar getEnd() {
+        return mEnd;
+    }
+
+    public FoodTruck getTruck() {
+        return mTruck;
+    }
+
+    public String getAddress() {
+        return mAddress;
+    }
 }

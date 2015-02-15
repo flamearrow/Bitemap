@@ -1,11 +1,14 @@
 package com.gb.ml.bitemap;
 
+import android.app.Activity;
+import android.util.Log;
+
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -33,10 +36,9 @@ public class BiteMapDebug {
 //        for (FoodTruck ft : createDebugFoodTrucks()) {
 //            System.out.println(ft);
 //        }
-        for (Schedule s : createDebugSchedules(convertIntoMap(createDebugFoodTrucks()))) {
+//        for (Schedule s : createDebugSchedules(convertIntoMap(createDebugFoodTrucks()))) {
 //            System.out.println(s);
-            int i = 23;
-        }
+//        }
     }
 
     private static FoodTruck parseFoodTruck(String inputLine) {
@@ -48,10 +50,11 @@ public class BiteMapDebug {
         return ret;
     }
 
-    public static List<FoodTruck> createDebugFoodTrucks() {
+    public static List<FoodTruck> createDebugFoodTrucks(Activity activity) {
         List<FoodTruck> ret = new LinkedList<>();
         try {
-            BufferedReader br = new BufferedReader(new FileReader(FOOD_TRUCKS_DATA));
+            BufferedReader br = new BufferedReader(new InputStreamReader(activity.getAssets().open(
+                    FOOD_TRUCKS_DATA)));
             String nextLine = br.readLine();
             while (nextLine != null) {
                 if (nextLine.startsWith("!")) {
@@ -82,8 +85,8 @@ public class BiteMapDebug {
 
         String[] date = fields[0].split(DASH);
         int year = Integer.parseInt(date[0]);
-        int month = Integer.parseInt(date[0]);
-        int day = Integer.parseInt(date[0]);
+        int month = Integer.parseInt(date[1]);
+        int day = Integer.parseInt(date[2]);
         String[] startTime = fields[2].split(COLON);
         String[] endTime = fields[3].split(COLON);
         Calendar start = Calendar.getInstance();
@@ -93,7 +96,6 @@ public class BiteMapDebug {
         start.set(Calendar.DAY_OF_MONTH, day);
         start.set(Calendar.HOUR_OF_DAY, Integer.parseInt(startTime[0]));
         start.set(Calendar.MINUTE, Integer.parseInt(startTime[1]));
-
         end.set(Calendar.YEAR, year);
         end.set(Calendar.MONTH, month);
         end.set(Calendar.DAY_OF_MONTH, day);
@@ -106,10 +108,12 @@ public class BiteMapDebug {
         return s;
     }
 
-    public static List<Schedule> createDebugSchedules(Map<Long, FoodTruck> foodTrackMap) {
+    public static List<Schedule> createDebugSchedules(Activity activity,
+            Map<Long, FoodTruck> foodTrackMap) {
         List<Schedule> ret = new LinkedList<>();
         try {
-            BufferedReader br = new BufferedReader(new FileReader(SCHEDULES_DATA));
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(activity.getAssets().open(SCHEDULES_DATA)));
             String nextLine = br.readLine();
             while (nextLine != null) {
                 if (nextLine.startsWith("!")) {
@@ -123,5 +127,9 @@ public class BiteMapDebug {
             e.printStackTrace();
         }
         return ret;
+    }
+
+    public static List<Schedule> createDebugSchedules(Activity activity) {
+        return createDebugSchedules(activity, convertIntoMap(createDebugFoodTrucks(activity)));
     }
 }

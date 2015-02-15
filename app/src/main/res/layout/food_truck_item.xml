@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:columnCount="3"
+            android:rowCount="2">
+    <ImageView android:id="@+id/food_truck_logo" android:layout_columnSpan="1"
+               android:layout_rowSpan="2" android:layout_margin="10dp" android:layout_width="60dp"
+               android:layout_height="60dp"
+               android:src="@drawable/fatcat"/>
+    <TextView android:layout_rowSpan="1" android:layout_columnSpan="2"
+              android:id="@+id/food_truck_name" android:textStyle="bold"/>
+    <TextView android:layout_rowSpan="1" android:layout_columnSpan="2"
+              android:id="@+id/food_truck_category"/>
+    <TextView/>
+</GridLayout>

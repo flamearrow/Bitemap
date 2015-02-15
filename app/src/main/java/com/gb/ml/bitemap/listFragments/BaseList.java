@@ -38,7 +38,7 @@ public abstract class BaseList extends ListFragment {
 
         return new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), (String) parent.getItemAtPosition(position),
+                Toast.makeText(getActivity(), "you're clicking item " + position,
                         Toast.LENGTH_LONG).show();
             }
         };
