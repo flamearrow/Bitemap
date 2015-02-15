@@ -14,6 +14,13 @@ public class Schedule implements Comparable<Schedule> {
     String mAddress;
 //    LagLng mLocation
 
+    public Schedule(Calendar start, Calendar end, FoodTruck truck, String address) {
+        mStart = start;
+        mEnd = end;
+        mTruck = truck;
+        mAddress = address;
+    }
+
     @Override
     public int compareTo(Schedule another) {
         int ret = 0;
@@ -30,4 +37,14 @@ public class Schedule implements Comparable<Schedule> {
         return ret;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Schedule: \n");
+        sb.append(" FoodTruck: " + mTruck.getName() + "\n");
+        sb.append(" startTime: " + mStart + "\n");
+        sb.append(" endTime: " + mEnd + "\n");
+        sb.append(" Address: " + mAddress + "\n");
+        return sb.toString();
+    }
 }

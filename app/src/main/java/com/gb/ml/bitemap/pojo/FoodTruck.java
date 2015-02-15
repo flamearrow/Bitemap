@@ -4,6 +4,8 @@ import java.net.URI;
 
 public class FoodTruck {
 
+    private long mId;
+
     private String mName;
 
     // TODO: use enum?
@@ -18,16 +20,21 @@ public class FoodTruck {
     private FoodTruck() {
     }
 
-    private FoodTruck(String name, String category, String cDetail, URI logo, String url) {
+    private FoodTruck(String name, String category, String cDetail, URI logo, String url, long id) {
         mName = name;
         mCategory = category;
         mCategoryDetail = cDetail;
         mLogo = logo;
         mUrl = url;
+        mId = id;
     }
 
-    class Builder {
+    public static class Builder {
+
         private String mName, mCategory, mCategoryDetail, mUrl;
+
+        private long mId;
+
         private URI mLogo;
 
         public Builder setName(String name) {
@@ -55,8 +62,13 @@ public class FoodTruck {
             return this;
         }
 
-        FoodTruck build() {
-            return new FoodTruck(mName, mCategory, mCategoryDetail, mLogo, mUrl);
+        public Builder setId(long id) {
+            mId = id;
+            return this;
+        }
+
+        public FoodTruck build() {
+            return new FoodTruck(mName, mCategory, mCategoryDetail, mLogo, mUrl, mId);
         }
     }
 
@@ -100,5 +112,24 @@ public class FoodTruck {
         mUrl = url;
     }
 
+    public long getId() {
+        return mId;
+    }
 
+    public void setId(long id) {
+        this.mId = id;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("FoodTruck " + getName() + "\n");
+        sb.append(" id: " + getId() + "\n");
+        sb.append(" name: " + getName() + "\n");
+        sb.append(" category: " + getCategory() + "\n");
+        sb.append(" category detail: " + getCategoryDetail() + "\n");
+        sb.append(" logo: " + getLogo() + "\n");
+        sb.append(" url: " + getUrl() + "\n");
+        return sb.toString();
+    }
 }
