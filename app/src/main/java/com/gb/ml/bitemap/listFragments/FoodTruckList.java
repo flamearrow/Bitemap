@@ -1,5 +1,6 @@
 package com.gb.ml.bitemap.listFragments;
 
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.gb.ml.bitemap.BiteMapDebug;
 import com.gb.ml.bitemap.R;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -74,6 +76,17 @@ public class FoodTruckList extends BaseList {
             }
 
             final FoodTruck mFt = mTruckList.get(position);
+            Drawable mDrawable = null;
+            try {
+                String logoPath = "debugData/trucks_info/" + mFt.getLogo().getPath();
+                Log.d("mlgbLogo", logoPath);
+                mDrawable = Drawable
+                        .createFromStream(getActivity().getAssets()
+                                .open(logoPath), null);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mVh.mLogoView.setImageDrawable(mDrawable);
             mVh.mFoodTruckNameView.setText(mFt.getName());
             mVh.mCategoryView.setText(mFt.getCategory());
             return convertView;

@@ -1,10 +1,12 @@
 package com.gb.ml.bitemap.listFragments;
 
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -12,6 +14,7 @@ import com.gb.ml.bitemap.BiteMapDebug;
 import com.gb.ml.bitemap.R;
 import com.gb.ml.bitemap.pojo.Schedule;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -70,7 +73,7 @@ public class ScheduleList extends BaseList {
                 convertView = LayoutInflater.from(getActivity())
                         .inflate(R.layout.schedule_item, parent, false);
 
-                mVh = new ViewHolder(
+                mVh = new ViewHolder((ImageView) (convertView.findViewById(R.id.food_truck_logo)),
                         (TextView) (convertView.findViewById(R.id.food_truck_name)),
                         (TextView) (convertView.findViewById(R.id.schedule_start)),
                         (TextView) (convertView.findViewById(R.id.schedule_end)));
@@ -81,6 +84,17 @@ public class ScheduleList extends BaseList {
                 mVh = (ViewHolder) convertView.getTag();
             }
             final Schedule mS = mScheduleList.get(position);
+            Drawable mDrawable = null;
+            try {
+                String logoPath = "debugData/trucks_info/" + mS.getTruck().getLogo().getPath();
+                Log.d("mlgbLogo", logoPath);
+                mDrawable = Drawable
+                        .createFromStream(getActivity().getAssets()
+                                .open(logoPath), null);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mVh.mLogoView.setImageDrawable(mDrawable);
             mVh.mFoodTruckNameView.setText(mS.getTruck().getName());
             mVh.mScheduleStart.setText(mFormat.format(mS.getStart().getTime()));
             mVh.mScheduleEnd.setText(mFormat.format(mS.getEnd().getTime()));
@@ -90,9 +104,13 @@ public class ScheduleList extends BaseList {
 
         class ViewHolder {
 
+            ImageView mLogoView;
+
             TextView mFoodTruckNameView, mScheduleStart, mScheduleEnd;
 
-            ViewHolder(TextView foodTruckNameView, TextView scheduleStart, TextView scheduleEnd) {
+            ViewHolder(ImageView logoView, TextView foodTruckNameView, TextView scheduleStart,
+                    TextView scheduleEnd) {
+                mLogoView = logoView;
                 mFoodTruckNameView = foodTruckNameView;
                 mScheduleStart = scheduleStart;
                 mScheduleEnd = scheduleEnd;

@@ -25,7 +25,6 @@ public class DBConnector {
     private static final String TAG = "mlDB";
 
     private DBConnector(Context context) {
-        Log.d(TAG, "DBConnector created");
         mHelper = new DBOpenHelper(context, DB_NAME, null, 1);
     }
 
@@ -34,12 +33,10 @@ public class DBConnector {
         public DBOpenHelper(Context context, String name,
                 SQLiteDatabase.CursorFactory factory, int version) {
             super(context, name, factory, version);
-            Log.d(TAG, "DBOpenHelper created");
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            Log.d(TAG, "DBOpenHelper.onCreate()");
             // no foreign key support yet
             final String createFoodtrucks = "CREATE TABLE IF NOT EXISTS " + ALL_FOODTRUCKS +
                     " (id INTEGER primary key, name TEXT, category TEXT, category_detail TEXT, "
