@@ -1,9 +1,6 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context=".MainActivity">
-    <item android:id="@+id/action_settings"
-          android:title="@string/action_settings"
-          android:orderInCategory="100"
-          app:showAsAction="never"/>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_schedules" android:title="@string/menu_schedules_title"/>
+    <item android:id="@+id/menu_all_trucks" android:title="@string/menu_all_trucks"/>
+    <item android:id="@+id/menu_category" android:title="@string/menu_category"/>
+    <item android:id="@+id/menu_about" android:title="@string/menu_about"/>
 </menu>

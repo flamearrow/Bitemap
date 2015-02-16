@@ -20,7 +20,7 @@ public class MainActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(MainActivity.this, ScheduleActivity.class));
+                startActivity(new Intent(MainActivity.this, AllFoodTrucksActivity.class));
             }
         }, SPLASH_DELAY);
         initializeDB();

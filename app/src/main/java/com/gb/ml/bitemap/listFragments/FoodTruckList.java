@@ -79,7 +79,6 @@ public class FoodTruckList extends BaseList {
             Drawable mDrawable = null;
             try {
                 String logoPath = "debugData/trucks_info/" + mFt.getLogo().getPath();
-                Log.d("mlgbLogo", logoPath);
                 mDrawable = Drawable
                         .createFromStream(getActivity().getAssets()
                                 .open(logoPath), null);

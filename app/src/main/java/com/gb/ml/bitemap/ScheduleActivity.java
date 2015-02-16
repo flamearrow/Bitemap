@@ -15,13 +15,13 @@ import java.util.List;
 /**
  * Schedules of each food truck
  */
-public class ScheduleActivity extends ActionBarActivity {
+public class ScheduleActivity extends BitemapActionBarActivity {
 
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Schedules");
+        setTitle(R.string.menu_schedules_title);
         setContentView(R.layout.activity_schedule);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().add(R.id.schedule, new ScheduleList())
