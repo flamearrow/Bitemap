@@ -1,7 +1,6 @@
 package com.gb.ml.bitemap.listFragments;
 
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +9,11 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.gb.ml.bitemap.BiteMapDebug;
+import com.gb.ml.bitemap.BitemapApplication;
 import com.gb.ml.bitemap.R;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * List of food truck stores, sorted by food truck name
@@ -29,30 +27,21 @@ public class FoodTruckList extends BaseList {
 
     private class FoodTruckAdaptor extends BaseAdapter {
 
-        public List<FoodTruck> getTruckList() {
-            return mTruckList;
-        }
-
-        public void setTruckList(List<FoodTruck> truckList) {
-            this.mTruckList = truckList;
-        }
-
-        List<FoodTruck> mTruckList;
+        private BitemapApplication mAppContext;
 
         public FoodTruckAdaptor() {
-            mTruckList = BiteMapDebug.createDebugFoodTrucks(getActivity());
-            Log.d("bglm", "trucks: " + mTruckList.size());
+            mAppContext = (BitemapApplication) getActivity().getApplicationContext();
         }
 
 
         @Override
         public int getCount() {
-            return mTruckList.size();
+            return mAppContext.getFoodTrucks().size();
         }
 
         @Override
         public Object getItem(int position) {
-            return mTruckList.get(position);
+            return mAppContext.getFoodTrucks().get(position);
         }
 
         @Override
@@ -75,7 +64,7 @@ public class FoodTruckList extends BaseList {
                 mVh = (ViewHolder) convertView.getTag();
             }
 
-            final FoodTruck mFt = mTruckList.get(position);
+            final FoodTruck mFt = mAppContext.getFoodTrucks().get(position);
             Drawable mDrawable = null;
             try {
                 String logoPath = "debugData/trucks_info/" + mFt.getLogo().getPath();

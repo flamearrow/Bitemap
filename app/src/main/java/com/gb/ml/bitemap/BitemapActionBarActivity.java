@@ -6,6 +6,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.gb.ml.bitemap.database.BitemapDBConnector;
+
 /**
  * define common menu definitions
  */
@@ -35,6 +37,10 @@ public abstract class BitemapActionBarActivity extends ActionBarActivity {
                 break;
             case R.id.menu_about:
                 Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.menu_clear_debug_db:
+                BitemapDBConnector.getInstance(this).clearDatabase();
+                Toast.makeText(this, "Debug DB cleared!", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 return super.onOptionsItemSelected(item);

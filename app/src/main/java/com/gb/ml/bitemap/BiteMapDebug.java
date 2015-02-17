@@ -1,7 +1,6 @@
 package com.gb.ml.bitemap;
 
-import android.app.Activity;
-import android.util.Log;
+import android.content.Context;
 
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
@@ -20,7 +19,7 @@ import java.util.Map;
 /**
  * Debug helper to insert raw user data
  */
-public class BiteMapDebug {
+public class BitemapDebug {
 
     private static final String FOOD_TRUCKS_DATA = "debugData/debug_foodtrucks";
 
@@ -32,15 +31,6 @@ public class BiteMapDebug {
 
     private static final String COLON = ":";
 
-    public static void main(String[] args) {
-//        for (FoodTruck ft : createDebugFoodTrucks()) {
-//            System.out.println(ft);
-//        }
-//        for (Schedule s : createDebugSchedules(convertIntoMap(createDebugFoodTrucks()))) {
-//            System.out.println(s);
-//        }
-    }
-
     private static FoodTruck parseFoodTruck(String inputLine) {
         String[] fields = inputLine.split(SPLITER);
         FoodTruck ret = new FoodTruck.Builder().setId(Long.parseLong(fields[0])).setName(fields[1])
@@ -50,10 +40,10 @@ public class BiteMapDebug {
         return ret;
     }
 
-    public static List<FoodTruck> createDebugFoodTrucks(Activity activity) {
+    public static List<FoodTruck> createDebugFoodTrucks(Context context) {
         List<FoodTruck> ret = new LinkedList<>();
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(activity.getAssets().open(
+            BufferedReader br = new BufferedReader(new InputStreamReader(context.getAssets().open(
                     FOOD_TRUCKS_DATA)));
             String nextLine = br.readLine();
             while (nextLine != null) {
@@ -103,17 +93,21 @@ public class BiteMapDebug {
         end.set(Calendar.MINUTE, Integer.parseInt(endTime[1]));
 
         String address = fields[4];
-        Schedule s = new Schedule(start, end, fr, address);
-        System.out.println(s);
+        // no id for schedule at the moment
+        // not supporting street view lat and lng at the moment
+
+        Schedule s = new Schedule.Builder().setId(0).setStart(start).setEnd(end).setTruck(fr)
+                .setAddress(address).setLat(Double.parseDouble(fields[5]))
+                .setLng(Double.parseDouble(fields[6])).setStreetLat(0).setStreetLng(0).build();
         return s;
     }
 
-    public static List<Schedule> createDebugSchedules(Activity activity,
+    public static List<Schedule> createDebugSchedules(Context context,
             Map<Long, FoodTruck> foodTrackMap) {
         List<Schedule> ret = new LinkedList<>();
         try {
             BufferedReader br = new BufferedReader(
-                    new InputStreamReader(activity.getAssets().open(SCHEDULES_DATA)));
+                    new InputStreamReader(context.getAssets().open(SCHEDULES_DATA)));
             String nextLine = br.readLine();
             while (nextLine != null) {
                 if (nextLine.startsWith("!")) {
@@ -129,7 +123,7 @@ public class BiteMapDebug {
         return ret;
     }
 
-    public static List<Schedule> createDebugSchedules(Activity activity) {
-        return createDebugSchedules(activity, convertIntoMap(createDebugFoodTrucks(activity)));
+    public static List<Schedule> createDebugSchedules(Context context) {
+        return createDebugSchedules(context, convertIntoMap(createDebugFoodTrucks(context)));
     }
 }

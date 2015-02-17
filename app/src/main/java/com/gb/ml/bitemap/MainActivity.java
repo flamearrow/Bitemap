@@ -3,10 +3,9 @@ package com.gb.ml.bitemap;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+
+import com.gb.ml.bitemap.database.BitemapDBConnector;
 
 
 public class MainActivity extends Activity {
@@ -23,12 +22,5 @@ public class MainActivity extends Activity {
                 startActivity(new Intent(MainActivity.this, AllFoodTrucksActivity.class));
             }
         }, SPLASH_DELAY);
-        initializeDB();
-    }
-
-    // debug data and insert into
-    private void initializeDB() {
-        DBConnector connector = DBConnector.getInstance(getApplicationContext());
-        connector.open();
     }
 }

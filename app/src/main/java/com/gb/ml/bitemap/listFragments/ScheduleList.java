@@ -10,13 +10,12 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.gb.ml.bitemap.BiteMapDebug;
+import com.gb.ml.bitemap.BitemapApplication;
 import com.gb.ml.bitemap.R;
 import com.gb.ml.bitemap.pojo.Schedule;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 /**
  * List of events of all food trucks, sorted by event dates
@@ -33,32 +32,24 @@ public class ScheduleList extends BaseList {
 
         private SimpleDateFormat mFormat;
 
-        private List<Schedule> mScheduleList;
 
         private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
 
-        public List<Schedule> getScheduleList() {
-            return mScheduleList;
-        }
-
-        public void setScheduleList(List<Schedule> scheduleList) {
-            mScheduleList = scheduleList;
-        }
+        private BitemapApplication mAppContext;
 
         ScheduleAdaptor() {
-            mScheduleList = BiteMapDebug.createDebugSchedules(getActivity());
+            mAppContext = (BitemapApplication) getActivity().getApplicationContext();
             mFormat = new SimpleDateFormat(DATE_FORMAT);
         }
 
-
         @Override
         public int getCount() {
-            return mScheduleList.size();
+            return mAppContext.getSchedules().size();
         }
 
         @Override
         public Object getItem(int position) {
-            return mScheduleList.get(position);
+            return mAppContext.getSchedules().get(position);
         }
 
         @Override
@@ -83,11 +74,10 @@ public class ScheduleList extends BaseList {
             } else {
                 mVh = (ViewHolder) convertView.getTag();
             }
-            final Schedule mS = mScheduleList.get(position);
+            final Schedule mS = mAppContext.getSchedules().get(position);
             Drawable mDrawable = null;
             try {
                 String logoPath = "debugData/trucks_info/" + mS.getTruck().getLogo().getPath();
-                Log.d("mlgbLogo", logoPath);
                 mDrawable = Drawable
                         .createFromStream(getActivity().getAssets()
                                 .open(logoPath), null);

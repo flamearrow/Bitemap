@@ -10,5 +10,6 @@
     <string name="menu_all_trucks">All foodtrucks</string>
     <string name="menu_about">About</string>
     <string name="menu_category">Category</string>
+    <string name="menu_clear_debug_db">Clear DebugDB</string>
 
 </resources>
