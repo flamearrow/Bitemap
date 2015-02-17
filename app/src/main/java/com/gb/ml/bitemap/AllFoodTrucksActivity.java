@@ -1,14 +1,8 @@
 package com.gb.ml.bitemap;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.gb.ml.bitemap.listFragments.FoodTruckList;
-import com.gb.ml.bitemap.pojo.Schedule;
 
 /**
  * A list of all available food trucks

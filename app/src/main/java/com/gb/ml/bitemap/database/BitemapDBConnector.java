@@ -105,7 +105,7 @@ public class BitemapDBConnector {
         newSchedule.put(STREET_LAT, streetLat);
         newSchedule.put(STREET_LNG, streetLng);
         open();
-        mDb.insert(SCHEDULES, null, newSchedule);
+        mDb.insertWithOnConflict(SCHEDULES, null, newSchedule, SQLiteDatabase.CONFLICT_IGNORE);
         close();
     }
 
@@ -115,7 +115,7 @@ public class BitemapDBConnector {
     }
 
     public void addSchedule(Schedule schedule) {
-        addSchedule(schedule.getId(), schedule.getTruck().getId(), schedule.getStart(),
+        addSchedule(schedule.getId(), schedule.getFoodtruckId(), schedule.getStart(),
                 schedule.getEnd(), schedule.getAddress(), schedule.getLat(), schedule.getLng(),
                 schedule.getStreetLat(), schedule.getStreetLng());
     }
@@ -141,7 +141,7 @@ public class BitemapDBConnector {
             final Calendar mEnd = Calendar.getInstance();
             mEnd.setTimeInMillis(mEndTime);
             final Schedule newSchedule = new Schedule.Builder().setId(mId)
-                    .setTruck(foodTruckMap.get(mFoodTruckId)).setStart(mStart).setEnd(mEnd)
+                    .setFoodtruckId(mFoodTruckId).setStart(mStart).setEnd(mEnd)
                     .setAddress(mAddress).setLat(mLat).setLng(mLng).setStreetLat(mStreetLat)
                     .setStreetLng(mStreetLng).build();
             ret.add(newSchedule);

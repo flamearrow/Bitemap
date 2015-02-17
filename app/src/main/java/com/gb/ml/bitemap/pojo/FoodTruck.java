@@ -1,15 +1,15 @@
-package com.gb.ml.bitemap.pojo;
+    package com.gb.ml.bitemap.pojo;
 
-import java.net.URI;
+    import java.net.URI;
 
-public class FoodTruck {
+    public class FoodTruck {
 
-    private long mId;
+        private long mId;
 
-    private String mName;
+        private String mName;
 
-    // TODO: use enum?
-    private String mCategory;
+        // TODO: use enum?
+        private String mCategory;
 
     private String mCategoryDetail;
 

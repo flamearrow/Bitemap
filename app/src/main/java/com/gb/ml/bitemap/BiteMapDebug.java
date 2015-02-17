@@ -96,8 +96,8 @@ public class BitemapDebug {
         // no id for schedule at the moment
         // not supporting street view lat and lng at the moment
 
-        Schedule s = new Schedule.Builder().setId(0).setStart(start).setEnd(end).setTruck(fr)
-                .setAddress(address).setLat(Double.parseDouble(fields[5]))
+        Schedule s = new Schedule.Builder().setId(0).setStart(start).setEnd(end).setFoodtruckId(
+                fr.getId()).setAddress(address).setLat(Double.parseDouble(fields[5]))
                 .setLng(Double.parseDouble(fields[6])).setStreetLat(0).setStreetLng(0).build();
         return s;
     }

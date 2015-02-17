@@ -24,8 +24,8 @@ public class ScheduleActivity extends BitemapActionBarActivity {
         setTitle(R.string.menu_schedules_title);
         setContentView(R.layout.activity_schedule);
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.schedule, new ScheduleList())
-                    .commit();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.schedule, new ScheduleList()).commit();
         }
     }
 }

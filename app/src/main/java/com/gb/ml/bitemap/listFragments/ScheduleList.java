@@ -1,16 +1,21 @@
 package com.gb.ml.bitemap.listFragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gb.ml.bitemap.BitemapApplication;
+import com.gb.ml.bitemap.MapActivity;
 import com.gb.ml.bitemap.R;
 import com.gb.ml.bitemap.pojo.Schedule;
 
@@ -22,6 +27,14 @@ import java.text.SimpleDateFormat;
  */
 public class ScheduleList extends BaseList {
 
+    private BitemapApplication mAppContext;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mAppContext = (BitemapApplication) activity.getApplicationContext();
+    }
+
     @Override
     ListAdapter createListAdapter() {
         return new ScheduleAdaptor();
@@ -29,18 +42,6 @@ public class ScheduleList extends BaseList {
 
 
     private class ScheduleAdaptor extends BaseAdapter {
-
-        private SimpleDateFormat mFormat;
-
-
-        private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
-
-        private BitemapApplication mAppContext;
-
-        ScheduleAdaptor() {
-            mAppContext = (BitemapApplication) getActivity().getApplicationContext();
-            mFormat = new SimpleDateFormat(DATE_FORMAT);
-        }
 
         @Override
         public int getCount() {
@@ -77,7 +78,8 @@ public class ScheduleList extends BaseList {
             final Schedule mS = mAppContext.getSchedules().get(position);
             Drawable mDrawable = null;
             try {
-                String logoPath = "debugData/trucks_info/" + mS.getTruck().getLogo().getPath();
+                String logoPath = "debugData/trucks_info/" + mAppContext
+                        .findFoodtruckFromId(mS.getFoodtruckId()).getLogo().getPath();
                 mDrawable = Drawable
                         .createFromStream(getActivity().getAssets()
                                 .open(logoPath), null);
@@ -85,9 +87,10 @@ public class ScheduleList extends BaseList {
                 e.printStackTrace();
             }
             mVh.mLogoView.setImageDrawable(mDrawable);
-            mVh.mFoodTruckNameView.setText(mS.getTruck().getName());
-            mVh.mScheduleStart.setText(mFormat.format(mS.getStart().getTime()));
-            mVh.mScheduleEnd.setText(mFormat.format(mS.getEnd().getTime()));
+            mVh.mFoodTruckNameView.setText(
+                    mAppContext.findFoodtruckFromId(mS.getFoodtruckId()).getName());
+            mVh.mScheduleStart.setText(mS.getStartTimeString());
+            mVh.mScheduleEnd.setText(mS.getEndTimeString());
 
             return convertView;
         }
@@ -105,6 +108,22 @@ public class ScheduleList extends BaseList {
                 mScheduleStart = scheduleStart;
                 mScheduleEnd = scheduleEnd;
             }
+        }
+    }
+
+
+    @Override
+    AdapterView.OnItemClickListener createItemClickListener() {
+        return new ScheduleItemClickListener();
+    }
+
+    private class ScheduleItemClickListener implements AdapterView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            final Intent i = new Intent(getActivity(), MapActivity.class);
+            i.putExtra(MapActivity.SCHEDULE, mAppContext.getSchedules().get(position));
+            startActivity(i);
         }
     }
 }

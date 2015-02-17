@@ -18,7 +18,7 @@ public abstract class BaseList extends ListFragment {
         super.onActivityCreated(savedInstanceState);
         ListView listView = getListView();
 
-        listView.setOnItemClickListener(getItemClickListener());
+        listView.setOnItemClickListener(createItemClickListener());
         setListAdapter(createListAdapter());
     }
 
@@ -34,7 +34,7 @@ public abstract class BaseList extends ListFragment {
      *
      * @return ItemClickListener fro list items
      */
-    AdapterView.OnItemClickListener getItemClickListener() {
+    AdapterView.OnItemClickListener createItemClickListener() {
 
         return new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

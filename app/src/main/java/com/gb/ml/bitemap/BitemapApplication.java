@@ -52,4 +52,8 @@ public class BitemapApplication extends Application {
     public List<FoodTruck> getFoodTrucks() {
         return mFoodTrucks;
     }
+
+    public FoodTruck findFoodtruckFromId(long foodtruckId) {
+        return mFoodTruckMap.get(foodtruckId);
+    }
 }

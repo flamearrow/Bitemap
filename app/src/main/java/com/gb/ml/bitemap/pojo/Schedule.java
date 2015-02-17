@@ -1,51 +1,104 @@
 package com.gb.ml.bitemap.pojo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.android.gms.maps.model.LatLng;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
  * Schedule corresponds to on entry in ScheduleActivity, need to be sortable by Time and Name
  */
-public class Schedule implements Comparable<Schedule> {
+public class Schedule implements Comparable<Schedule>, Parcelable {
 
     private long mId;
 
-    private double mLat;
-
-    private double mLng;
-
-    private double mStreetLat;
-
-    private double mStreetLng;
-
     private Calendar mStart, mEnd;
 
-    private FoodTruck mTruck;
+    private long mFoodtruckId;
 
     private String mAddress;
-//    LagLng mLocation
 
-    private Schedule(long id, Calendar start, Calendar end, FoodTruck truck, String address,
+    private LatLng mLocation;
+
+    private LatLng mStreetLocation;
+
+    private static SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+    private Schedule(long id, Calendar start, Calendar end, long foodtruckId, String address,
             double lat, double lng, double streetLat, double streetLng) {
         mId = id;
         mStart = start;
         mEnd = end;
-        mTruck = truck;
+        mFoodtruckId = foodtruckId;
         mAddress = address;
-        mLat = lat;
-        mLng = lng;
-        mStreetLat = streetLat;
-        mStreetLng = streetLng;
+        mLocation = new LatLng(lat, lng);
+        mStreetLocation = new LatLng(streetLat, streetLng);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Flatten this object in to a Parcel.
+     *
+     * @param dest  The Parcel in which the object should be written.
+     * @param flags Additional flags about how the object should be written.
+     *              May be 0 or {@link #PARCELABLE_WRITE_RETURN_VALUE}.
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(mId);
+        dest.writeLong(mFoodtruckId);
+        dest.writeLong(mStart.getTimeInMillis());
+        dest.writeLong(mEnd.getTimeInMillis());
+        dest.writeString(mAddress);
+        dest.writeDouble(mLocation.latitude);
+        dest.writeDouble(mLocation.longitude);
+        dest.writeDouble(mStreetLocation.latitude);
+        dest.writeDouble(mStreetLocation.longitude);
+    }
+
+    public static final Creator<Schedule> CREATOR = new Creator<Schedule>() {
+        @Override
+        public Schedule createFromParcel(Parcel source) {
+            final long id = source.readLong();
+            final long foodtruckId = source.readLong();
+            final long start = source.readLong();
+            final long end = source.readLong();
+            final String address = source.readString();
+            final double lat = source.readDouble();
+            final double lng = source.readDouble();
+            final double streetLat = source.readDouble();
+            final double streetLng = source.readDouble();
+
+            final Calendar cStart = Calendar.getInstance();
+            final Calendar cEnd = Calendar.getInstance();
+            cStart.setTimeInMillis(start);
+            cEnd.setTimeInMillis(end);
+
+            return new Builder().setId(id).setStart(cStart).setEnd(cEnd).setFoodtruckId(foodtruckId)
+                    .setAddress(address).setLat(lat).setLng(lng).setStreetLat(streetLat)
+                    .setStreetLng(streetLng).build();
+        }
+
+        @Override
+        public Schedule[] newArray(int size) {
+            return new Schedule[size];
+        }
+    };
 
     public static class Builder {
 
-        private long mId;
+        private long mId, mFoodtruckId;
 
         private double mLat, mLng, mStreetLat, mStreetLng;
 
         private Calendar mStart, mEnd;
-
-        private FoodTruck mTruck;
 
         private String mAddress;
 
@@ -56,6 +109,11 @@ public class Schedule implements Comparable<Schedule> {
 
         public Builder setId(long id) {
             mId = id;
+            return this;
+        }
+
+        public Builder setFoodtruckId(long foodtruckId) {
+            mFoodtruckId = foodtruckId;
             return this;
         }
 
@@ -89,38 +147,26 @@ public class Schedule implements Comparable<Schedule> {
             return this;
         }
 
-        public Builder setTruck(FoodTruck truck) {
-            mTruck = truck;
-            return this;
-        }
-
         public Schedule build() {
-            return new Schedule(mId, mStart, mEnd, mTruck, mAddress, mLat, mLng, mStreetLat,
+            return new Schedule(mId, mStart, mEnd, mFoodtruckId, mAddress, mLat, mLng, mStreetLat,
                     mStreetLng);
         }
     }
 
     @Override
     public int compareTo(Schedule another) {
-        int ret = 0;
-
         if (mStart.equals(another.mStart)) {
-            if (mEnd.equals(another.mEnd)) {
-                ret = mTruck.getName().compareTo(another.mTruck.getName());
-            } else {
-                ret = mEnd.before(another.mEnd) ? -1 : 1;
-            }
+            return mEnd.before(another.mEnd) ? -1 : 1;
         } else {
-            ret = mStart.before(another.mStart) ? -1 : 1;
+            return mStart.before(another.mStart) ? -1 : 1;
         }
-        return ret;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Schedule: \n");
-        sb.append(" FoodTruck: " + mTruck.getName() + "\n");
+        sb.append(" FoodTruckId: " + mFoodtruckId + "\n");
         sb.append(" startTime: " + mStart + "\n");
         sb.append(" endTime: " + mEnd + "\n");
         sb.append(" Address: " + mAddress + "\n");
@@ -135,8 +181,8 @@ public class Schedule implements Comparable<Schedule> {
         return mEnd;
     }
 
-    public FoodTruck getTruck() {
-        return mTruck;
+    public long getFoodtruckId() {
+        return mFoodtruckId;
     }
 
     public String getAddress() {
@@ -148,18 +194,34 @@ public class Schedule implements Comparable<Schedule> {
     }
 
     public double getLat() {
-        return mLat;
+        return mLocation.latitude;
     }
 
     public double getLng() {
-        return mLng;
+        return mLocation.longitude;
     }
 
     public double getStreetLat() {
-        return mStreetLat;
+        return mStreetLocation.latitude;
     }
 
     public double getStreetLng() {
-        return mStreetLng;
+        return mStreetLocation.longitude;
+    }
+
+    public LatLng getLocation() {
+        return mLocation;
+    }
+
+    public LatLng getStreetLocation() {
+        return mStreetLocation;
+    }
+
+    public String getStartTimeString() {
+        return mFormat.format(getStart().getTime());
+    }
+
+    public String getEndTimeString() {
+        return mFormat.format(getEnd().getTime());
     }
 }
