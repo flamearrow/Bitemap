@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Bundle;
 
 import com.gb.ml.bitemap.database.BitemapDBConnector;
+import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
 
 
 public class MainActivity extends Activity {
