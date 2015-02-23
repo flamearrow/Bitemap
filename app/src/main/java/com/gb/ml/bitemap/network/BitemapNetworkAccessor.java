@@ -60,7 +60,7 @@ public class BitemapNetworkAccessor {
 
             conn.connect();
             int response = conn.getResponseCode();
-            Log.d(TAG, "The response for getTrucks is: " + response);
+            Log.d("mlgb", "The response for getTrucks is: " + response);
             // TODO: we might need to handle according to different response
             is = conn.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -71,6 +71,7 @@ public class BitemapNetworkAccessor {
                 nextLine = br.readLine();
             }
         } catch (IOException e) {
+            // TODO: something is wrong with network request, connection fails, need to handle it here
             e.printStackTrace();
         } finally {
             if (is != null) {

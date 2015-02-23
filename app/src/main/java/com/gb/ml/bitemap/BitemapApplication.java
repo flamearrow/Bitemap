@@ -1,7 +1,9 @@
 package com.gb.ml.bitemap;
 
 import android.app.Application;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.gb.ml.bitemap.database.BitemapDBConnector;
 import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
@@ -16,6 +18,8 @@ import java.util.Map;
  * Hold global foodtruck state
  */
 public class BitemapApplication extends Application {
+
+    public static final String INIT_COMPLETE = "INITIALIZATION_COMPLETE";
 
     private List<Schedule> mSchedules;
 
@@ -46,6 +50,7 @@ public class BitemapApplication extends Application {
 
         @Override
         protected void onPostExecute(List<FoodTruck> foodTrucks) {
+            Log.d("mlgb", "food truck api returns with " + foodTrucks.size() + " trucks");
             mFoodTrucks = foodTrucks;
             populateLists();
         }
@@ -53,12 +58,13 @@ public class BitemapApplication extends Application {
 
     // Pull data from DB to populate lists
     private void populateLists() {
-//        mFoodTrucks = mDBConnector.getTrucks();
         mFoodTruckMap = new HashMap<>();
         for (FoodTruck ft : mFoodTrucks) {
             mFoodTruckMap.put(ft.getId(), ft);
         }
         mSchedules = mDBConnector.getSchedules(mFoodTruckMap);
+        // initialization complete
+        sendBroadcast(new Intent(INIT_COMPLETE));
     }
 
     private void initializeDB() {

@@ -82,16 +82,6 @@ public class FoodTruckList extends BaseList {
                 mVh.mLogoView.setImageBitmap(mDefaultBm);
             } else {
                 mVh.mLogoView.setImageBitmap(mFt.getLogoBm());
-//                Drawable mDrawable = null;
-//                try {
-//                    String logoPath = "debugData/trucks_info/" + mFt.getLogo().getPath();
-//                    mDrawable = Drawable
-//                            .createFromStream(getActivity().getAssets()
-//                                    .open(logoPath), null);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                mVh.mLogoView.setImageDrawable(mDrawable);
             }
             mVh.mFoodTruckNameView.setText(mFt.getName());
             mVh.mCategoryView.setText(mFt.getCategory());
