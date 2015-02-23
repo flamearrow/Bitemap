@@ -14,9 +14,28 @@ import java.net.URI;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import static com.gb.ml.bitemap.database.DBConstants.*;
+import static com.gb.ml.bitemap.database.DBConstants.ADDRESS;
+import static com.gb.ml.bitemap.database.DBConstants.ALL_FOODTRUCKS;
+import static com.gb.ml.bitemap.database.DBConstants.CATEGORY;
+import static com.gb.ml.bitemap.database.DBConstants.CATEGORY_DETAIL;
+import static com.gb.ml.bitemap.database.DBConstants.CLEAR_ALL_FOOD_TRUCKS;
+import static com.gb.ml.bitemap.database.DBConstants.CLEAR_SCHEDULES;
+import static com.gb.ml.bitemap.database.DBConstants.CREATE_ALL_FOOD_TRUCKS;
+import static com.gb.ml.bitemap.database.DBConstants.CREATE_SCHEDULES;
+import static com.gb.ml.bitemap.database.DBConstants.DB_NAME;
+import static com.gb.ml.bitemap.database.DBConstants.END_TIME;
+import static com.gb.ml.bitemap.database.DBConstants.FOOD_TRUCK_ID;
+import static com.gb.ml.bitemap.database.DBConstants.ID;
+import static com.gb.ml.bitemap.database.DBConstants.LAT;
+import static com.gb.ml.bitemap.database.DBConstants.LNG;
+import static com.gb.ml.bitemap.database.DBConstants.LOGO;
+import static com.gb.ml.bitemap.database.DBConstants.NAME;
+import static com.gb.ml.bitemap.database.DBConstants.SCHEDULES;
+import static com.gb.ml.bitemap.database.DBConstants.START_TIME;
+import static com.gb.ml.bitemap.database.DBConstants.STREET_LAT;
+import static com.gb.ml.bitemap.database.DBConstants.STREET_LNG;
+import static com.gb.ml.bitemap.database.DBConstants.URL;
 
 /**
  * Access database
@@ -70,11 +89,18 @@ public class BitemapDBConnector {
         mDb = mHelper.getWritableDatabase();
     }
 
+    private void openDbIfClosed() {
+        if (!mDb.isOpen()) {
+            mDb = mHelper.getWritableDatabase();
+        }
+    }
+
     public void close() {
         if (mDb != null) {
             mDb.close();
         }
     }
+
 
     private void addTruck(long id, String name, String category, String category_detail, URI logo,
             String url) {
@@ -86,7 +112,27 @@ public class BitemapDBConnector {
         newTruck.put(LOGO, logo.getPath());
         newTruck.put(URL, url);
         open();
-        mDb.insert(ALL_FOODTRUCKS, null, newTruck);
+        mDb.insertWithOnConflict(ALL_FOODTRUCKS, null, newTruck, SQLiteDatabase.CONFLICT_IGNORE);
+        close();
+    }
+
+    public void addTruckBatch(List<FoodTruck> foodTrucks) {
+        open();
+        ContentValues newTruck = new ContentValues();
+        int i = 0;
+        for (FoodTruck ft : foodTrucks) {
+            i++;
+            newTruck.put(ID, ft.getId());
+            newTruck.put(NAME, ft.getName());
+            newTruck.put(CATEGORY, ft.getCategory());
+            newTruck.put(CATEGORY_DETAIL, ft.getCategoryDetail());
+            newTruck.put(LOGO, ft.getLogo().getPath());
+            newTruck.put(URL, ft.getUrl());
+            // db sometimes gets closed in between...
+            openDbIfClosed();
+            mDb.insertWithOnConflict(ALL_FOODTRUCKS, null, newTruck,
+                    SQLiteDatabase.CONFLICT_IGNORE);
+        }
         close();
     }
 
@@ -120,7 +166,7 @@ public class BitemapDBConnector {
                 schedule.getStreetLat(), schedule.getStreetLng());
     }
 
-    public List<Schedule> getSchedules(Map<Long, FoodTruck> foodTruckMap) {
+    public List<Schedule> getSchedules() {
         //(id INTEGER primary key, foodtruck_id INTEGER, start_time INTEGER, end_time INTEGER,
         // address TEXT, lat REAL, lng REAL, street_lat REAL, street_lng REAL)
         open();
@@ -173,24 +219,11 @@ public class BitemapDBConnector {
     }
 
     /**
-     * fire a network request to update DB if necessary
-     */
-    public void updateDBIfNecessary() {
-        // TODO: add an initial network request here to populate DB first, currently use debug data
-        initializeDebugData();
-    }
-
-    /**
      * load test data into database
      */
     public void initializeDebugData() {
-
         for (Schedule schedule : BitemapDebug.createDebugSchedules(mContext)) {
             addSchedule(schedule);
-        }
-
-        for (FoodTruck truck : BitemapDebug.createDebugFoodTrucks(mContext)) {
-            addTruck(truck);
         }
     }
 

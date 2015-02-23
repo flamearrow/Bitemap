@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Access Network 
+ * Access Network
  */
 public class BitemapNetworkAccessor {
 
@@ -72,6 +72,7 @@ public class BitemapNetworkAccessor {
             }
         } catch (IOException e) {
             // TODO: something is wrong with network request, connection fails, need to handle it here
+            Log.d(TAG, "Fails to get food truck info at the moment!");
             e.printStackTrace();
         } finally {
             if (is != null) {
@@ -102,6 +103,7 @@ public class BitemapNetworkAccessor {
             is = conn.getInputStream();
             return BitmapFactory.decodeStream(is);
         } catch (IOException e) {
+            Log.d(TAG, "Fails to get image at the moment!");
             e.printStackTrace();
         } finally {
             if (is != null) {
