@@ -2,13 +2,10 @@ package com.gb.ml.bitemap.network;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,14 +16,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Access Network
+ * Access Network 
  */
 public class BitemapNetworkAccessor {
 
@@ -55,6 +51,7 @@ public class BitemapNetworkAccessor {
         InputStream is = null;
         try {
             URL url = new URL(NetworkConstants.ALL_TRUCKS);
+            Log.d(TAG, "getTrucks: started async task for " + url.getPath());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(10000);
             conn.setConnectTimeout(15000);
@@ -63,9 +60,10 @@ public class BitemapNetworkAccessor {
 
             conn.connect();
             int response = conn.getResponseCode();
+            Log.d(TAG, "The response for getTrucks is: " + response);
             // TODO: we might need to handle according to different response
-            Log.d(TAG, "The response is: " + response);
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            is = conn.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
             // only return one line
             String nextLine = br.readLine();
             while (nextLine != null) {
@@ -86,18 +84,32 @@ public class BitemapNetworkAccessor {
         return list;
     }
 
-    public static Drawable getDrawableFromURI(URI uri) {
+    public static Bitmap getBitmapFromURI(URI uri) {
+        InputStream is = null;
         try {
-            final Bitmap bm;
+
             URL url = new URL(NetworkConstants.SERVER_IP + uri.getPath());
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
             conn.connect();
-            return new BitmapDrawable(null, BitmapFactory.decodeStream(conn.getInputStream()));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+            int response = conn.getResponseCode();
+            Log.d(TAG, "The response for getBitmapFromURI is: " + response);
+            is = conn.getInputStream();
+            return BitmapFactory.decodeStream(is);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return null;
     }

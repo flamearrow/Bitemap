@@ -1,21 +1,32 @@
-    package com.gb.ml.bitemap.pojo;
+package com.gb.ml.bitemap.pojo;
 
-    import java.net.URI;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
+import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 
-    public class FoodTruck {
+import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
+import com.gb.ml.bitemap.network.NetworkConstants;
 
-        private long mId;
+import java.net.URI;
 
-        private String mName;
+public class FoodTruck {
 
-        // TODO: use enum?
-        private String mCategory;
+    private long mId;
+
+    private String mName;
+
+    // TODO: use enum?
+    private String mCategory;
 
     private String mCategoryDetail;
 
     private URI mLogo;
 
     private String mUrl;
+
+    private Bitmap mBm;
+
 
     private FoodTruck() {
     }
@@ -70,6 +81,25 @@
         public FoodTruck build() {
             return new FoodTruck(mName, mCategory, mCategoryDetail, mLogo, mUrl, mId);
         }
+    }
+
+    public void loadImage(final BaseAdapter ldp) {
+        new AsyncTask<URI, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(URI... params) {
+                return BitemapNetworkAccessor.getBitmapFromURI(params[0]);
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                mBm = bitmap;
+                ldp.notifyDataSetChanged();
+            }
+        }.execute(getLogo());
+    }
+
+    public Bitmap getLogoBm() {
+        return mBm;
     }
 
     public String getName() {

@@ -1,5 +1,6 @@
 package com.gb.ml.bitemap.listFragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
@@ -8,10 +9,20 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.gb.ml.bitemap.BitemapApplication;
+
 /**
  * abstract fragment to display a list of customizable items from DB
  */
 public abstract class BaseList extends ListFragment {
+
+    protected BitemapApplication mAppContext;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mAppContext = (BitemapApplication) activity.getApplicationContext();
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
