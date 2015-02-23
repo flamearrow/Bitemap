@@ -1,6 +1,8 @@
 package com.gb.ml.bitemap.listFragments;
 
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,16 +11,31 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.gb.ml.bitemap.BitemapApplication;
 import com.gb.ml.bitemap.R;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 
-import java.io.IOException;
 
 /**
  * List of food truck stores, sorted by food truck name
  */
 public class FoodTruckList extends BaseList {
+
+    private Bitmap mDefaultBm;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mDefaultBm = BitmapFactory.decodeResource(getResources(), R.drawable.foreveralone);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // This is a heavy call, one asynctask would be fired for each foodtruck
+        for (FoodTruck ft : mAppContext.getFoodTrucks()) {
+            ft.loadImage((BaseAdapter) getListAdapter());
+        }
+    }
 
     @Override
     ListAdapter createListAdapter() {
@@ -26,12 +43,6 @@ public class FoodTruckList extends BaseList {
     }
 
     private class FoodTruckAdaptor extends BaseAdapter {
-
-        private BitemapApplication mAppContext;
-
-        public FoodTruckAdaptor() {
-            mAppContext = (BitemapApplication) getActivity().getApplicationContext();
-        }
 
 
         @Override
@@ -49,6 +60,7 @@ public class FoodTruckList extends BaseList {
             return position;
         }
 
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder mVh;
@@ -65,16 +77,22 @@ public class FoodTruckList extends BaseList {
             }
 
             final FoodTruck mFt = mAppContext.getFoodTrucks().get(position);
-            Drawable mDrawable = null;
-            try {
-                String logoPath = "debugData/trucks_info/" + mFt.getLogo().getPath();
-                mDrawable = Drawable
-                        .createFromStream(getActivity().getAssets()
-                                .open(logoPath), null);
-            } catch (IOException e) {
-                e.printStackTrace();
+
+            if (mFt.getLogoBm() == null) {
+                mVh.mLogoView.setImageBitmap(mDefaultBm);
+            } else {
+                mVh.mLogoView.setImageBitmap(mFt.getLogoBm());
+//                Drawable mDrawable = null;
+//                try {
+//                    String logoPath = "debugData/trucks_info/" + mFt.getLogo().getPath();
+//                    mDrawable = Drawable
+//                            .createFromStream(getActivity().getAssets()
+//                                    .open(logoPath), null);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                mVh.mLogoView.setImageDrawable(mDrawable);
             }
-            mVh.mLogoView.setImageDrawable(mDrawable);
             mVh.mFoodTruckNameView.setText(mFt.getName());
             mVh.mCategoryView.setText(mFt.getCategory());
             return convertView;
