@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.gb.ml.bitemap.MapActivity;
 import com.gb.ml.bitemap.R;
+import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
 
 import java.io.IOException;
@@ -63,17 +64,12 @@ public class ScheduleList extends BaseList {
                 mVh = (ViewHolder) convertView.getTag();
             }
             final Schedule mS = mAppContext.getSchedules().get(position);
-            Drawable mDrawable = null;
-            try {
-                String logoPath = "debugData/trucks_info/" + mAppContext
-                        .findFoodtruckFromId(mS.getFoodtruckId()).getLogo().getPath();
-                mDrawable = Drawable
-                        .createFromStream(getActivity().getAssets()
-                                .open(logoPath), null);
-            } catch (IOException e) {
-                e.printStackTrace();
+            final FoodTruck mFt = mAppContext.findFoodtruckFromId(mS.getFoodtruckId());
+            if (mFt.getLogoBm() == null) {
+                mVh.mLogoView.setImageBitmap(null);
+            } else {
+                mVh.mLogoView.setImageBitmap(mFt.getLogoBm());
             }
-            mVh.mLogoView.setImageDrawable(mDrawable);
             mVh.mFoodTruckNameView.setText(
                     mAppContext.findFoodtruckFromId(mS.getFoodtruckId()).getName());
             mVh.mScheduleStart.setText(mS.getStartTimeString());

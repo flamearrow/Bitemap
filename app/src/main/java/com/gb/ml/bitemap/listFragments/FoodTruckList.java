@@ -1,7 +1,5 @@
 package com.gb.ml.bitemap.listFragments;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,14 +17,6 @@ import com.gb.ml.bitemap.pojo.FoodTruck;
  * List of food truck stores, sorted by food truck name
  */
 public class FoodTruckList extends BaseList {
-
-    private Bitmap mDefaultBm;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mDefaultBm = BitmapFactory.decodeResource(getResources(), R.drawable.foreveralone);
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
