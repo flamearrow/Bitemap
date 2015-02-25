@@ -166,6 +166,7 @@ public class Schedule implements Comparable<Schedule>, Parcelable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Schedule: \n");
+        sb.append(" Id: " + mId + "\n");
         sb.append(" FoodTruckId: " + mFoodtruckId + "\n");
         sb.append(" startTime: " + mStart + "\n");
         sb.append(" endTime: " + mEnd + "\n");

@@ -57,7 +57,7 @@ public class BitemapApplication extends Application {
         super.onCreate();
         mDBConnector = BitemapDBConnector.getInstance(getApplicationContext());
         // TODO: currently there's no api for schedules and events, we need to manually populate them
-        mDBConnector.initializeDebugData();
+//        mDBConnector.initializeDebugData();
         syncDatabaseWithSever();
     }
 
@@ -81,9 +81,7 @@ public class BitemapApplication extends Application {
             } else {
                 Log.d(TAG, "local db not up to date, issuing api requests...");
                 new DownloadFoodTrucks().execute();
-                // TODO: new DownloadSchedules().execute();
-                // need to remote the following once schedule api is ready..
-                new LoadSchedulesFromDB().execute();
+                new DownloadSchedules().execute();
                 // TODO: new DownloadEvents().execute();
             }
         } else {
@@ -143,6 +141,24 @@ public class BitemapApplication extends Application {
             Log.d(TAG, "LoadFoodTrucksFromDB returns " + foodTrucks.size() + " trucks");
             mFoodTrucks = foodTrucks;
             addModeAndCheckReady(FOODTRUCK_LIST_READY);
+        }
+    }
+
+    private class DownloadSchedules extends AsyncTask<Void, Void, List<Schedule>> {
+
+        @Override
+        protected List<Schedule> doInBackground(Void... params) {
+//            return BitemapNetworkAccessor.getSchedulesToday();
+            return BitemapNetworkAccessor.getSchedulesFeb();
+        }
+
+        @Override
+        protected void onPostExecute(List<Schedule> schedules) {
+            Log.d(TAG, "DownloadSchedules returns " + schedules.size() + " schedules");
+            mSchedules = schedules;
+            // TODO: do this in a separate thread
+            mDBConnector.addScheduleBatch(schedules);
+            addModeAndCheckReady(SCHEDULE_LIST_READY);
         }
     }
 

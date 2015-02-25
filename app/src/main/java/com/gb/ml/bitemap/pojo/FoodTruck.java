@@ -3,10 +3,8 @@ package com.gb.ml.bitemap.pojo;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 
 import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
-import com.gb.ml.bitemap.network.NetworkConstants;
 
 import java.net.URI;
 

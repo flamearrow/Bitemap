@@ -119,9 +119,7 @@ public class BitemapDBConnector {
     public void addTruckBatch(List<FoodTruck> foodTrucks) {
         open();
         ContentValues newTruck = new ContentValues();
-        int i = 0;
         for (FoodTruck ft : foodTrucks) {
-            i++;
             newTruck.put(ID, ft.getId());
             newTruck.put(NAME, ft.getName());
             newTruck.put(CATEGORY, ft.getCategory());
@@ -136,11 +134,32 @@ public class BitemapDBConnector {
         close();
     }
 
+    public void addScheduleBatch(List<Schedule> schedules) {
+        open();
+        ContentValues newSchedule = new ContentValues();
+        for (Schedule sc : schedules) {
+            newSchedule.put(ID, sc.getId());
+            newSchedule.put(FOOD_TRUCK_ID, sc.getFoodtruckId());
+
+            newSchedule.put(START_TIME, sc.getStart().getTimeInMillis());
+            newSchedule.put(END_TIME, sc.getEnd().getTimeInMillis());
+            newSchedule.put(ADDRESS, sc.getAddress());
+            newSchedule.put(LAT, sc.getLat());
+            newSchedule.put(LNG, sc.getLng());
+            newSchedule.put(STREET_LAT, sc.getStreetLat());
+            newSchedule.put(STREET_LNG, sc.getStreetLng());
+            // db sometimes gets closed in between...
+            openDbIfClosed();
+            mDb.insertWithOnConflict(SCHEDULES, null, newSchedule, SQLiteDatabase.CONFLICT_IGNORE);
+        }
+        close();
+    }
+
     private void addSchedule(long id, long foodTruckId, Calendar startTime, Calendar endTime,
             String address, double lat, double lng, double streetLat, double streetLng) {
         ContentValues newSchedule = new ContentValues();
-        // all ids are 0 now, we should ignore adding id at the moment, sqlite will generate an PK
-        // newSchedule.put(ID, id);
+        // id is generated from debug
+        newSchedule.put(ID, id);
         newSchedule.put(FOOD_TRUCK_ID, foodTruckId);
 
         newSchedule.put(START_TIME, startTime.getTimeInMillis());

@@ -2,6 +2,7 @@ package com.gb.ml.bitemap.listFragments;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,11 @@ import java.io.IOException;
  * List of events of all food trucks, sorted by event dates
  */
 public class ScheduleList extends BaseList {
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
 
     @Override
     ListAdapter createListAdapter() {
@@ -66,7 +72,7 @@ public class ScheduleList extends BaseList {
             final Schedule mS = mAppContext.getSchedules().get(position);
             final FoodTruck mFt = mAppContext.findFoodtruckFromId(mS.getFoodtruckId());
             if (mFt.getLogoBm() == null) {
-                mVh.mLogoView.setImageBitmap(null);
+                mVh.mLogoView.setImageBitmap(mDefaultBm);
             } else {
                 mVh.mLogoView.setImageBitmap(mFt.getLogoBm());
             }
