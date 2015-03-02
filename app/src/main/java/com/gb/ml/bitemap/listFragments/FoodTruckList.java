@@ -21,10 +21,6 @@ public class FoodTruckList extends BaseList {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // This is a heavy call, one asynctask would be fired for each foodtruck
-        for (FoodTruck ft : mAppContext.getFoodTrucks()) {
-            ft.loadImage((BaseAdapter) getListAdapter());
-        }
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.gb.ml.bitemap.pojo;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.widget.BaseAdapter;
@@ -25,6 +27,7 @@ public class FoodTruck {
 
     private Bitmap mBm;
 
+    public static final String LOGO_DOWNLOADED = "logo_downloaded";
 
     private FoodTruck() {
     }
@@ -81,7 +84,7 @@ public class FoodTruck {
         }
     }
 
-    public void loadImage(final BaseAdapter ldp) {
+    public void loadImage(final Context context) {
         new AsyncTask<URI, Void, Bitmap>() {
             @Override
             protected Bitmap doInBackground(URI... params) {
@@ -91,7 +94,7 @@ public class FoodTruck {
             @Override
             protected void onPostExecute(Bitmap bitmap) {
                 mBm = bitmap;
-                ldp.notifyDataSetChanged();
+                context.sendBroadcast(new Intent(LOGO_DOWNLOADED));
             }
         }.execute(getLogo());
     }

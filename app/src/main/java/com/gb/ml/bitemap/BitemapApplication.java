@@ -194,6 +194,10 @@ public class BitemapApplication extends Application {
             sendBroadcast(completeIntent);
             // need to reset in case we re-request later
             mListsReadyMode = 0;
+            // This is a heavy call, one asynctask would be fired for each foodtruck
+            for (FoodTruck ft : getFoodTrucks()) {
+                ft.loadImage(getApplicationContext());
+            }
         } else {
             Log.d(TAG, "some lists are not ready, hold on sending init_complete signal");
         }
