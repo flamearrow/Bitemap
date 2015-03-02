@@ -18,7 +18,6 @@ import java.util.List;
 public class ScheduleActivity extends BitemapActionBarActivity {
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(R.string.menu_schedules_title);
@@ -27,5 +26,8 @@ public class ScheduleActivity extends BitemapActionBarActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.schedule, new ScheduleList()).commit();
         }
+    }
+
+    public void switchMapList(View view) {
     }
 }
