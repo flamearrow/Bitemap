@@ -52,12 +52,12 @@ public class BitemapApplication extends Application {
 
     private static final int ALL_LISTS_READY = SCHEDULE_LIST_READY | FOODTRUCK_LIST_READY;
 
+    private static final int DAYS_OF_SCHEDULE_TO_GET = 7;
+
     @Override
     public void onCreate() {
         super.onCreate();
         mDBConnector = BitemapDBConnector.getInstance(getApplicationContext());
-        // TODO: currently there's no api for schedules and events, we need to manually populate them
-//        mDBConnector.initializeDebugData();
         syncDatabaseWithSever();
     }
 
@@ -148,8 +148,7 @@ public class BitemapApplication extends Application {
 
         @Override
         protected List<Schedule> doInBackground(Void... params) {
-//            return BitemapNetworkAccessor.getSchedulesToday();
-            return BitemapNetworkAccessor.getSchedulesFeb();
+            return BitemapNetworkAccessor.getSchedulesForDays(DAYS_OF_SCHEDULE_TO_GET);
         }
 
         @Override

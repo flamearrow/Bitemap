@@ -55,6 +55,13 @@ public class BitemapNetworkAccessor {
         return getSchedules(start, end);
     }
 
+    public static List<Schedule> getSchedulesForDays(int days) {
+        final Calendar start = Calendar.getInstance();
+        final Calendar end = Calendar.getInstance();
+        end.add(Calendar.DAY_OF_MONTH, days);
+        return getSchedules(start, end);
+    }
+
     public static List<Schedule> getSchedules(Calendar start, Calendar end) {
         final StringBuilder scheduleApiBuilder = new StringBuilder();
         scheduleApiBuilder.append(SCHEDULES);
@@ -291,7 +298,6 @@ public class BitemapNetworkAccessor {
                             .setLat(Double.parseDouble(jOb.getString("lat")))
                             .setLng(Double.parseDouble(jOb.getString("lng"))).setStart(start)
                             .setEnd(end).build();
-                    Log.d("mlgb", "parsed a new schedule" + newSc.toString());
                     list.add(newSc);
                 }
             }
