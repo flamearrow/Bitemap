@@ -45,6 +45,12 @@ public abstract class BaseList extends ListFragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(mLogoCompletedReceiver);
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mAppContext = (BitemapApplication) activity.getApplicationContext();

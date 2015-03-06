@@ -1,6 +1,7 @@
 package com.gb.ml.bitemap;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.gb.ml.bitemap.listFragments.ScheduleList;
@@ -19,27 +20,41 @@ public class ScheduleActivity extends BitemapActionBarActivity {
         super.onCreate(savedInstanceState);
         setTitle(R.string.menu_schedules_title);
         setContentView(R.layout.activity_schedule);
-        if (mSchedulesList == null) {
-            mSchedulesList = new ScheduleList();
-        }
-        if (mSchedulesMap == null) {
-            mSchedulesMap = new SchedulesMapFragment();
-        }
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.schedule, mSchedulesMap).add(R.id.schedule, mSchedulesList)
-                    .show(mSchedulesList).hide(mSchedulesMap).commit();
+                    .add(R.id.schedule, getSchedulesList()).commit();
         }
     }
 
+    private Fragment getSchedulesList() {
+        if (mSchedulesList == null) {
+            mSchedulesList = new ScheduleList();
+        }
+        return mSchedulesList;
+    }
+
+    private Fragment getSchedulesMap() {
+        if (mSchedulesMap == null) {
+            mSchedulesMap = new SchedulesMapFragment();
+        }
+        return mSchedulesMap;
+    }
+
     public void switchMapList(View view) {
-        if (mSchedulesList.isHidden()) {
-            getSupportFragmentManager().beginTransaction().show(mSchedulesList).hide(mSchedulesMap)
-                    .commit();
+        if (!getSchedulesMap().isAdded()) {
+            getSupportFragmentManager().beginTransaction().add(R.id.schedule, getSchedulesMap())
+                    .hide(mSchedulesList).commit();
         } else {
-            getSupportFragmentManager().beginTransaction().show(mSchedulesMap).hide(mSchedulesList)
-                    .commit();
+            if (mSchedulesList.isHidden()) {
+                getSupportFragmentManager().beginTransaction().show(mSchedulesList)
+                        .hide(mSchedulesMap)
+                        .commit();
+            } else {
+                getSupportFragmentManager().beginTransaction().show(mSchedulesMap)
+                        .hide(mSchedulesList)
+                        .commit();
+            }
         }
     }
 }
