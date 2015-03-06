@@ -45,8 +45,8 @@ public abstract class BaseList extends ListFragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
         getActivity().unregisterReceiver(mLogoCompletedReceiver);
     }
 
