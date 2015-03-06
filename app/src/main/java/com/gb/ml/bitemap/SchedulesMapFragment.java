@@ -1,7 +1,10 @@
 package com.gb.ml.bitemap;
 
 import android.app.Activity;
+import android.content.Context;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,7 +22,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 /**
  * Display schedules on a map
  */
-public class SchedulesMapFragment extends Fragment implements GoogleMap.OnMyLocationChangeListener {
+public class SchedulesMapFragment extends Fragment {
 
     private GoogleMap mMap;
 
@@ -47,7 +50,7 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.OnMyLoca
             for (Schedule s : mBitemapApplication.getSchedules()) {
                 mMap.addMarker(createMarker(s));
             }
-            mMap.setOnMyLocationChangeListener(this);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getMyLocation(), 12));
         }
     }
 
@@ -58,9 +61,12 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.OnMyLoca
                 .position(schedule.getLocation());
     }
 
-    @Override
-    public void onMyLocationChange(Location location) {
-        mMap.moveCamera(CameraUpdateFactory
-                .newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
+    private LatLng getMyLocation() {
+        LocationManager service = (LocationManager) getActivity()
+                .getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String provider = service.getBestProvider(criteria, false);
+        Location location = service.getLastKnownLocation(provider);
+        return new LatLng(location.getLatitude(), location.getLongitude());
     }
 }
