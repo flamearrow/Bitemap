@@ -12,6 +12,7 @@ import com.gb.ml.bitemap.pojo.Schedule;
 
 import java.net.URI;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -234,6 +235,7 @@ public class BitemapDBConnector {
             ret.add(newFt);
         }
         close();
+        Collections.sort(ret);
         return ret;
     }
 

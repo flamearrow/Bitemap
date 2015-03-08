@@ -19,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -166,6 +167,7 @@ public class BitemapNetworkAccessor {
                 }
             }
         }
+        Collections.sort(list);
         return list;
     }
 
