@@ -43,17 +43,30 @@ public class ScheduleActivity extends BitemapActionBarActivity {
 
     public void switchMapList(View view) {
         if (!getSchedulesMap().isAdded()) {
+//            getSupportFragmentManager().beginTransaction().setCustomAnimations(
+//                    R.animator.card_flip_right_in, R.animator.card_flip_right_out,
+//                    R.animator.card_flip_left_in, R.animator.card_flip_left_out)
+//                    .add(R.id.schedule, getSchedulesMap()).hide(mSchedulesList).commit();
+
             getSupportFragmentManager().beginTransaction().add(R.id.schedule, getSchedulesMap())
                     .hide(mSchedulesList).commit();
         } else {
             if (mSchedulesList.isHidden()) {
+//                getSupportFragmentManager().beginTransaction().setCustomAnimations(
+//                        R.animator.card_flip_right_in, R.animator.card_flip_right_out,
+//                        R.animator.card_flip_left_in, R.animator.card_flip_left_out)
+//                        .show(mSchedulesList)
+//                        .hide(mSchedulesMap).commit();
                 getSupportFragmentManager().beginTransaction().show(mSchedulesList)
-                        .hide(mSchedulesMap)
-                        .commit();
+                        .hide(mSchedulesMap).commit();
             } else {
+//                getSupportFragmentManager().beginTransaction().setCustomAnimations(
+//                        R.animator.card_flip_right_in, R.animator.card_flip_right_out,
+//                        R.animator.card_flip_left_in, R.animator.card_flip_left_out)
+//                        .show(mSchedulesMap)
+//                        .hide(mSchedulesList).commit();
                 getSupportFragmentManager().beginTransaction().show(mSchedulesMap)
-                        .hide(mSchedulesList)
-                        .commit();
+                        .hide(mSchedulesList).commit();
             }
         }
     }
