@@ -5,9 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.widget.Toast;
 
 
@@ -18,7 +17,7 @@ public class MainActivity extends Activity {
     private final BroadcastReceiver mOnInitCompeleteReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            final boolean hasNetwork = intent.getBooleanExtra(BitemapApplication.NETWORK, false);
+            final boolean hasNetwork = intent.getBooleanExtra(BitemapListDataHolder.NETWORK, false);
             if (hasNetwork) {
                 Toast.makeText(MainActivity.this,
                         "has network connection, issuing api requests and sync with local db",
@@ -41,13 +40,14 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        BitemapListDataHolder.syncDatabaseWithSever(getApplicationContext());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         registerReceiver(mOnInitCompeleteReceiver,
-                new IntentFilter(BitemapApplication.INIT_COMPLETE));
+                new IntentFilter(BitemapListDataHolder.INIT_COMPLETE));
     }
 
     @Override

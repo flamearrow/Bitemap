@@ -16,7 +16,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.gb.ml.bitemap.BitemapApplication;
 import com.gb.ml.bitemap.R;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 
@@ -24,8 +23,6 @@ import com.gb.ml.bitemap.pojo.FoodTruck;
  * abstract fragment to display a list of customizable items from DB
  */
 public abstract class BaseList extends ListFragment {
-
-    protected BitemapApplication mAppContext;
 
     protected Bitmap mDefaultBm;
 
@@ -53,7 +50,6 @@ public abstract class BaseList extends ListFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mAppContext = (BitemapApplication) activity.getApplicationContext();
     }
 
     @Override

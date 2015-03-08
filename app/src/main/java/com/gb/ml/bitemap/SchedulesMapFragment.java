@@ -26,12 +26,10 @@ public class SchedulesMapFragment extends Fragment {
 
     private GoogleMap mMap;
 
-    private BitemapApplication mBitemapApplication;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mBitemapApplication = (BitemapApplication) activity.getApplication();
     }
 
     @Override
@@ -47,7 +45,7 @@ public class SchedulesMapFragment extends Fragment {
             mMap = ((SupportMapFragment) getChildFragmentManager()
                     .findFragmentById(R.id.schedules_map)).getMap();
             mMap.setMyLocationEnabled(true);
-            for (Schedule s : mBitemapApplication.getSchedules()) {
+            for (Schedule s : BitemapListDataHolder.getSchedules()) {
                 mMap.addMarker(createMarker(s));
             }
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getMyLocation(), 12));
@@ -56,7 +54,7 @@ public class SchedulesMapFragment extends Fragment {
 
     private MarkerOptions createMarker(Schedule schedule) {
         return new MarkerOptions()
-                .title(mBitemapApplication.findFoodtruckFromId(schedule.getFoodtruckId()).getName())
+                .title(BitemapListDataHolder.findFoodtruckFromId(schedule.getFoodtruckId()).getName())
                 .snippet(schedule.getStartTimeString() + " to " + schedule.getEndTimeString())
                 .position(schedule.getLocation());
     }

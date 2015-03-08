@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.gb.ml.bitemap.BitemapListDataHolder;
 import com.gb.ml.bitemap.MapActivity;
 import com.gb.ml.bitemap.R;
 import com.gb.ml.bitemap.pojo.FoodTruck;
@@ -39,12 +40,12 @@ public class ScheduleList extends BaseList {
 
         @Override
         public int getCount() {
-            return mAppContext.getSchedules().size();
+            return BitemapListDataHolder.getSchedules().size();
         }
 
         @Override
         public Object getItem(int position) {
-            return mAppContext.getSchedules().get(position);
+            return BitemapListDataHolder.getSchedules().get(position);
         }
 
         @Override
@@ -69,15 +70,15 @@ public class ScheduleList extends BaseList {
             } else {
                 mVh = (ViewHolder) convertView.getTag();
             }
-            final Schedule mS = mAppContext.getSchedules().get(position);
-            final FoodTruck mFt = mAppContext.findFoodtruckFromId(mS.getFoodtruckId());
+            final Schedule mS = BitemapListDataHolder.getSchedules().get(position);
+            final FoodTruck mFt = BitemapListDataHolder.findFoodtruckFromId(mS.getFoodtruckId());
             if (mFt.getLogoBm() == null) {
                 mVh.mLogoView.setImageBitmap(mDefaultBm);
             } else {
                 mVh.mLogoView.setImageBitmap(mFt.getLogoBm());
             }
             mVh.mFoodTruckNameView.setText(
-                    mAppContext.findFoodtruckFromId(mS.getFoodtruckId()).getName());
+                    BitemapListDataHolder.findFoodtruckFromId(mS.getFoodtruckId()).getName());
             mVh.mScheduleStart.setText(mS.getStartTimeString());
             mVh.mScheduleEnd.setText(mS.getEndTimeString());
 
@@ -111,7 +112,7 @@ public class ScheduleList extends BaseList {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             final Intent i = new Intent(getActivity(), MapActivity.class);
-            i.putExtra(MapActivity.SCHEDULE, mAppContext.getSchedules().get(position));
+            i.putExtra(MapActivity.SCHEDULE, BitemapListDataHolder.getSchedules().get(position));
             startActivity(i);
         }
     }

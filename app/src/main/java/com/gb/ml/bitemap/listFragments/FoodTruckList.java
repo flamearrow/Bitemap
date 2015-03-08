@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.gb.ml.bitemap.BitemapListDataHolder;
 import com.gb.ml.bitemap.R;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 
@@ -33,12 +34,12 @@ public class FoodTruckList extends BaseList {
 
         @Override
         public int getCount() {
-            return mAppContext.getFoodTrucks().size();
+            return BitemapListDataHolder.getFoodTrucks().size();
         }
 
         @Override
         public Object getItem(int position) {
-            return mAppContext.getFoodTrucks().get(position);
+            return BitemapListDataHolder.getFoodTrucks().get(position);
         }
 
         @Override
@@ -62,7 +63,7 @@ public class FoodTruckList extends BaseList {
                 mVh = (ViewHolder) convertView.getTag();
             }
 
-            final FoodTruck mFt = mAppContext.getFoodTrucks().get(position);
+            final FoodTruck mFt = BitemapListDataHolder.getFoodTrucks().get(position);
 
             if (mFt.getLogoBm() == null) {
                 mVh.mLogoView.setImageBitmap(mDefaultBm);

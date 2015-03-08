@@ -14,7 +14,6 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
 
     public static final String SCHEDULE = "SCHEDULE";
 
-    private BitemapApplication mBitemapApplication;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +23,6 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
         getFragmentManager().beginTransaction().add(R.id.map_container, mf)
                 .commit();
         mf.getMapAsync(this);
-        mBitemapApplication = (BitemapApplication) getApplication();
 
     }
 
@@ -35,7 +33,7 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(schedule.getLocation(), 13));
         googleMap.addMarker(
                 new MarkerOptions()
-                        .title(mBitemapApplication.findFoodtruckFromId(schedule.getFoodtruckId()).getName())
+                        .title(BitemapListDataHolder.findFoodtruckFromId(schedule.getFoodtruckId()).getName())
                         .snippet(schedule.getStartTimeString() + " to " + schedule
                                 .getEndTimeString()).position(schedule.getLocation()));
 
