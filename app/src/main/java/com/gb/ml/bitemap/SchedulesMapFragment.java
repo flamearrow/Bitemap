@@ -1,13 +1,12 @@
 package com.gb.ml.bitemap;
 
-import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import android.view.ViewGroup;
 import com.gb.ml.bitemap.pojo.Schedule;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -24,37 +23,34 @@ import com.google.android.gms.maps.model.MarkerOptions;
  */
 public class SchedulesMapFragment extends Fragment {
 
-    private GoogleMap mMap;
+    private GoogleMap mGoogleMap;
 
-
+    @Nullable
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.schedules_map_fragment, container, false);
         initializeMap();
         return v;
     }
 
     private void initializeMap() {
-        if (mMap == null) {
-            mMap = ((SupportMapFragment) getChildFragmentManager()
-                    .findFragmentById(R.id.schedules_map)).getMap();
-            mMap.setMyLocationEnabled(true);
+        if (mGoogleMap == null) {
+            mGoogleMap = ((MapFragment) getChildFragmentManager().findFragmentById(
+                    R.id.schedules_map))
+                    .getMap();
+            mGoogleMap.setMyLocationEnabled(true);
             for (Schedule s : BitemapListDataHolder.getSchedules()) {
-                mMap.addMarker(createMarker(s));
+                mGoogleMap.addMarker(createMarker(s));
             }
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getMyLocation(), 12));
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getMyLocation(), 12));
         }
     }
 
     private MarkerOptions createMarker(Schedule schedule) {
         return new MarkerOptions()
-                .title(BitemapListDataHolder.findFoodtruckFromId(schedule.getFoodtruckId()).getName())
+                .title(BitemapListDataHolder.findFoodtruckFromId(schedule.getFoodtruckId())
+                        .getName())
                 .snippet(schedule.getStartTimeString() + " to " + schedule.getEndTimeString())
                 .position(schedule.getLocation());
     }

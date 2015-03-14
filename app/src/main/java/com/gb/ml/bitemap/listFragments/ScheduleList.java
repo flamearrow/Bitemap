@@ -1,8 +1,6 @@
 package com.gb.ml.bitemap.listFragments;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,23 +16,12 @@ import com.gb.ml.bitemap.R;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
 
-import java.io.IOException;
-
-/**
- * List of events of all food trucks, sorted by event dates
- */
 public class ScheduleList extends BaseList {
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
 
     @Override
     ListAdapter createListAdapter() {
         return new ScheduleAdaptor();
     }
-
 
     private class ScheduleAdaptor extends BaseAdapter {
 
@@ -100,7 +87,6 @@ public class ScheduleList extends BaseList {
             }
         }
     }
-
 
     @Override
     AdapterView.OnItemClickListener createItemClickListener() {

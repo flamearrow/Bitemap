@@ -15,8 +15,7 @@ public class AllFoodTrucksActivity extends BitemapActionBarActivity {
         setTitle(R.string.menu_all_trucks);
         setContentView(R.layout.activity_all_foodtrucks);
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.all_food_trucks, new FoodTruckList())
+            getFragmentManager().beginTransaction().add(R.id.all_food_trucks, new FoodTruckList())
                     .commit();
         }
     }
