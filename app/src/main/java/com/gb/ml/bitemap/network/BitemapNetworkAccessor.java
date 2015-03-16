@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -56,14 +57,14 @@ public class BitemapNetworkAccessor {
         return getSchedules(start, end);
     }
 
-    public static List<Schedule> getSchedulesForDays(int days) {
+    public static ArrayList<Schedule> getSchedulesForDays(int days) {
         final Calendar start = Calendar.getInstance();
         final Calendar end = Calendar.getInstance();
         end.add(Calendar.DAY_OF_MONTH, days);
         return getSchedules(start, end);
     }
 
-    public static List<Schedule> getSchedules(Calendar start, Calendar end) {
+    public static ArrayList<Schedule> getSchedules(Calendar start, Calendar end) {
         final StringBuilder scheduleApiBuilder = new StringBuilder();
         scheduleApiBuilder.append(SCHEDULES);
         scheduleApiBuilder.append(QUESTION_MARK);
@@ -89,7 +90,7 @@ public class BitemapNetworkAccessor {
         scheduleApiBuilder.append(SLASH);
         scheduleApiBuilder.append(end.get(Calendar.DAY_OF_MONTH));
 
-        final List<Schedule> list = new LinkedList<>();
+        final ArrayList<Schedule> list = new ArrayList<>();
         InputStream is = null;
         try {
             URL url = new URL(scheduleApiBuilder.toString());

@@ -3,6 +3,7 @@ package com.gb.ml.bitemap.pojo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.gb.ml.bitemap.FoodTruckConstants;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.text.SimpleDateFormat;
@@ -26,6 +27,10 @@ public class Schedule implements Comparable<Schedule>, Parcelable {
     private LatLng mStreetLocation;
 
     private static SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+    private static SimpleDateFormat mFormatDate = new SimpleDateFormat("yyyy-MM-dd");
+
+    private static SimpleDateFormat mFormatTime = new SimpleDateFormat("HH:mm");
 
     private Schedule(long id, Calendar start, Calendar end, long foodtruckId, String address,
             double lat, double lng, double streetLat, double streetLng) {
@@ -224,5 +229,14 @@ public class Schedule implements Comparable<Schedule>, Parcelable {
 
     public String getEndTimeString() {
         return mFormat.format(getEnd().getTime());
+    }
+
+    public String getDateString() {
+        return mFormatDate.format(getStart().getTime());
+    }
+
+    public String getTimeString() {
+        return mFormatTime.format(getStart().getTime()) + FoodTruckConstants.TILT + mFormatTime
+                .format(getEnd().getTime());
     }
 }

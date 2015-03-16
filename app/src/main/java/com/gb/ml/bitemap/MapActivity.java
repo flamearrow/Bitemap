@@ -35,7 +35,7 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
                 new MarkerOptions()
                         .title(BitemapListDataHolder.findFoodtruckFromId(schedule.getFoodtruckId()).getName())
                         .snippet(schedule.getStartTimeString() + " to " + schedule
-                                .getEndTimeString()).position(schedule.getLocation()));
+                                .getEndTimeString()).position(schedule.getLocation())).showInfoWindow();
 
     }
 }

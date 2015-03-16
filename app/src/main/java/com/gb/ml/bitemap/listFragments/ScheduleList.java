@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.gb.ml.bitemap.BitemapListDataHolder;
 import com.gb.ml.bitemap.MapActivity;
 import com.gb.ml.bitemap.R;
+import com.gb.ml.bitemap.ScheduleActivity;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
 
@@ -97,9 +98,11 @@ public class ScheduleList extends BaseList {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            final Intent i = new Intent(getActivity(), MapActivity.class);
-            i.putExtra(MapActivity.SCHEDULE, BitemapListDataHolder.getSchedules().get(position));
-            startActivity(i);
+//            final Intent i = new Intent(getActivity(), MapActivity.class);
+//            i.putExtra(MapActivity.SCHEDULE, BitemapListDataHolder.getSchedules().get(position));
+//            startActivity(i);
+            ((ScheduleActivity) getActivity())
+                    .switchMapList(null, BitemapListDataHolder.getSchedules().get(position));
         }
     }
 }

@@ -13,6 +13,7 @@ import com.gb.ml.bitemap.pojo.Event;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class BitemapListDataHolder {
 
     public static final String NETWORK = "NETWORK";
 
-    private static List<Schedule> mSchedules;
+    private static ArrayList<Schedule> mSchedules;
 
     private static List<FoodTruck> mFoodTrucks;
 
@@ -148,7 +149,7 @@ public class BitemapListDataHolder {
         }
     }
 
-    private static class DownloadSchedules extends AsyncTask<Void, Void, List<Schedule>> {
+    private static class DownloadSchedules extends AsyncTask<Void, Void, ArrayList<Schedule>> {
 
         Context mContext;
 
@@ -157,12 +158,12 @@ public class BitemapListDataHolder {
         }
 
         @Override
-        protected List<Schedule> doInBackground(Void... params) {
+        protected ArrayList<Schedule> doInBackground(Void... params) {
             return BitemapNetworkAccessor.getSchedulesForDays(DAYS_OF_SCHEDULE_TO_GET);
         }
 
         @Override
-        protected void onPostExecute(List<Schedule> schedules) {
+        protected void onPostExecute(ArrayList<Schedule> schedules) {
             Log.d(TAG, "DownloadSchedules returns " + schedules.size() + " schedules");
             mSchedules = schedules;
             // TODO: do this in a separate thread
@@ -171,7 +172,7 @@ public class BitemapListDataHolder {
         }
     }
 
-    private static class LoadSchedulesFromDB extends AsyncTask<Void, Void, List<Schedule>> {
+    private static class LoadSchedulesFromDB extends AsyncTask<Void, Void, ArrayList<Schedule>> {
 
         Context mContext;
 
@@ -180,12 +181,12 @@ public class BitemapListDataHolder {
         }
 
         @Override
-        protected List<Schedule> doInBackground(Void... params) {
+        protected ArrayList<Schedule> doInBackground(Void... params) {
             return BitemapDBConnector.getInstance(mContext).getSchedules();
         }
 
         @Override
-        protected void onPostExecute(List<Schedule> schedules) {
+        protected void onPostExecute(ArrayList<Schedule> schedules) {
             Log.d(TAG, "LoadSchedulesFromDB returns " + schedules.size() + " schedules");
             mSchedules = schedules;
             addModeAndCheckReady(SCHEDULE_LIST_READY, mContext);
@@ -218,7 +219,7 @@ public class BitemapListDataHolder {
         }
     }
 
-    public static List<Schedule> getSchedules() {
+    public static ArrayList<Schedule> getSchedules() {
         return mSchedules;
     }
 

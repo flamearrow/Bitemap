@@ -11,6 +11,7 @@ import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -186,12 +187,12 @@ public class BitemapDBConnector {
                 schedule.getStreetLat(), schedule.getStreetLng());
     }
 
-    public List<Schedule> getSchedules() {
+    public ArrayList<Schedule> getSchedules() {
         //(id INTEGER primary key, foodtruck_id INTEGER, start_time INTEGER, end_time INTEGER,
         // address TEXT, lat REAL, lng REAL, street_lat REAL, street_lng REAL)
         open();
         Cursor result = mDb.query(SCHEDULES, null, null, null, null, null, null);
-        List<Schedule> ret = new LinkedList<>();
+        ArrayList<Schedule> ret = new ArrayList<>();
         while (result.moveToNext()) {
             final long mId = result.getLong(0);
             final long mFoodTruckId = result.getLong(1);

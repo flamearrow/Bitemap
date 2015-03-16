@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corner"
+            android:columnCount="4"
+            android:rowCount="3" android:layout_margin="5dp">
+    <ImageView android:layout_width="60dp" android:layout_height="60dp"
+               android:id="@+id/map_info_logo" android:layout_columnSpan="3"
+               android:layout_rowSpan="3" android:layout_margin="5dp"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:id="@+id/map_info_name" android:layout_columnSpan="1"
+              android:layout_rowSpan="1" android:textColor="@color/white" android:textSize="20sp"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:id="@+id/map_info_date" android:layout_columnSpan="1"
+              android:layout_rowSpan="1" android:textColor="@color/white"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:id="@+id/map_info_time" android:layout_columnSpan="1"
+              android:layout_rowSpan="1" android:textColor="@color/white"/>
+</GridLayout>
