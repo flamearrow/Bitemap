@@ -12,9 +12,11 @@ import android.widget.TextView;
 
 import com.gb.ml.bitemap.DetailActivity;
 import com.gb.ml.bitemap.R;
+import com.gb.ml.bitemap.SchedulesMapFragment;
 import com.gb.ml.bitemap.database.BitemapDBConnector;
 import com.gb.ml.bitemap.pojo.Schedule;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,15 +27,12 @@ import java.util.List;
 public class DetailScheduleList extends BaseList {
 
 
-    private List<Schedule> mSchedules;
+    private ArrayList<Schedule> mSchedules;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final long foodTruckId = getArguments().getLong(DetailActivity.FOODTRUCK_ID);
-        mSchedules = BitemapDBConnector.getInstance(getActivity())
-                .getSchedulesForTruck(foodTruckId);
-        Log.d("mlgb", "found " + mSchedules.size() + "schedules");
+        mSchedules = getArguments().getParcelableArrayList(SchedulesMapFragment.SCHEDULES);
     }
 
     @Override

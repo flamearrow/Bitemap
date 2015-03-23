@@ -15,8 +15,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gb.ml.bitemap.database.BitemapDBConnector;
 import com.gb.ml.bitemap.listFragments.DetailScheduleList;
 import com.gb.ml.bitemap.pojo.FoodTruck;
+import com.gb.ml.bitemap.pojo.Schedule;
+
+import java.util.ArrayList;
 
 /**
  * Displays Category, names, events for a particular food truck
@@ -33,6 +37,10 @@ public class DetailActivity extends ActionBarActivity {
     private FoodTruck mTruck;
 
     private Bitmap mDefaultBm;
+
+    private DetailScheduleList mDetailScheduleList;
+
+    private SchedulesMapFragment mSchedulesMapFragment;
 
     private BroadcastReceiver mUpdateLogoReceiver = new BroadcastReceiver() {
         @Override
@@ -52,12 +60,18 @@ public class DetailActivity extends ActionBarActivity {
         mTruck = BitemapListDataHolder.findFoodtruckFromId(mTruckId);
         setTitle(mTruck.getName());
         if (savedInstanceState == null) {
+            ArrayList<Schedule> schedules = BitemapDBConnector.getInstance(this)
+                    .getSchedulesForTruck(mTruckId);
             final Bundle args = new Bundle();
-            args.putLong(FOODTRUCK_ID, mTruckId);
-            final Fragment detailScheduleList = new DetailScheduleList();
-            detailScheduleList.setArguments(args);
+            args.putParcelableArrayList(SchedulesMapFragment.SCHEDULES, schedules);
+            mDetailScheduleList = new DetailScheduleList();
+            mDetailScheduleList.setArguments(args);
+            mSchedulesMapFragment = new SchedulesMapFragment();
+            mSchedulesMapFragment.setArguments(args);
             getFragmentManager().beginTransaction()
-                    .add(R.id.activity_detail, detailScheduleList).commit();
+                    .add(R.id.activity_detail, mDetailScheduleList)
+                    .add(R.id.activity_detail, mSchedulesMapFragment).hide(mSchedulesMapFragment)
+                    .commit();
         }
         if (mDefaultBm == null) {
             mDefaultBm = BitmapFactory.decodeResource(getResources(), R.drawable.foreveralone);
@@ -87,6 +101,18 @@ public class DetailActivity extends ActionBarActivity {
     }
 
     public void switchMap(View v) {
-        Toast.makeText(this, "you should switch to map", Toast.LENGTH_SHORT).show();
+        if (mSchedulesMapFragment.isHidden()) {
+            getFragmentManager().beginTransaction().setCustomAnimations(
+                    R.animator.card_flip_right_in, R.animator.card_flip_right_out,
+                    R.animator.card_flip_left_in, R.animator.card_flip_left_out)
+                    .hide(mDetailScheduleList)
+                    .show(mSchedulesMapFragment).commit();
+        } else {
+            getFragmentManager().beginTransaction().setCustomAnimations(
+                    R.animator.card_flip_right_in, R.animator.card_flip_right_out,
+                    R.animator.card_flip_left_in, R.animator.card_flip_left_out)
+                    .hide(mSchedulesMapFragment)
+                    .show(mDetailScheduleList).commit();
+        }
     }
 }

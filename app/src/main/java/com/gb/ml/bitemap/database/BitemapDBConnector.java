@@ -221,13 +221,13 @@ public class BitemapDBConnector {
     /**
      * Return all schedules with the given foodtruck id, this is not really hitting db
      * but we put it here anyway
-     * @param foodTruckId
+     *
      * @return this foodtruck's next 7 day schedule
      */
-    public List<Schedule> getSchedulesForTruck(long foodTruckId) {
-        final List<Schedule> ret = new ArrayList<>();
-        for(Schedule s : BitemapListDataHolder.getSchedules()) {
-            if(s.getFoodtruckId() == foodTruckId) {
+    public ArrayList<Schedule> getSchedulesForTruck(long foodTruckId) {
+        final ArrayList<Schedule> ret = new ArrayList<>();
+        for (Schedule s : BitemapListDataHolder.getSchedules()) {
+            if (s.getFoodtruckId() == foodTruckId) {
                 ret.add(s);
             }
         }
