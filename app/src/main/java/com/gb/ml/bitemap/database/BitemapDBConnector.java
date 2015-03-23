@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.gb.ml.bitemap.BitemapDebug;
+import com.gb.ml.bitemap.BitemapListDataHolder;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
 
@@ -214,6 +215,22 @@ public class BitemapDBConnector {
             ret.add(newSchedule);
         }
         close();
+        return ret;
+    }
+
+    /**
+     * Return all schedules with the given foodtruck id, this is not really hitting db
+     * but we put it here anyway
+     * @param foodTruckId
+     * @return this foodtruck's next 7 day schedule
+     */
+    public List<Schedule> getSchedulesForTruck(long foodTruckId) {
+        final List<Schedule> ret = new ArrayList<>();
+        for(Schedule s : BitemapListDataHolder.getSchedules()) {
+            if(s.getFoodtruckId() == foodTruckId) {
+                ret.add(s);
+            }
+        }
         return ret;
     }
 

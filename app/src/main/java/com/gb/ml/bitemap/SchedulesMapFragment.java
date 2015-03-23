@@ -101,6 +101,11 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
         }
     }
 
+    /**
+     * highlight a specific schedule by opening its marker, this needs to be called
+     * on UI thread
+     * @param schedule
+     */
     public void enableMarkerForSchedule(Schedule schedule) {
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(schedule.getLocation(), 12));
         mScheduleMarkerMap.get(schedule).showInfoWindow();

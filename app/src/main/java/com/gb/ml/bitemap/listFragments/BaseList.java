@@ -64,7 +64,7 @@ public abstract class BaseList extends ListFragment {
     /**
      * Create DB adaptor for the list, decides how the list is displayed
      *
-     * @return The list adaptor created from DB, should have it's own formatted defined
+     * @return The list adaptor created from DB, should have it's own format defined
      */
     abstract ListAdapter createListAdapter();
 

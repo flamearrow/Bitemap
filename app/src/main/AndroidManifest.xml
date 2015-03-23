@@ -20,6 +20,7 @@
         </activity>
         <activity android:name=".ScheduleActivity"/>
         <activity android:name=".AllFoodTrucksActivity"/>
+        <activity android:name=".DetailActivity"/>
         <activity android:name=".MapActivity"/>
         <meta-data android:name="com.google.android.gms.version"
                    android:value="@integer/google_play_services_version"/>

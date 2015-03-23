@@ -1,15 +1,20 @@
 package com.gb.ml.bitemap.listFragments;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gb.ml.bitemap.BitemapListDataHolder;
+import com.gb.ml.bitemap.DetailActivity;
 import com.gb.ml.bitemap.R;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 
@@ -88,5 +93,21 @@ public class FoodTruckList extends BaseList {
             TextView mFoodTruckNameView, mCategoryView;
         }
 
+    }
+
+    /**
+     * should open detail of a foodtruck
+     */
+    @Override
+    AdapterView.OnItemClickListener createItemClickListener() {
+        return new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("mlgb", "starting activity");
+                final long truckId = BitemapListDataHolder.getFoodTrucks().get(position).getId();
+                final Intent i = new Intent(getActivity(), DetailActivity.class);
+                i.putExtra(DetailActivity.FOODTRUCK_ID, truckId);
+                startActivity(i);
+            }
+        };
     }
 }
