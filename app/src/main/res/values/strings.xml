@@ -13,5 +13,6 @@
     <string name="menu_clear_debug_db">Clear DebugDB</string>
     <string name="map">map</string>
     <string name="no_schedules">oops, no events found!</string>
+    <string name="upcomming_schedules">upcoming schedules</string>
 
 </resources>

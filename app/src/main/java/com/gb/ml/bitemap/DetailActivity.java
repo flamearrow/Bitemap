@@ -1,6 +1,5 @@
 package com.gb.ml.bitemap;
 
-import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,12 +7,12 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gb.ml.bitemap.database.BitemapDBConnector;
 import com.gb.ml.bitemap.listFragments.DetailScheduleList;
@@ -42,6 +41,8 @@ public class DetailActivity extends ActionBarActivity {
 
     private SchedulesMapFragment mSchedulesMapFragment;
 
+    private Handler mHandler;
+
     private BroadcastReceiver mUpdateLogoReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -69,8 +70,9 @@ public class DetailActivity extends ActionBarActivity {
             mSchedulesMapFragment = new SchedulesMapFragment();
             mSchedulesMapFragment.setArguments(args);
             getFragmentManager().beginTransaction()
-                    .add(R.id.activity_detail, mDetailScheduleList)
-                    .add(R.id.activity_detail, mSchedulesMapFragment).hide(mSchedulesMapFragment)
+                    .add(R.id.schedules_container, mDetailScheduleList)
+                    .add(R.id.schedules_container, mSchedulesMapFragment)
+                    .hide(mSchedulesMapFragment)
                     .commit();
         }
         if (mDefaultBm == null) {
@@ -78,14 +80,13 @@ public class DetailActivity extends ActionBarActivity {
         }
 
         if (mTruck.getLogoBm() == null) {
-            Log.d("mlgb", "no logo");
             ((ImageView) findViewById(R.id.detail_logo)).setImageBitmap(mDefaultBm);
         } else {
-            Log.d("mlgb", "has logo");
             ((ImageView) findViewById(R.id.detail_logo)).setImageBitmap(mTruck.getLogoBm());
         }
         ((TextView) findViewById(R.id.detail_truck_name)).setText(mTruck.getName());
         ((TextView) findViewById(R.id.detail_category)).setText(mTruck.getCategory());
+        mHandler = new Handler(getMainLooper());
     }
 
     @Override
@@ -100,19 +101,39 @@ public class DetailActivity extends ActionBarActivity {
         unregisterReceiver(mUpdateLogoReceiver);
     }
 
-    public void switchMap(View v) {
+    public void switchMapList(View v, final Schedule scheduleToHighlight) {
         if (mSchedulesMapFragment.isHidden()) {
             getFragmentManager().beginTransaction().setCustomAnimations(
                     R.animator.card_flip_right_in, R.animator.card_flip_right_out,
                     R.animator.card_flip_left_in, R.animator.card_flip_left_out)
                     .hide(mDetailScheduleList)
                     .show(mSchedulesMapFragment).commit();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (scheduleToHighlight != null) {
+                        mSchedulesMapFragment.enableMarkerForSchedule(scheduleToHighlight);
+                    }
+                }
+            });
         } else {
             getFragmentManager().beginTransaction().setCustomAnimations(
                     R.animator.card_flip_right_in, R.animator.card_flip_right_out,
                     R.animator.card_flip_left_in, R.animator.card_flip_left_out)
                     .hide(mSchedulesMapFragment)
                     .show(mDetailScheduleList).commit();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (scheduleToHighlight != null) {
+                        mSchedulesMapFragment.enableMarkerForSchedule(scheduleToHighlight);
+                    }
+                }
+            });
         }
+    }
+
+    public void switchMapList(View v) {
+        switchMapList(v, null);
     }
 }

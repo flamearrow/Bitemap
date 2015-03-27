@@ -3,5 +3,16 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-
+    <ListView android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:id="@android:id/list"/>
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:id="@android:id/empty">
+        <TextView android:layout_width="fill_parent" android:layout_height="wrap_content"
+                  android:layout_gravity="center" android:textSize="20dp" android:textStyle="bold"
+                  android:text="@string/no_schedules" android:layout_margin="10dp"
+                  android:id="@+id/no_scheudles_found"/>
+        <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                   android:src="@drawable/fatcat" android:layout_alignParentBottom="true"
+                   android:layout_below="@id/no_scheudles_found"/>
+    </RelativeLayout>
 </LinearLayout>
