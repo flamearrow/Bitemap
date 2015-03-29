@@ -13,10 +13,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gb.ml.bitemap.database.BitemapDBConnector;
@@ -27,7 +25,6 @@ import com.gb.ml.bitemap.pojo.Schedule;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -52,6 +49,8 @@ public class DetailActivity extends ActionBarActivity {
 
     private Handler mHandler;
 
+    private LayoutInflater mLayoutInflater;
+
     private BroadcastReceiver mUpdateLogoReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -59,10 +58,8 @@ public class DetailActivity extends ActionBarActivity {
         }
     };
 
-    private GridView mGallery;
+    private LinearLayout mGallery;
 
-    // this list needs to be synchronized
-    private List<Bitmap> mGalleryPics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,10 +74,7 @@ public class DetailActivity extends ActionBarActivity {
         }
         if (savedInstanceState == null) {
             Log.d("mlgb", "starting initialization...");
-            mGalleryPics = new LinkedList<>();
-            mGallery = (GridView) findViewById(R.id.gallery);
-            mGallery.setAdapter(new GalleryAdapter());
-            Log.d("mlgb", "initializeGallery() called");
+            mGallery = (LinearLayout) findViewById(R.id.gallery_id);
             ArrayList<Schedule> schedules = BitemapDBConnector.getInstance(this)
                     .getSchedulesForTruck(mTruckId);
             final Bundle args = new Bundle();
@@ -108,6 +102,14 @@ public class DetailActivity extends ActionBarActivity {
         ((TextView) findViewById(R.id.detail_category)).setText(mTruck.getCategory());
 
         mHandler = new Handler(getMainLooper());
+        mLayoutInflater = LayoutInflater.from(this);
+    }
+
+    private void addImageToGallery(Bitmap newImage) {
+        View view = mLayoutInflater.inflate(R.layout.gallery_item, mGallery, false);
+        ImageView iv = (ImageView) view.findViewById(R.id.gallery_image);
+        iv.setImageBitmap(newImage);
+        mGallery.addView(view);
     }
 
     /**
@@ -116,8 +118,13 @@ public class DetailActivity extends ActionBarActivity {
      * *) Issue an image pull request for all URIs
      */
     private void initializeGallery() {
+//        for (int i = 0; i < 5; i++) {
+//            View view = mLayoutInflater.inflate(R.layout.gallery_item, mGallery, false);
+//            ImageView iv = (ImageView) view.findViewById(R.id.gallery_image);
+//            iv.setImageBitmap(mDefaultBm);
+//            mGallery.addView(view);
+//        }
         new AsyncTask<Void, Void, List<URI>>() {
-
             @Override
             protected List<URI> doInBackground(Void... params) {
                 Log.d("mlgb", "getting images for " + mTruckId);
@@ -138,8 +145,8 @@ public class DetailActivity extends ActionBarActivity {
                         protected void onPostExecute(Bitmap bitmap) {
                             // needs to be synchronized
                             // do we need to synchronize the gallery adaptor as well?
-                            mGalleryPics.add(bitmap);
-                            ((BaseAdapter) (mGallery.getAdapter())).notifyDataSetChanged();
+                            Log.d("mlgb", "pulled an image");
+                            addImageToGallery(bitmap);
                         }
                     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
@@ -193,51 +200,5 @@ public class DetailActivity extends ActionBarActivity {
 
     public void switchMapList(View v) {
         switchMapList(v, null);
-    }
-
-    private class GalleryAdapter extends BaseAdapter {
-
-        @Override
-        public int getCount() {
-            return 23;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return position;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            TextView tv;
-            ImageView iv;
-            if (convertView == null) {
-                convertView = LayoutInflater.from(getApplicationContext())
-                        .inflate(R.layout.gallery_item, parent, false);
-
-                iv = (ImageView) convertView.findViewById(R.id.gallery_image);
-                convertView.setTag(new ViewHolder(iv));
-            } else {
-                iv = ((ViewHolder) convertView.getTag()).mGalleryImage;
-            }
-//            iv.setImageBitmap(mGalleryPics.get(position));
-            iv.setImageBitmap(mDefaultBm);
-
-            return convertView;
-        }
-
-        class ViewHolder {
-
-            ImageView mGalleryImage;
-
-            ViewHolder(ImageView galleryImage) {
-                mGalleryImage = galleryImage;
-            }
-        }
     }
 }

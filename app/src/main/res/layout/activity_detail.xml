@@ -20,11 +20,17 @@
                   android:text="@string/gallery" android:layout_marginLeft="20dp"
                   android:layout_below="@id/detail_info" android:id="@+id/gallery_banner"
                   android:textStyle="bold|italic"/>
-        <GridView android:layout_width="fill_parent"
+        <HorizontalScrollView android:layout_width="fill_parent"
+                              android:layout_height="wrap_content"
+                              android:layout_below="@id/gallery_banner" android:id="@+id/gallery">
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content" android:id="@+id/gallery_id"
+                          android:orientation="horizontal"/>
+        </HorizontalScrollView>
+        <!--GridView android:layout_width="fill_parent"
                   android:layout_height="fill_parent" android:id="@+id/gallery"
                   android:gravity="center" android:layout_below="@id/gallery_banner"
-                  android:numColumns="2"/>
-        <Gallery android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+                  android:numColumns="2"/-->
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:text="@string/upcomming_schedules" android:layout_marginLeft="20dp"
                   android:layout_below="@id/gallery" android:id="@+id/upcoming_banner"
