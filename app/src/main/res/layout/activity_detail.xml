@@ -1,33 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" android:id="@+id/activity_detail">
-    <GridLayout android:layout_width="wrap_content" android:layout_height="100dp"
-                android:columnCount="2" android:rowCount="2" android:layout_alignParentTop="true"
-                android:layout_centerInParent="true" android:id="@+id/detail_info">
-        <ImageView android:id="@+id/detail_logo" android:layout_columnSpan="1"
-                   android:layout_rowSpan="2" android:layout_width="70dp"
-                   android:layout_height="70dp" android:layout_margin="5dp"/>
-        <TextView android:id="@+id/detail_truck_name" android:layout_columnSpan="1"
-                  android:layout_rowSpan="1"
-                  android:textStyle="bold"/>
-        <TextView android:id="@+id/detail_category" android:layout_columnSpan="1"
-                  android:layout_rowSpan="1"/>
-    </GridLayout>
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-              android:text="@string/upcomming_schedules" android:layout_marginLeft="20dp"
-              android:layout_below="@id/detail_info" android:id="@+id/upcoming_banner"
-              android:textStyle="bold|italic"/>
-    <FrameLayout android:id="@+id/schedules_container"
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:layout_below="@id/upcoming_banner"/>
+<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent"
+            xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" android:id="@+id/activity_detail">
+        <GridLayout android:layout_width="wrap_content" android:layout_height="100dp"
+                    android:columnCount="2" android:rowCount="2"
+                    android:layout_centerHorizontal="true" android:layout_alignParentTop="true"
+                    android:id="@+id/detail_info">
+            <ImageView android:id="@+id/detail_logo" android:layout_columnSpan="1"
+                       android:layout_rowSpan="2" android:layout_width="70dp"
+                       android:layout_height="70dp" android:layout_margin="5dp"/>
+            <TextView android:id="@+id/detail_truck_name" android:layout_columnSpan="1"
+                      android:layout_rowSpan="1"
+                      android:textStyle="bold"/>
+            <TextView android:id="@+id/detail_category" android:layout_columnSpan="1"
+                      android:layout_rowSpan="1"/>
+        </GridLayout>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:text="@string/gallery" android:layout_marginLeft="20dp"
+                  android:layout_below="@id/detail_info" android:id="@+id/gallery_banner"
+                  android:textStyle="bold|italic"/>
+        <GridView android:layout_width="fill_parent"
+                  android:layout_height="fill_parent" android:id="@+id/gallery"
+                  android:gravity="center" android:layout_below="@id/gallery_banner"
+                  android:numColumns="2"/>
+        <Gallery android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:text="@string/upcomming_schedules" android:layout_marginLeft="20dp"
+                  android:layout_below="@id/gallery" android:id="@+id/upcoming_banner"
+                  android:textStyle="bold|italic"/>
+        <FrameLayout android:id="@+id/schedules_container"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:layout_below="@id/upcoming_banner"/>
 
-    <Button android:layout_width="70dp" android:layout_height="70dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:background="@drawable/foreveralone"
-            android:onClick="switchMapList"/>
-</RelativeLayout>
+        <Button android:layout_width="70dp" android:layout_height="70dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/foreveralone"
+                android:onClick="switchMapList"/>
+    </RelativeLayout>
+</ScrollView>

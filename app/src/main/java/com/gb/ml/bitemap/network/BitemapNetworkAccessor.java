@@ -172,6 +172,41 @@ public class BitemapNetworkAccessor {
         return list;
     }
 
+    public static List<URI> getGalleryForTruck(long truckId) {
+        InputStream is = null;
+        List<URI> ret = new LinkedList<>();
+        try {
+            URL url = new URL(NetworkConstants.TRUCK_GALLERY + truckId);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            conn.connect();
+            int response = conn.getResponseCode();
+            is = conn.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            String nextLine = br.readLine();
+            while (nextLine != null) {
+                appendImageUrlToList(nextLine, ret);
+                nextLine = br.readLine();
+            }
+            return ret;
+        } catch (IOException e) {
+            Log.d(TAG, "Fails to get foodtruck gallery at the moment!");
+            e.printStackTrace();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
     public static Bitmap getBitmapFromURI(URI uri) {
         InputStream is = null;
         try {
@@ -240,6 +275,29 @@ public class BitemapNetworkAccessor {
         }
     }
 
+
+    /**
+     * Parse the following json and store them as URI
+     * [
+     * "/trucks/Taqueria_Angelicas/logo.jpg",
+     * "/trucks/Taqueria_Angelicas/tagueria-angelicas-menu.jpg",
+     * "/trucks/Taqueria_Angelicas/taqueria-angelicas-churros.jpg",
+     * "/trucks/Taqueria_Angelicas/taqueria-angelicas-tacos.jpg",
+     * "/trucks/Taqueria_Angelicas/taqueria-angelicas.jpg"
+     * ]
+     */
+    private static void appendImageUrlToList(String imagesJson, List<URI> list) {
+        try {
+            JSONArray arr = new JSONArray(imagesJson);
+            int size = arr.length();
+            for (int i = 0; i < size; i++) {
+                String s = arr.getString(i);
+                list.add(URI.create(s));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Parse new line as a list of food truck items and add them into list

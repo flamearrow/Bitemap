@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.widget.Toast;
+import android.util.Log;
 
 
 public class MainActivity extends Activity {
+
+    private static final String TAG = "MainActivity";
 
     private static final int SPLASH_DELAY = 1000;
 
@@ -19,13 +21,9 @@ public class MainActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             final boolean hasNetwork = intent.getBooleanExtra(BitemapListDataHolder.NETWORK, false);
             if (hasNetwork) {
-                Toast.makeText(MainActivity.this,
-                        "has network connection, issuing api requests and sync with local db",
-                        Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "has network connection, issuing api requests and sync with local db");
             } else {
-                Toast.makeText(MainActivity.this,
-                        "No network connection, will load data from local database",
-                        Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "No network connection, will load data from local database");
             }
             new Handler().postDelayed(new Runnable() {
                 @Override

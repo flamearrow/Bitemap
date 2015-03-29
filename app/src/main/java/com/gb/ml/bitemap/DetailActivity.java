@@ -6,20 +6,29 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gb.ml.bitemap.database.BitemapDBConnector;
 import com.gb.ml.bitemap.listFragments.DetailScheduleList;
+import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
 
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Displays Category, names, events for a particular food truck
@@ -50,6 +59,11 @@ public class DetailActivity extends ActionBarActivity {
         }
     };
 
+    private GridView mGallery;
+
+    // this list needs to be synchronized
+    private List<Bitmap> mGalleryPics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,9 +72,15 @@ public class DetailActivity extends ActionBarActivity {
         if (mTruckId == -1) {
             Log.w(TAG, "failed to get foodtruck id");
         }
-        mTruck = BitemapListDataHolder.findFoodtruckFromId(mTruckId);
-        setTitle(mTruck.getName());
+        if (mDefaultBm == null) {
+            mDefaultBm = BitmapFactory.decodeResource(getResources(), R.drawable.foreveralone);
+        }
         if (savedInstanceState == null) {
+            Log.d("mlgb", "starting initialization...");
+            mGalleryPics = new LinkedList<>();
+            mGallery = (GridView) findViewById(R.id.gallery);
+            mGallery.setAdapter(new GalleryAdapter());
+            Log.d("mlgb", "initializeGallery() called");
             ArrayList<Schedule> schedules = BitemapDBConnector.getInstance(this)
                     .getSchedulesForTruck(mTruckId);
             final Bundle args = new Bundle();
@@ -74,10 +94,10 @@ public class DetailActivity extends ActionBarActivity {
                     .add(R.id.schedules_container, mSchedulesMapFragment)
                     .hide(mSchedulesMapFragment)
                     .commit();
+            initializeGallery();
         }
-        if (mDefaultBm == null) {
-            mDefaultBm = BitmapFactory.decodeResource(getResources(), R.drawable.foreveralone);
-        }
+        mTruck = BitemapListDataHolder.findFoodtruckFromId(mTruckId);
+        setTitle(mTruck.getName());
 
         if (mTruck.getLogoBm() == null) {
             ((ImageView) findViewById(R.id.detail_logo)).setImageBitmap(mDefaultBm);
@@ -86,7 +106,45 @@ public class DetailActivity extends ActionBarActivity {
         }
         ((TextView) findViewById(R.id.detail_truck_name)).setText(mTruck.getName());
         ((TextView) findViewById(R.id.detail_category)).setText(mTruck.getCategory());
+
         mHandler = new Handler(getMainLooper());
+    }
+
+    /**
+     * *) Initialize an api request to pull all URIs, get the size of URI list
+     * *) Populate the gallery with size number of mDefaultBm
+     * *) Issue an image pull request for all URIs
+     */
+    private void initializeGallery() {
+        new AsyncTask<Void, Void, List<URI>>() {
+
+            @Override
+            protected List<URI> doInBackground(Void... params) {
+                Log.d("mlgb", "getting images for " + mTruckId);
+                return BitemapNetworkAccessor.getGalleryForTruck(mTruckId);
+            }
+
+            @Override
+            protected void onPostExecute(List<URI> uris) {
+                Log.d("mlgb", "" + uris.size() + " image uris downloaded");
+                for (final URI uri : uris) {
+                    new AsyncTask<Void, Void, Bitmap>() {
+                        @Override
+                        protected Bitmap doInBackground(Void... params) {
+                            return BitemapNetworkAccessor.getBitmapFromURI(uri);
+                        }
+
+                        @Override
+                        protected void onPostExecute(Bitmap bitmap) {
+                            // needs to be synchronized
+                            // do we need to synchronize the gallery adaptor as well?
+                            mGalleryPics.add(bitmap);
+                            ((BaseAdapter) (mGallery.getAdapter())).notifyDataSetChanged();
+                        }
+                    }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -135,5 +193,51 @@ public class DetailActivity extends ActionBarActivity {
 
     public void switchMapList(View v) {
         switchMapList(v, null);
+    }
+
+    private class GalleryAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return 23;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            TextView tv;
+            ImageView iv;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getApplicationContext())
+                        .inflate(R.layout.gallery_item, parent, false);
+
+                iv = (ImageView) convertView.findViewById(R.id.gallery_image);
+                convertView.setTag(new ViewHolder(iv));
+            } else {
+                iv = ((ViewHolder) convertView.getTag()).mGalleryImage;
+            }
+//            iv.setImageBitmap(mGalleryPics.get(position));
+            iv.setImageBitmap(mDefaultBm);
+
+            return convertView;
+        }
+
+        class ViewHolder {
+
+            ImageView mGalleryImage;
+
+            ViewHolder(ImageView galleryImage) {
+                mGalleryImage = galleryImage;
+            }
+        }
     }
 }
