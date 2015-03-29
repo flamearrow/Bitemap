@@ -35,6 +35,11 @@ public class BitemapNetworkAccessor {
 
     public static long DEBUG_ID_BASE = 1;
 
+    public static int THUMBNAIL_IMAGE_SIZE = 100;
+
+    public static int GALLERY_IMAGE_SIZE = 200;
+
+
     public static void main(String... args) {
         for (FoodTruck ft : getTrucks()) {
             System.out.println(ft);
@@ -207,12 +212,11 @@ public class BitemapNetworkAccessor {
         return null;
     }
 
-    public static Bitmap getBitmapFromURI(URI uri) {
+    public static Bitmap getGalleryBitmapFromURI(URI uri) {
         InputStream is = null;
         try {
 
             URL url = new URL(NetworkConstants.SERVER_IP + uri.getPath());
-
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(10000);
             conn.setConnectTimeout(15000);
@@ -221,7 +225,7 @@ public class BitemapNetworkAccessor {
             conn.connect();
             int response = conn.getResponseCode();
             is = conn.getInputStream();
-            return BitmapFactory.decodeStream(is);
+            return decodeSampledBitmapFromStream(url, GALLERY_IMAGE_SIZE, GALLERY_IMAGE_SIZE);
         } catch (IOException e) {
             Log.d(TAG, "Fails to get image at the moment!");
             e.printStackTrace();
@@ -235,6 +239,68 @@ public class BitemapNetworkAccessor {
             }
         }
         return null;
+    }
+
+    public static Bitmap getThumbnailBitmapFromURI(URI uri) {
+        InputStream is = null;
+        try {
+
+            URL url = new URL(NetworkConstants.SERVER_IP + uri.getPath());
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            conn.connect();
+            int response = conn.getResponseCode();
+            is = conn.getInputStream();
+            return decodeSampledBitmapFromStream(url, THUMBNAIL_IMAGE_SIZE, THUMBNAIL_IMAGE_SIZE);
+        } catch (IOException e) {
+            Log.d(TAG, "Fails to get image at the moment!");
+            e.printStackTrace();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
+    private static int calculateSamplingSize(BitmapFactory.Options options, int reqWidth,
+            int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
+
+    // Read an bitmap from URL and scale it to the required width to save memory
+    private static Bitmap decodeSampledBitmapFromStream(URL url, int reqWidth,
+            int reqHeight) throws IOException {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        // don't load the actual image
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(url.openStream(), null, options);
+        options.inSampleSize = calculateSamplingSize(options, reqWidth, reqHeight);
+        options.inJustDecodeBounds = false;
+        Log.d("mlgb", "getting the stream with scale: " + options.inSampleSize);
+        return BitmapFactory.decodeStream(url.openStream(), null, options);
     }
 
     /**
@@ -367,6 +433,5 @@ public class BitemapNetworkAccessor {
             e.printStackTrace();
         }
     }
-
 
 }

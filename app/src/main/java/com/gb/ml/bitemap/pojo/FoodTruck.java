@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.widget.BaseAdapter;
 
 import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
 
@@ -105,7 +104,7 @@ public class FoodTruck implements Comparable<FoodTruck>{
         new AsyncTask<URI, Void, Bitmap>() {
             @Override
             protected Bitmap doInBackground(URI... params) {
-                return BitemapNetworkAccessor.getBitmapFromURI(params[0]);
+                return BitemapNetworkAccessor.getThumbnailBitmapFromURI(params[0]);
             }
 
             @Override
@@ -113,7 +112,7 @@ public class FoodTruck implements Comparable<FoodTruck>{
                 mBm = bitmap;
                 context.sendBroadcast(new Intent(LOGO_DOWNLOADED));
             }
-        }.execute(getLogo());
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getLogo());
     }
 
     public Bitmap getLogoBm() {

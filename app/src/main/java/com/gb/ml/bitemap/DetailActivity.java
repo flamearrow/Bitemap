@@ -118,34 +118,23 @@ public class DetailActivity extends ActionBarActivity {
      * *) Issue an image pull request for all URIs
      */
     private void initializeGallery() {
-//        for (int i = 0; i < 5; i++) {
-//            View view = mLayoutInflater.inflate(R.layout.gallery_item, mGallery, false);
-//            ImageView iv = (ImageView) view.findViewById(R.id.gallery_image);
-//            iv.setImageBitmap(mDefaultBm);
-//            mGallery.addView(view);
-//        }
         new AsyncTask<Void, Void, List<URI>>() {
             @Override
             protected List<URI> doInBackground(Void... params) {
-                Log.d("mlgb", "getting images for " + mTruckId);
                 return BitemapNetworkAccessor.getGalleryForTruck(mTruckId);
             }
 
             @Override
             protected void onPostExecute(List<URI> uris) {
-                Log.d("mlgb", "" + uris.size() + " image uris downloaded");
                 for (final URI uri : uris) {
                     new AsyncTask<Void, Void, Bitmap>() {
                         @Override
                         protected Bitmap doInBackground(Void... params) {
-                            return BitemapNetworkAccessor.getBitmapFromURI(uri);
+                            return BitemapNetworkAccessor.getThumbnailBitmapFromURI(uri);
                         }
 
                         @Override
                         protected void onPostExecute(Bitmap bitmap) {
-                            // needs to be synchronized
-                            // do we need to synchronize the gallery adaptor as well?
-                            Log.d("mlgb", "pulled an image");
                             addImageToGallery(bitmap);
                         }
                     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
