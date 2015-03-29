@@ -69,6 +69,21 @@ public class BitemapNetworkAccessor {
         return getSchedules(start, end);
     }
 
+    private static BufferedReader getBufferedReaderFromURLString(String apiString)
+            throws IOException {
+        URL url = new URL(apiString);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setReadTimeout(10000);
+        conn.setConnectTimeout(15000);
+        conn.setRequestMethod("GET");
+        conn.setDoInput(true);
+
+        conn.connect();
+        int response = conn.getResponseCode();
+        // TODO: we might need to handle according to different response
+        return new BufferedReader(new InputStreamReader(conn.getInputStream()));
+    }
+
     public static ArrayList<Schedule> getSchedules(Calendar start, Calendar end) {
         final StringBuilder scheduleApiBuilder = new StringBuilder();
         scheduleApiBuilder.append(SCHEDULES);
@@ -96,22 +111,9 @@ public class BitemapNetworkAccessor {
         scheduleApiBuilder.append(end.get(Calendar.DAY_OF_MONTH));
 
         final ArrayList<Schedule> list = new ArrayList<>();
-        InputStream is = null;
+        BufferedReader br = null;
         try {
-            URL url = new URL(scheduleApiBuilder.toString());
-            Log.d(TAG, "getSchedules: started async task for " + url.getPath());
-            Log.d(TAG, "getSchedules: requesting api " + scheduleApiBuilder.toString());
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-
-            conn.connect();
-            int response = conn.getResponseCode();
-            // TODO: we might need to handle according to different response
-            is = conn.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            br = getBufferedReaderFromURLString(scheduleApiBuilder.toString());
             // only return one line
             String nextLine = br.readLine();
             while (nextLine != null) {
@@ -123,9 +125,9 @@ public class BitemapNetworkAccessor {
             Log.d(TAG, "Fails to get food truck info at the moment!");
             e.printStackTrace();
         } finally {
-            if (is != null) {
+            if (br != null) {
                 try {
-                    is.close();
+                    br.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -139,21 +141,9 @@ public class BitemapNetworkAccessor {
      */
     public static List<FoodTruck> getTrucks() {
         final List<FoodTruck> list = new LinkedList<>();
-        InputStream is = null;
+        BufferedReader br = null;
         try {
-            URL url = new URL(NetworkConstants.ALL_TRUCKS);
-            Log.d(TAG, "getTrucks: started async task for " + url.getPath());
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-
-            conn.connect();
-            int response = conn.getResponseCode();
-            // TODO: we might need to handle according to different response
-            is = conn.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            br = getBufferedReaderFromURLString(NetworkConstants.ALL_TRUCKS);
             // only return one line
             String nextLine = br.readLine();
             while (nextLine != null) {
@@ -165,9 +155,9 @@ public class BitemapNetworkAccessor {
             Log.d(TAG, "Fails to get food truck info at the moment!");
             e.printStackTrace();
         } finally {
-            if (is != null) {
+            if (br != null) {
                 try {
-                    is.close();
+                    br.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -178,19 +168,10 @@ public class BitemapNetworkAccessor {
     }
 
     public static List<URI> getGalleryForTruck(long truckId) {
-        InputStream is = null;
         List<URI> ret = new LinkedList<>();
+        BufferedReader br = null;
         try {
-            URL url = new URL(NetworkConstants.TRUCK_GALLERY + truckId);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            conn.connect();
-            int response = conn.getResponseCode();
-            is = conn.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            br = getBufferedReaderFromURLString(NetworkConstants.TRUCK_GALLERY + truckId);
             String nextLine = br.readLine();
             while (nextLine != null) {
                 appendImageUrlToList(nextLine, ret);
@@ -201,9 +182,9 @@ public class BitemapNetworkAccessor {
             Log.d(TAG, "Fails to get foodtruck gallery at the moment!");
             e.printStackTrace();
         } finally {
-            if (is != null) {
+            if (br != null) {
                 try {
-                    is.close();
+                    br.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -213,59 +194,23 @@ public class BitemapNetworkAccessor {
     }
 
     public static Bitmap getGalleryBitmapFromURI(URI uri) {
-        InputStream is = null;
         try {
-
-            URL url = new URL(NetworkConstants.SERVER_IP + uri.getPath());
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            conn.connect();
-            int response = conn.getResponseCode();
-            is = conn.getInputStream();
-            return decodeSampledBitmapFromStream(url, GALLERY_IMAGE_SIZE, GALLERY_IMAGE_SIZE);
+            return decodeSampledBitmapFromStream(NetworkConstants.SERVER_IP + uri.getPath(),
+                    GALLERY_IMAGE_SIZE, GALLERY_IMAGE_SIZE);
         } catch (IOException e) {
             Log.d(TAG, "Fails to get image at the moment!");
             e.printStackTrace();
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         return null;
     }
 
     public static Bitmap getThumbnailBitmapFromURI(URI uri) {
-        InputStream is = null;
         try {
-
-            URL url = new URL(NetworkConstants.SERVER_IP + uri.getPath());
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            conn.connect();
-            int response = conn.getResponseCode();
-            is = conn.getInputStream();
-            return decodeSampledBitmapFromStream(url, THUMBNAIL_IMAGE_SIZE, THUMBNAIL_IMAGE_SIZE);
+            return decodeSampledBitmapFromStream(NetworkConstants.SERVER_IP + uri.getPath(),
+                    THUMBNAIL_IMAGE_SIZE, THUMBNAIL_IMAGE_SIZE);
         } catch (IOException e) {
             Log.d(TAG, "Fails to get image at the moment!");
             e.printStackTrace();
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         return null;
     }
@@ -291,16 +236,30 @@ public class BitemapNetworkAccessor {
     }
 
     // Read an bitmap from URL and scale it to the required width to save memory
-    private static Bitmap decodeSampledBitmapFromStream(URL url, int reqWidth,
+    private static Bitmap decodeSampledBitmapFromStream(String urlPath, int reqWidth,
             int reqHeight) throws IOException {
+        URL url = new URL(urlPath);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setReadTimeout(10000);
+        conn.setConnectTimeout(15000);
+        conn.setRequestMethod("GET");
+        conn.setDoInput(true);
+        conn.connect();
+        InputStream is = conn.getInputStream();
         final BitmapFactory.Options options = new BitmapFactory.Options();
         // don't load the actual image
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(url.openStream(), null, options);
+        BitmapFactory.decodeStream(is, null, options);
+        is.close();
         options.inSampleSize = calculateSamplingSize(options, reqWidth, reqHeight);
         options.inJustDecodeBounds = false;
         Log.d("mlgb", "getting the stream with scale: " + options.inSampleSize);
-        return BitmapFactory.decodeStream(url.openStream(), null, options);
+        try {
+            is = url.openStream();
+            return BitmapFactory.decodeStream(is, null, options);
+        } finally {
+            is.close();
+        }
     }
 
     /**
@@ -433,5 +392,4 @@ public class BitemapNetworkAccessor {
             e.printStackTrace();
         }
     }
-
 }
