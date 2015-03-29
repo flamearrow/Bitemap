@@ -60,6 +60,9 @@ public class DetailActivity extends ActionBarActivity {
 
     private LinearLayout mGallery;
 
+    private static final String MAP_FRAGMENT = "MAP_FRAGMENT";
+
+    private static final String LIST_FRAGMENT = "LIST_FRAGMENT";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,24 +75,9 @@ public class DetailActivity extends ActionBarActivity {
         if (mDefaultBm == null) {
             mDefaultBm = BitmapFactory.decodeResource(getResources(), R.drawable.foreveralone);
         }
-        if (savedInstanceState == null) {
-            Log.d("mlgb", "starting initialization...");
-            mGallery = (LinearLayout) findViewById(R.id.gallery_id);
-            ArrayList<Schedule> schedules = BitemapDBConnector.getInstance(this)
-                    .getSchedulesForTruck(mTruckId);
-            final Bundle args = new Bundle();
-            args.putParcelableArrayList(SchedulesMapFragment.SCHEDULES, schedules);
-            mDetailScheduleList = new DetailScheduleList();
-            mDetailScheduleList.setArguments(args);
-            mSchedulesMapFragment = new SchedulesMapFragment();
-            mSchedulesMapFragment.setArguments(args);
-            getFragmentManager().beginTransaction()
-                    .add(R.id.schedules_container, mDetailScheduleList)
-                    .add(R.id.schedules_container, mSchedulesMapFragment)
-                    .hide(mSchedulesMapFragment)
-                    .commit();
-            initializeGallery();
-        }
+        mGallery = (LinearLayout) findViewById(R.id.gallery_id);
+        initializeFragments();
+        initializeGallery();
         mTruck = BitemapListDataHolder.findFoodtruckFromId(mTruckId);
         setTitle(mTruck.getName());
 
@@ -103,6 +91,29 @@ public class DetailActivity extends ActionBarActivity {
 
         mHandler = new Handler(getMainLooper());
         mLayoutInflater = LayoutInflater.from(this);
+    }
+
+    private void initializeFragments() {
+        ArrayList<Schedule> schedules = BitemapDBConnector.getInstance(this)
+                .getSchedulesForTruck(mTruckId);
+        if (getFragmentManager().findFragmentByTag(MAP_FRAGMENT) == null) {
+            final Bundle args = new Bundle();
+            args.putParcelableArrayList(SchedulesMapFragment.SCHEDULES, schedules);
+            mDetailScheduleList = new DetailScheduleList();
+            mDetailScheduleList.setArguments(args);
+            mSchedulesMapFragment = new SchedulesMapFragment();
+            mSchedulesMapFragment.setArguments(args);
+            getFragmentManager().beginTransaction()
+                    .add(R.id.schedules_container, mDetailScheduleList, LIST_FRAGMENT)
+                    .add(R.id.schedules_container, mSchedulesMapFragment, MAP_FRAGMENT)
+                    .commit();
+        } else {
+            mSchedulesMapFragment = (SchedulesMapFragment) getFragmentManager().findFragmentByTag(
+                    MAP_FRAGMENT);
+            mDetailScheduleList = (DetailScheduleList) getFragmentManager().findFragmentByTag(
+                    LIST_FRAGMENT);
+        }
+        getFragmentManager().beginTransaction().hide(mSchedulesMapFragment).commit();
     }
 
     private void addImageToGallery(Bitmap newImage) {

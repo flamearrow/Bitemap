@@ -253,7 +253,6 @@ public class BitemapNetworkAccessor {
         is.close();
         options.inSampleSize = calculateSamplingSize(options, reqWidth, reqHeight);
         options.inJustDecodeBounds = false;
-        Log.d("mlgb", "getting the stream with scale: " + options.inSampleSize);
         try {
             is = url.openStream();
             return BitmapFactory.decodeStream(is, null, options);

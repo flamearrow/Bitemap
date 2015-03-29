@@ -19,36 +19,38 @@ public class ScheduleActivity extends BitemapActionBarActivity {
 
     private Handler mHandler;
 
+
+    private static final String MAP_FRAGMENT = "MAP_FRAGMENT";
+
+    private static final String LIST_FRAGMENT = "LIST_FRAGMENT";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(R.string.menu_schedules_title);
         setContentView(R.layout.activity_schedule);
 
-        getSchedulesList();
-        getSchedulesMap();
-        if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction().add(R.id.schedule, getSchedulesList()).commit();
-        }
+        initializeFragments();
         mHandler = new Handler(getMainLooper());
     }
 
-    private Fragment getSchedulesList() {
-        if (mSchedulesList == null) {
+    private void initializeFragments() {
+        if (getFragmentManager().findFragmentByTag(LIST_FRAGMENT) == null) {
             mSchedulesList = new ScheduleList();
-        }
-        return mSchedulesList;
-    }
-
-    private SchedulesMapFragment getSchedulesMap() {
-        if (mSchedulesMap == null) {
             mSchedulesMap = new SchedulesMapFragment();
             final Bundle args = new Bundle();
             args.putParcelableArrayList(SchedulesMapFragment.SCHEDULES,
                     BitemapListDataHolder.getSchedules());
             mSchedulesMap.setArguments(args);
+            getFragmentManager().beginTransaction()
+                    .add(R.id.schedule, mSchedulesList, LIST_FRAGMENT)
+                    .add(R.id.schedule, mSchedulesMap, MAP_FRAGMENT).commit();
+        } else {
+            mSchedulesList = (ScheduleList) getFragmentManager().findFragmentByTag(LIST_FRAGMENT);
+            mSchedulesMap = (SchedulesMapFragment) getFragmentManager()
+                    .findFragmentByTag(MAP_FRAGMENT);
         }
-        return mSchedulesMap;
+        getFragmentManager().beginTransaction().hide(mSchedulesMap).commit();
     }
 
     public void switchMapList(View view) {
@@ -56,39 +58,24 @@ public class ScheduleActivity extends BitemapActionBarActivity {
     }
 
     public void switchMapList(View view, final Schedule scheduleToHighlight) {
-        if (!getSchedulesMap().isAdded()) {
+        if (mSchedulesList.isHidden()) {
             getFragmentManager().beginTransaction().setCustomAnimations(
                     R.animator.card_flip_right_in, R.animator.card_flip_right_out,
                     R.animator.card_flip_left_in, R.animator.card_flip_left_out)
-                    .add(R.id.schedule, getSchedulesMap()).hide(mSchedulesList).commit();
+                    .show(mSchedulesList).hide(mSchedulesMap).commit();
+        } else {
+            getFragmentManager().beginTransaction().setCustomAnimations(
+                    R.animator.card_flip_right_in, R.animator.card_flip_right_out,
+                    R.animator.card_flip_left_in, R.animator.card_flip_left_out)
+                    .show(mSchedulesMap).hide(mSchedulesList).commit();
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     if (scheduleToHighlight != null) {
-                        getSchedulesMap().enableMarkerForSchedule(scheduleToHighlight);
+                        mSchedulesMap.enableMarkerForSchedule(scheduleToHighlight);
                     }
                 }
             });
-        } else {
-            if (mSchedulesList.isHidden()) {
-                getFragmentManager().beginTransaction().setCustomAnimations(
-                        R.animator.card_flip_right_in, R.animator.card_flip_right_out,
-                        R.animator.card_flip_left_in, R.animator.card_flip_left_out)
-                        .show(mSchedulesList).hide(mSchedulesMap).commit();
-            } else {
-                getFragmentManager().beginTransaction().setCustomAnimations(
-                        R.animator.card_flip_right_in, R.animator.card_flip_right_out,
-                        R.animator.card_flip_left_in, R.animator.card_flip_left_out)
-                        .show(mSchedulesMap).hide(mSchedulesList).commit();
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (scheduleToHighlight != null) {
-                            getSchedulesMap().enableMarkerForSchedule(scheduleToHighlight);
-                        }
-                    }
-                });
-            }
         }
     }
 }
