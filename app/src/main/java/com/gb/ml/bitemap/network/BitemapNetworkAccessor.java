@@ -54,7 +54,7 @@ public class BitemapNetworkAccessor {
         return getSchedules(today, today);
     }
 
-    public static List<Schedule> getSchedulesFeb() {
+    public static ArrayList<Schedule> getSchedulesFeb() {
         final Calendar start = Calendar.getInstance();
         start.set(Calendar.MONTH, Calendar.FEBRUARY);
         start.set(Calendar.DAY_OF_MONTH, 1);
@@ -63,10 +63,11 @@ public class BitemapNetworkAccessor {
     }
 
     public static ArrayList<Schedule> getSchedulesForDays(int days) {
-        final Calendar start = Calendar.getInstance();
-        final Calendar end = Calendar.getInstance();
-        end.add(Calendar.DAY_OF_MONTH, days);
-        return getSchedules(start, end);
+//        final Calendar start = Calendar.getInstance();
+//        final Calendar end = Calendar.getInstance();
+//        end.add(Calendar.DAY_OF_MONTH, days);
+//        return getSchedules(start, end);
+        return getSchedulesFeb();
     }
 
     private static BufferedReader getBufferedReaderFromURLString(String apiString)
