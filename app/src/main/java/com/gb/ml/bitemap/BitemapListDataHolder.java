@@ -72,8 +72,8 @@ public class BitemapListDataHolder {
                 loadListsFromDB(context);
             } else {
                 Log.d(TAG, "local db not up to date, issuing api requests...");
-                new DownloadFoodTrucks(context).execute();
-                new DownloadSchedules(context).execute();
+                new DownloadFoodTrucks(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new DownloadSchedules(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 // TODO: new DownloadEvents().execute();
             }
         } else {
@@ -91,8 +91,8 @@ public class BitemapListDataHolder {
 
     // load whatever we have in db
     private static void loadListsFromDB(Context context) {
-        new LoadFoodTrucksFromDB(context).execute();
-        new LoadSchedulesFromDB(context).execute();
+        new LoadFoodTrucksFromDB(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new LoadSchedulesFromDB(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         // TODO: new LoadEventsFromDB().execute();
 
     }

@@ -1,6 +1,7 @@
 package com.gb.ml.bitemap;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
@@ -8,7 +9,6 @@ import com.gb.ml.bitemap.pojo.Schedule;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -36,7 +36,7 @@ public class BitemapDebug {
         FoodTruck ret = new FoodTruck.Builder().setId(Long.parseLong(fields[0])).setName(fields[1])
                 .setCategory(fields[2])
                 .setCategoryDetail(fields[3]).setLogo(
-                        URI.create(fields[4])).setUrl(fields[5]).build();
+                        Uri.parse(fields[4])).setUrl(fields[5]).build();
         return ret;
     }
 

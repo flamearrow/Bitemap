@@ -14,7 +14,6 @@ public class BitemapApplication extends Application {
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "mlgb");
         Stetho.initialize(
                 Stetho.newInitializerBuilder(this)
                         .enableDumpapp(

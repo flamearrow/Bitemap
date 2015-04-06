@@ -5,13 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 
 import com.gb.ml.bitemap.BitemapDebug;
 import com.gb.ml.bitemap.BitemapListDataHolder;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -105,7 +105,7 @@ public class BitemapDBConnector {
     }
 
 
-    private void addTruck(long id, String name, String category, String category_detail, URI logo,
+    private void addTruck(long id, String name, String category, String category_detail, Uri logo,
             String url) {
         ContentValues newTruck = new ContentValues();
         newTruck.put(ID, id);
@@ -248,7 +248,7 @@ public class BitemapDBConnector {
             final String mLogo = result.getString(4);
             final String mUrl = result.getString(5);
             final FoodTruck newFt = new FoodTruck.Builder().setId(mId).setName(mName).setCategory(
-                    mCategory).setCategoryDetail(mCategoryDetail).setLogo(URI.create(mLogo)).setUrl(
+                    mCategory).setCategoryDetail(mCategoryDetail).setLogo(Uri.parse(mLogo)).setUrl(
                     mUrl).build();
             ret.add(newFt);
         }

@@ -2,6 +2,7 @@ package com.gb.ml.bitemap.network;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 
 import com.gb.ml.bitemap.pojo.FoodTruck;
@@ -24,7 +25,16 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.gb.ml.bitemap.network.NetworkConstants.*;
+import static com.gb.ml.bitemap.network.NetworkConstants.AND;
+import static com.gb.ml.bitemap.network.NetworkConstants.COLON;
+import static com.gb.ml.bitemap.network.NetworkConstants.DASH;
+import static com.gb.ml.bitemap.network.NetworkConstants.END_DATE;
+import static com.gb.ml.bitemap.network.NetworkConstants.EQUALS;
+import static com.gb.ml.bitemap.network.NetworkConstants.QUESTION_MARK;
+import static com.gb.ml.bitemap.network.NetworkConstants.SCHEDULES;
+import static com.gb.ml.bitemap.network.NetworkConstants.SLASH;
+import static com.gb.ml.bitemap.network.NetworkConstants.START_DATE;
+import static com.gb.ml.bitemap.network.NetworkConstants.ZERO;
 
 /**
  * Access Network
@@ -168,8 +178,8 @@ public class BitemapNetworkAccessor {
         return list;
     }
 
-    public static List<URI> getGalleryForTruck(long truckId) {
-        List<URI> ret = new LinkedList<>();
+    public static ArrayList<Uri> getGalleryForTruck(long truckId) {
+        ArrayList<Uri> ret = new ArrayList<>();
         BufferedReader br = null;
         try {
             br = getBufferedReaderFromURLString(NetworkConstants.TRUCK_GALLERY + truckId);
@@ -205,7 +215,7 @@ public class BitemapNetworkAccessor {
         return null;
     }
 
-    public static Bitmap getThumbnailBitmapFromURI(URI uri) {
+    public static Bitmap getThumbnailBitmapFromURI(Uri uri) {
         try {
             return decodeSampledBitmapFromStream(NetworkConstants.SERVER_IP + uri.getPath(),
                     THUMBNAIL_IMAGE_SIZE, THUMBNAIL_IMAGE_SIZE);
@@ -290,7 +300,7 @@ public class BitemapNetworkAccessor {
                 FoodTruck newFT = new FoodTruck.Builder().setCategory(jOb.getString("category"))
                         .setCategoryDetail(jOb.getString("category_detail"))
                         .setName(jOb.getString("name")).setUrl(jOb.getString("url"))
-                        .setLogo(URI.create(jOb.getString("img")))
+                        .setLogo(Uri.parse(jOb.getString("img")))
                         .setId(Long.parseLong(jOb.getString("id"))).build();
                 list.add(newFT);
             }
@@ -311,13 +321,13 @@ public class BitemapNetworkAccessor {
      * "/trucks/Taqueria_Angelicas/taqueria-angelicas.jpg"
      * ]
      */
-    private static void appendImageUrlToList(String imagesJson, List<URI> list) {
+    private static void appendImageUrlToList(String imagesJson, List<Uri> list) {
         try {
             JSONArray arr = new JSONArray(imagesJson);
             int size = arr.length();
             for (int i = 0; i < size; i++) {
                 String s = arr.getString(i);
-                list.add(URI.create(s));
+                list.add(Uri.parse(s));
             }
         } catch (JSONException e) {
             e.printStackTrace();

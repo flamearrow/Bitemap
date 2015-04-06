@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +14,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,9 +25,7 @@ import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
 
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Displays Category, names, events for a particular food truck
@@ -60,6 +60,10 @@ public class DetailActivity extends ActionBarActivity {
 
     private LinearLayout mGallery;
 
+    private ArrayList<Uri> mGalleryURIs;
+
+    private Button mSeeAllButton;
+
     private static final String MAP_FRAGMENT = "MAP_FRAGMENT";
 
     private static final String LIST_FRAGMENT = "LIST_FRAGMENT";
@@ -78,6 +82,7 @@ public class DetailActivity extends ActionBarActivity {
         mGallery = (LinearLayout) findViewById(R.id.gallery_id);
         initializeFragments();
         initializeGallery();
+        initializeSeeAllButton();
         mTruck = BitemapListDataHolder.findFoodtruckFromId(mTruckId);
         setTitle(mTruck.getName());
 
@@ -117,10 +122,18 @@ public class DetailActivity extends ActionBarActivity {
     }
 
     private void addImageToGallery(Bitmap newImage) {
-        View view = mLayoutInflater.inflate(R.layout.gallery_item, mGallery, false);
-        ImageView iv = (ImageView) view.findViewById(R.id.gallery_image);
+        final ImageView iv = (ImageView) mLayoutInflater
+                .inflate(R.layout.gallery_preview_item, mGallery, false);
         iv.setImageBitmap(newImage);
-        mGallery.addView(view);
+        iv.setId(mGallery.getChildCount());
+        iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("mlgb", "you're clicking an view: " + v.getId());
+                Log.d("mlgb", "you're clicking an image view: " + iv.getId());
+            }
+        });
+        mGallery.addView(iv);
     }
 
     /**
@@ -129,15 +142,16 @@ public class DetailActivity extends ActionBarActivity {
      * *) Issue an image pull request for all URIs
      */
     private void initializeGallery() {
-        new AsyncTask<Void, Void, List<URI>>() {
+        new AsyncTask<Void, Void, ArrayList<Uri>>() {
             @Override
-            protected List<URI> doInBackground(Void... params) {
+            protected ArrayList<Uri> doInBackground(Void... params) {
                 return BitemapNetworkAccessor.getGalleryForTruck(mTruckId);
             }
 
             @Override
-            protected void onPostExecute(List<URI> uris) {
-                for (final URI uri : uris) {
+            protected void onPostExecute(ArrayList<Uri> uris) {
+                mGalleryURIs = uris;
+                for (final Uri uri : uris) {
                     new AsyncTask<Void, Void, Bitmap>() {
                         @Override
                         protected Bitmap doInBackground(Void... params) {
@@ -147,11 +161,27 @@ public class DetailActivity extends ActionBarActivity {
                         @Override
                         protected void onPostExecute(Bitmap bitmap) {
                             addImageToGallery(bitmap);
+                            if (!mSeeAllButton.isEnabled()) {
+                                mSeeAllButton.setEnabled(true);
+                            }
                         }
                     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private void initializeSeeAllButton() {
+        mSeeAllButton = (Button) findViewById(R.id.btn_see_all_pics);
+        mSeeAllButton.setEnabled(false);
+        mSeeAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), GridViewGalleryActivity.class);
+                i.putParcelableArrayListExtra(GridViewGalleryActivity.IMAGE_URIS, mGalleryURIs);
+                startActivity(i);
+            }
+        });
     }
 
     @Override

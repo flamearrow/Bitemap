@@ -3,11 +3,10 @@ package com.gb.ml.bitemap.pojo;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
-
-import java.net.URI;
 
 public class FoodTruck implements Comparable<FoodTruck>{
 
@@ -20,7 +19,7 @@ public class FoodTruck implements Comparable<FoodTruck>{
 
     private String mCategoryDetail;
 
-    private URI mLogo;
+    private Uri mLogo;
 
     private String mUrl;
 
@@ -31,7 +30,7 @@ public class FoodTruck implements Comparable<FoodTruck>{
     private FoodTruck() {
     }
 
-    private FoodTruck(String name, String category, String cDetail, URI logo, String url, long id) {
+    private FoodTruck(String name, String category, String cDetail, Uri logo, String url, long id) {
         mName = name;
         mCategory = category;
         mCategoryDetail = cDetail;
@@ -63,7 +62,7 @@ public class FoodTruck implements Comparable<FoodTruck>{
 
         private long mId;
 
-        private URI mLogo;
+        private Uri mLogo;
 
         public Builder setName(String name) {
             mName = name;
@@ -85,7 +84,7 @@ public class FoodTruck implements Comparable<FoodTruck>{
             return this;
         }
 
-        public Builder setLogo(URI logo) {
+        public Builder setLogo(Uri logo) {
             mLogo = logo;
             return this;
         }
@@ -101,9 +100,9 @@ public class FoodTruck implements Comparable<FoodTruck>{
     }
 
     public void loadImage(final Context context) {
-        new AsyncTask<URI, Void, Bitmap>() {
+        new AsyncTask<Uri, Void, Bitmap>() {
             @Override
-            protected Bitmap doInBackground(URI... params) {
+            protected Bitmap doInBackground(Uri... params) {
                 return BitemapNetworkAccessor.getThumbnailBitmapFromURI(params[0]);
             }
 
@@ -143,11 +142,11 @@ public class FoodTruck implements Comparable<FoodTruck>{
         mCategoryDetail = categoryDetail;
     }
 
-    public URI getLogo() {
+    public Uri getLogo() {
         return mLogo;
     }
 
-    public void setLogo(URI logo) {
+    public void setLogo(Uri logo) {
         mLogo = logo;
     }
 
