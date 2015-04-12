@@ -68,14 +68,14 @@ public class ScheduleActivity extends BitemapActionBarActivity {
                     R.animator.card_flip_right_in, R.animator.card_flip_right_out,
                     R.animator.card_flip_left_in, R.animator.card_flip_left_out)
                     .show(mSchedulesMap).hide(mSchedulesList).commit();
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (scheduleToHighlight != null) {
+            if (scheduleToHighlight != null) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
                         mSchedulesMap.enableMarkerForSchedule(scheduleToHighlight);
                     }
-                }
-            });
+                });
+            }
         }
     }
 }

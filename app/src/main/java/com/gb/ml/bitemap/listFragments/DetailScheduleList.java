@@ -103,7 +103,7 @@ public class DetailScheduleList extends BaseList {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             ((DetailActivity) getActivity())
-                    .switchMapList(null, BitemapListDataHolder.getSchedules().get(position));
+                    .switchMapList(null, mSchedules.get(position));
         }
     }
 }

@@ -197,28 +197,28 @@ public class DetailActivity extends ActionBarActivity {
                     R.animator.card_flip_left_in, R.animator.card_flip_left_out)
                     .hide(mDetailScheduleList)
                     .show(mSchedulesMapFragment).commit();
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (scheduleToHighlight != null) {
+            if (scheduleToHighlight != null) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
                         mSchedulesMapFragment.enableMarkerForSchedule(scheduleToHighlight);
                     }
-                }
-            });
+                });
+            }
         } else {
             getFragmentManager().beginTransaction().setCustomAnimations(
                     R.animator.card_flip_right_in, R.animator.card_flip_right_out,
                     R.animator.card_flip_left_in, R.animator.card_flip_left_out)
                     .hide(mSchedulesMapFragment)
                     .show(mDetailScheduleList).commit();
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (scheduleToHighlight != null) {
+            if (scheduleToHighlight != null) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
                         mSchedulesMapFragment.enableMarkerForSchedule(scheduleToHighlight);
                     }
-                }
-            });
+                });
+            }
         }
     }
 
