@@ -3,13 +3,8 @@
              android:layout_width="fill_parent"
              android:layout_height="fill_parent"
              android:id="@+id/schedule">
-    <LinearLayout android:orientation="vertical"
-                  android:layout_width="fill_parent"
-                  android:layout_height="fill_parent">
-        <ListView android:id="@android:id/list"
-                  android:layout_width="fill_parent"
-                  android:layout_height="fill_parent"/>
-    </LinearLayout>
+    <FrameLayout android:layout_width="fill_parent"
+                 android:layout_height="fill_parent" android:id="@+id/schedules_container"/>
     <Button android:layout_width="70dp" android:layout_height="70dp"
             android:id="@+id/menuButton"
             android:layout_marginRight="20dp"

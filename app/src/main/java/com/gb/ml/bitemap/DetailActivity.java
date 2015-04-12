@@ -1,10 +1,7 @@
 package com.gb.ml.bitemap;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -24,7 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.gb.ml.bitemap.database.BitemapDBConnector;
-import com.gb.ml.bitemap.listFragments.DetailScheduleList;
+import com.gb.ml.bitemap.listFragments.ScheduleList;
 import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
 import com.gb.ml.bitemap.network.NetworkConstants;
 import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
@@ -49,7 +46,7 @@ public class DetailActivity extends ActionBarActivity {
 
     private Bitmap mDefaultBm;
 
-    private DetailScheduleList mDetailScheduleList;
+    private ScheduleList mScheduleList;
 
     private SchedulesMapFragment mSchedulesMapFragment;
 
@@ -62,6 +59,14 @@ public class DetailActivity extends ActionBarActivity {
     private ArrayList<Uri> mGalleryURIs;
 
     private Button mSeeAllButton;
+
+    private ScheduleList.OnScheduleClickListener mOnScheduleClickListener
+            = new ScheduleList.OnScheduleClickListener() {
+        @Override
+        public void onScheduleClicked(Schedule schedule) {
+            switchMapList(null, schedule);
+        }
+    };
 
     private static final String MAP_FRAGMENT = "MAP_FRAGMENT";
 
@@ -102,20 +107,21 @@ public class DetailActivity extends ActionBarActivity {
         if (getFragmentManager().findFragmentByTag(MAP_FRAGMENT) == null) {
             final Bundle args = new Bundle();
             args.putParcelableArrayList(SchedulesMapFragment.SCHEDULES, schedules);
-            mDetailScheduleList = new DetailScheduleList();
-            mDetailScheduleList.setArguments(args);
+            mScheduleList = new ScheduleList();
+            mScheduleList.setArguments(args);
             mSchedulesMapFragment = new SchedulesMapFragment();
             mSchedulesMapFragment.setArguments(args);
             getFragmentManager().beginTransaction()
-                    .add(R.id.schedules_container, mDetailScheduleList, LIST_FRAGMENT)
+                    .add(R.id.schedules_container, mScheduleList, LIST_FRAGMENT)
                     .add(R.id.schedules_container, mSchedulesMapFragment, MAP_FRAGMENT)
                     .commit();
         } else {
             mSchedulesMapFragment = (SchedulesMapFragment) getFragmentManager().findFragmentByTag(
                     MAP_FRAGMENT);
-            mDetailScheduleList = (DetailScheduleList) getFragmentManager().findFragmentByTag(
+            mScheduleList = (ScheduleList) getFragmentManager().findFragmentByTag(
                     LIST_FRAGMENT);
         }
+        mScheduleList.addOnScheduleClickListener(mOnScheduleClickListener);
         getFragmentManager().beginTransaction().hide(mSchedulesMapFragment).commit();
     }
 
@@ -195,7 +201,7 @@ public class DetailActivity extends ActionBarActivity {
             getFragmentManager().beginTransaction().setCustomAnimations(
                     R.animator.card_flip_right_in, R.animator.card_flip_right_out,
                     R.animator.card_flip_left_in, R.animator.card_flip_left_out)
-                    .hide(mDetailScheduleList)
+                    .hide(mScheduleList)
                     .show(mSchedulesMapFragment).commit();
             if (scheduleToHighlight != null) {
                 mHandler.post(new Runnable() {
@@ -210,7 +216,7 @@ public class DetailActivity extends ActionBarActivity {
                     R.animator.card_flip_right_in, R.animator.card_flip_right_out,
                     R.animator.card_flip_left_in, R.animator.card_flip_left_out)
                     .hide(mSchedulesMapFragment)
-                    .show(mDetailScheduleList).commit();
+                    .show(mScheduleList).commit();
             if (scheduleToHighlight != null) {
                 mHandler.post(new Runnable() {
                     @Override

@@ -1,5 +1,6 @@
 package com.gb.ml.bitemap.listFragments;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,29 +11,66 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.gb.ml.bitemap.BitemapListDataHolder;
+import com.gb.ml.bitemap.DetailActivity;
 import com.gb.ml.bitemap.R;
-import com.gb.ml.bitemap.ScheduleActivity;
+import com.gb.ml.bitemap.SchedulesMapFragment;
 import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * A list to display schedules
+ *
+ * @author ccen
+ */
 public class ScheduleList extends BaseList {
+
+    private ArrayList<Schedule> mSchedules;
+
+    private Set<OnScheduleClickListener> mOnScheduleClickListenerList;
+
+    public ScheduleList() {
+        mOnScheduleClickListenerList = new HashSet<>();
+    }
+
+    public int getSize() {
+        return mOnScheduleClickListenerList.size();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_schedule_list, container, false);
+        return view;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mSchedules = getArguments().getParcelableArrayList(SchedulesMapFragment.SCHEDULES);
+    }
 
     @Override
     ListAdapter createListAdapter() {
-        return new ScheduleAdaptor();
+        return new DetailScheduleAdaptor();
     }
 
-    private class ScheduleAdaptor extends BaseAdapter {
+    private class DetailScheduleAdaptor extends BaseAdapter {
 
         @Override
         public int getCount() {
-            return BitemapListDataHolder.getSchedules().size();
+            return mSchedules.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return BitemapListDataHolder.getSchedules().get(position);
+            return mSchedules.get(position);
         }
 
         @Override
@@ -58,7 +96,7 @@ public class ScheduleList extends BaseList {
             } else {
                 mVh = (ViewHolder) convertView.getTag();
             }
-            final Schedule mS = BitemapListDataHolder.getSchedules().get(position);
+            final Schedule mS = mSchedules.get(position);
             final FoodTruck mFt = BitemapListDataHolder.findFoodtruckFromId(mS.getFoodtruckId());
             mVh.mLogoView.setImageUrl(mFt.getFullUrlForLogo(),
                     VolleyNetworkAccessor.getInstance(getActivity()).getImageLoader());
@@ -87,17 +125,24 @@ public class ScheduleList extends BaseList {
         }
     }
 
-    @Override
-    AdapterView.OnItemClickListener createItemClickListener() {
-        return new ScheduleItemClickListener();
+    public void addOnScheduleClickListener(OnScheduleClickListener listener) {
+        mOnScheduleClickListenerList.add(listener);
     }
 
-    private class ScheduleItemClickListener implements AdapterView.OnItemClickListener {
+    @Override
+    AdapterView.OnItemClickListener createItemClickListener() {
+        return new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                for (OnScheduleClickListener listener : mOnScheduleClickListenerList) {
+                    listener.onScheduleClicked(mSchedules.get(position));
+                }
+            }
+        };
+    }
 
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            ((ScheduleActivity) getActivity())
-                    .switchMapList(null, BitemapListDataHolder.getSchedules().get(position));
-        }
+    public interface OnScheduleClickListener {
+
+        public void onScheduleClicked(Schedule schedule);
     }
 }

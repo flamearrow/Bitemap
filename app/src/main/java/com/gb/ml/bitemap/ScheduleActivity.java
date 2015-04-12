@@ -1,6 +1,5 @@
 package com.gb.ml.bitemap;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -19,6 +18,7 @@ public class ScheduleActivity extends BitemapActionBarActivity {
 
     private Handler mHandler;
 
+    private ScheduleList.OnScheduleClickListener mOnScheduleClickListener;
 
     private static final String MAP_FRAGMENT = "MAP_FRAGMENT";
 
@@ -30,26 +30,35 @@ public class ScheduleActivity extends BitemapActionBarActivity {
         setTitle(R.string.menu_schedules_title);
         setContentView(R.layout.activity_schedule);
 
+        mOnScheduleClickListener = new ScheduleList.OnScheduleClickListener() {
+            @Override
+            public void onScheduleClicked(Schedule schedule) {
+                switchMapList(null, schedule);
+            }
+        };
         initializeFragments();
         mHandler = new Handler(getMainLooper());
     }
 
     private void initializeFragments() {
         if (getFragmentManager().findFragmentByTag(LIST_FRAGMENT) == null) {
-            mSchedulesList = new ScheduleList();
-            mSchedulesMap = new SchedulesMapFragment();
             final Bundle args = new Bundle();
             args.putParcelableArrayList(SchedulesMapFragment.SCHEDULES,
                     BitemapListDataHolder.getSchedules());
+            mSchedulesList = new ScheduleList();
+            mSchedulesMap = new SchedulesMapFragment();
+            mSchedulesList.setArguments(args);
             mSchedulesMap.setArguments(args);
             getFragmentManager().beginTransaction()
-                    .add(R.id.schedule, mSchedulesList, LIST_FRAGMENT)
-                    .add(R.id.schedule, mSchedulesMap, MAP_FRAGMENT).commit();
+                    .add(R.id.schedules_container, mSchedulesList, LIST_FRAGMENT)
+                    .add(R.id.schedules_container, mSchedulesMap, MAP_FRAGMENT).commit();
         } else {
-            mSchedulesList = (ScheduleList) getFragmentManager().findFragmentByTag(LIST_FRAGMENT);
+            mSchedulesList = (ScheduleList) getFragmentManager()
+                    .findFragmentByTag(LIST_FRAGMENT);
             mSchedulesMap = (SchedulesMapFragment) getFragmentManager()
                     .findFragmentByTag(MAP_FRAGMENT);
         }
+        mSchedulesList.addOnScheduleClickListener(mOnScheduleClickListener);
         getFragmentManager().beginTransaction().hide(mSchedulesMap).commit();
     }
 
