@@ -165,7 +165,8 @@ public class BitemapListDataHolder {
         @Override
         protected void onPostExecute(ArrayList<Schedule> schedules) {
             Log.d(TAG, "DownloadSchedules returns " + schedules.size() + " schedules");
-            mSchedules = schedules;
+//            mSchedules = schedules;
+            mSchedules = BitemapDebug.createDebugSchedules(mContext);
             // TODO: do this in a separate thread
             BitemapDBConnector.getInstance(mContext).addScheduleBatch(schedules);
             addModeAndCheckReady(SCHEDULE_LIST_READY, mContext);
@@ -210,10 +211,6 @@ public class BitemapListDataHolder {
             context.sendBroadcast(completeIntent);
             // need to reset in case we re-request later
             mListsReadyMode = 0;
-            // This is a heavy call, one asynctask would be fired for each foodtruck
-            for (FoodTruck ft : getFoodTrucks()) {
-                ft.loadImage(context);
-            }
         } else {
             Log.d(TAG, "some lists are not ready, hold on sending init_complete signal");
         }

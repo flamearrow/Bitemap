@@ -6,9 +6,12 @@
                 android:columnCount="2" android:rowCount="2"
                 android:layout_centerHorizontal="true" android:layout_alignParentTop="true"
                 android:id="@+id/detail_info">
-        <ImageView android:id="@+id/detail_logo" android:layout_columnSpan="1"
-                   android:layout_rowSpan="2" android:layout_width="70dp"
-                   android:layout_height="70dp" android:layout_margin="5dp"/>
+        <com.android.volley.toolbox.NetworkImageView android:id="@+id/detail_logo"
+                                                     android:layout_columnSpan="1"
+                                                     android:layout_rowSpan="2"
+                                                     android:layout_width="70dp"
+                                                     android:layout_height="70dp"
+                                                     android:layout_margin="5dp"/>
         <TextView android:id="@+id/detail_truck_name" android:layout_columnSpan="1"
                   android:layout_rowSpan="1"
                   android:textStyle="bold"/>

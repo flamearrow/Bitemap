@@ -5,13 +5,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.gb.ml.bitemap.BitemapListDataHolder;
 import com.gb.ml.bitemap.R;
 import com.gb.ml.bitemap.ScheduleActivity;
+import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
 
@@ -45,8 +46,9 @@ public class ScheduleList extends BaseList {
             if (convertView == null) {
                 convertView = LayoutInflater.from(getActivity())
                         .inflate(R.layout.schedule_item, parent, false);
-
-                mVh = new ViewHolder((ImageView) (convertView.findViewById(R.id.food_truck_logo)),
+                mVh = new ViewHolder(
+                        (NetworkImageView) (convertView
+                                .findViewById(R.id.food_truck_logo)),
                         (TextView) (convertView.findViewById(R.id.food_truck_name)),
                         (TextView) (convertView.findViewById(R.id.schedule_start)),
                         (TextView) (convertView.findViewById(R.id.schedule_end)));
@@ -58,11 +60,8 @@ public class ScheduleList extends BaseList {
             }
             final Schedule mS = BitemapListDataHolder.getSchedules().get(position);
             final FoodTruck mFt = BitemapListDataHolder.findFoodtruckFromId(mS.getFoodtruckId());
-            if (mFt.getLogoBm() == null) {
-                mVh.mLogoView.setImageBitmap(mDefaultBm);
-            } else {
-                mVh.mLogoView.setImageBitmap(mFt.getLogoBm());
-            }
+            mVh.mLogoView.setImageUrl(mFt.getFullUrlForLogo(),
+                    VolleyNetworkAccessor.getInstance(getActivity()).getImageLoader());
             mVh.mFoodTruckNameView.setText(
                     BitemapListDataHolder.findFoodtruckFromId(mS.getFoodtruckId()).getName());
             mVh.mScheduleStart.setText(mS.getStartTimeString());
@@ -73,11 +72,12 @@ public class ScheduleList extends BaseList {
 
         class ViewHolder {
 
-            ImageView mLogoView;
+            NetworkImageView mLogoView;
 
             TextView mFoodTruckNameView, mScheduleStart, mScheduleEnd;
 
-            ViewHolder(ImageView logoView, TextView foodTruckNameView, TextView scheduleStart,
+            ViewHolder(NetworkImageView logoView, TextView foodTruckNameView,
+                    TextView scheduleStart,
                     TextView scheduleEnd) {
                 mLogoView = logoView;
                 mFoodTruckNameView = foodTruckNameView;

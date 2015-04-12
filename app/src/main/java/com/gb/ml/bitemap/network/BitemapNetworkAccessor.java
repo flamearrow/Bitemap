@@ -49,13 +49,6 @@ public class BitemapNetworkAccessor {
 
     public static int GALLERY_IMAGE_SIZE = 200;
 
-
-    public static void main(String... args) {
-        for (FoodTruck ft : getTrucks()) {
-            System.out.println(ft);
-        }
-    }
-
     /**
      * Issue a network request to download all schedules
      */
@@ -73,11 +66,10 @@ public class BitemapNetworkAccessor {
     }
 
     public static ArrayList<Schedule> getSchedulesForDays(int days) {
-//        final Calendar start = Calendar.getInstance();
-//        final Calendar end = Calendar.getInstance();
-//        end.add(Calendar.DAY_OF_MONTH, days);
-//        return getSchedules(start, end);
-        return getSchedulesFeb();
+        final Calendar start = Calendar.getInstance();
+        final Calendar end = Calendar.getInstance();
+        end.add(Calendar.DAY_OF_MONTH, days);
+        return getSchedules(start, end);
     }
 
     private static BufferedReader getBufferedReaderFromURLString(String apiString)
@@ -204,6 +196,7 @@ public class BitemapNetworkAccessor {
         return null;
     }
 
+    @Deprecated
     public static Bitmap getGalleryBitmapFromURI(URI uri) {
         try {
             return decodeSampledBitmapFromStream(NetworkConstants.SERVER_IP + uri.getPath(),
@@ -215,6 +208,7 @@ public class BitemapNetworkAccessor {
         return null;
     }
 
+    @Deprecated
     public static Bitmap getThumbnailBitmapFromURI(Uri uri) {
         try {
             return decodeSampledBitmapFromStream(NetworkConstants.SERVER_IP + uri.getPath(),

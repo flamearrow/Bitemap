@@ -1,5 +1,6 @@
 package com.gb.ml.bitemap;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,9 +20,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.gb.ml.bitemap.database.BitemapDBConnector;
 import com.gb.ml.bitemap.listFragments.DetailScheduleList;
 import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
+import com.gb.ml.bitemap.network.NetworkConstants;
+import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
 
@@ -51,13 +57,6 @@ public class DetailActivity extends ActionBarActivity {
 
     private LayoutInflater mLayoutInflater;
 
-    private BroadcastReceiver mUpdateLogoReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ((ImageView) findViewById(R.id.detail_logo)).setImageBitmap(mTruck.getLogoBm());
-        }
-    };
-
     private LinearLayout mGallery;
 
     private ArrayList<Uri> mGalleryURIs;
@@ -86,11 +85,10 @@ public class DetailActivity extends ActionBarActivity {
         mTruck = BitemapListDataHolder.findFoodtruckFromId(mTruckId);
         setTitle(mTruck.getName());
 
-        if (mTruck.getLogoBm() == null) {
-            ((ImageView) findViewById(R.id.detail_logo)).setImageBitmap(mDefaultBm);
-        } else {
-            ((ImageView) findViewById(R.id.detail_logo)).setImageBitmap(mTruck.getLogoBm());
-        }
+        ((NetworkImageView) findViewById(R.id.detail_logo))
+                .setImageUrl(mTruck.getFullUrlForLogo(), VolleyNetworkAccessor
+                        .getInstance(this).getImageLoader());
+
         ((TextView) findViewById(R.id.detail_truck_name)).setText(mTruck.getName());
         ((TextView) findViewById(R.id.detail_category)).setText(mTruck.getCategory());
 
@@ -142,6 +140,7 @@ public class DetailActivity extends ActionBarActivity {
      * *) Issue an image pull request for all URIs
      */
     private void initializeGallery() {
+        final Activity activity = this;
         new AsyncTask<Void, Void, ArrayList<Uri>>() {
             @Override
             protected ArrayList<Uri> doInBackground(Void... params) {
@@ -152,20 +151,27 @@ public class DetailActivity extends ActionBarActivity {
             protected void onPostExecute(ArrayList<Uri> uris) {
                 mGalleryURIs = uris;
                 for (final Uri uri : uris) {
-                    new AsyncTask<Void, Void, Bitmap>() {
-                        @Override
-                        protected Bitmap doInBackground(Void... params) {
-                            return BitemapNetworkAccessor.getThumbnailBitmapFromURI(uri);
-                        }
 
-                        @Override
-                        protected void onPostExecute(Bitmap bitmap) {
-                            addImageToGallery(bitmap);
-                            if (!mSeeAllButton.isEnabled()) {
-                                mSeeAllButton.setEnabled(true);
-                            }
-                        }
-                    }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    VolleyNetworkAccessor.getInstance(activity).getImageLoader()
+                            .get(NetworkConstants.SERVER_IP + uri.getPath(),
+                                    new ImageLoader.ImageListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            Log.w(TAG, "error loading image!");
+                                        }
+
+                                        @Override
+                                        public void onResponse(ImageLoader.ImageContainer response,
+                                                boolean isImmediate) {
+                                            if (response.getBitmap() != null) {
+                                                addImageToGallery(response.getBitmap());
+                                            }
+                                            if (!mSeeAllButton.isEnabled()) {
+                                                mSeeAllButton.setEnabled(true);
+                                            }
+                                        }
+                                    });
+
                 }
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -182,18 +188,6 @@ public class DetailActivity extends ActionBarActivity {
                 startActivity(i);
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        registerReceiver(mUpdateLogoReceiver, new IntentFilter(FoodTruck.LOGO_DOWNLOADED));
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(mUpdateLogoReceiver);
     }
 
     public void switchMapList(View v, final Schedule scheduleToHighlight) {

@@ -16,13 +16,19 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
+import com.gb.ml.bitemap.network.NetworkConstants;
+import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class GridViewGalleryActivity extends Activity {
+
+    private static final String TAG = "GridViewGalleryActivity";
 
     public static final String IMAGE_URIS = "IMAGE_URIS";
 
@@ -74,7 +80,6 @@ public class GridViewGalleryActivity extends Activity {
                     - (LANDSCAPE_COLUMN + 1) * PADDING;
             mColNum = LANDSCAPE_COLUMN;
         }
-        Log.d("mlgb", "imageWidth: " + mImageWidth);
     }
 
     private void initializeMap() {
@@ -93,19 +98,25 @@ public class GridViewGalleryActivity extends Activity {
 
     private void pullImages() {
         for (final Uri uri : mBitmapCache.keySet()) {
-            new AsyncTask<Void, Void, Bitmap>() {
 
-                @Override
-                protected Bitmap doInBackground(Void... params) {
-                    return BitemapNetworkAccessor.getThumbnailBitmapFromURI(uri);
-                }
+            VolleyNetworkAccessor.getInstance(this).getImageLoader()
+                    .get(NetworkConstants.SERVER_IP + uri.getPath(),
+                            new ImageLoader.ImageListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.w(TAG, "error loading image!");
+                                }
 
-                @Override
-                protected void onPostExecute(Bitmap bitmap) {
-                    mBitmapCache.put(uri, bitmap);
-                    ((BaseAdapter) mGridView.getAdapter()).notifyDataSetChanged();
-                }
-            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                @Override
+                                public void onResponse(ImageLoader.ImageContainer response,
+                                        boolean isImmediate) {
+                                    if (response.getBitmap() != null) {
+                                        mBitmapCache.put(uri, response.getBitmap());
+                                        ((BaseAdapter) mGridView.getAdapter())
+                                                .notifyDataSetChanged();
+                                    }
+                                }
+                            });
         }
 
     }

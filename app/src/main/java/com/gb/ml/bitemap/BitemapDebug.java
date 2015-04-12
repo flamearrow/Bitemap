@@ -9,6 +9,7 @@ import com.gb.ml.bitemap.pojo.Schedule;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -102,9 +103,9 @@ public class BitemapDebug {
         return s;
     }
 
-    public static List<Schedule> createDebugSchedules(Context context,
+    public static ArrayList<Schedule> createDebugSchedules(Context context,
             Map<Long, FoodTruck> foodTrackMap) {
-        List<Schedule> ret = new LinkedList<>();
+        ArrayList<Schedule> ret = new ArrayList<>();
         try {
             BufferedReader br = new BufferedReader(
                     new InputStreamReader(context.getAssets().open(SCHEDULES_DATA)));
@@ -123,7 +124,7 @@ public class BitemapDebug {
         return ret;
     }
 
-    public static List<Schedule> createDebugSchedules(Context context) {
+    public static ArrayList<Schedule> createDebugSchedules(Context context) {
         return createDebugSchedules(context, convertIntoMap(createDebugFoodTrucks(context)));
     }
 }

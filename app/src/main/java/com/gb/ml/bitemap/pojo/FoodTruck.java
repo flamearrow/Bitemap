@@ -7,8 +7,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
+import com.gb.ml.bitemap.network.NetworkConstants;
 
-public class FoodTruck implements Comparable<FoodTruck>{
+public class FoodTruck implements Comparable<FoodTruck> {
 
     private long mId;
 
@@ -22,8 +23,6 @@ public class FoodTruck implements Comparable<FoodTruck>{
     private Uri mLogo;
 
     private String mUrl;
-
-    private Bitmap mBm;
 
     public static final String LOGO_DOWNLOADED = "logo_downloaded";
 
@@ -99,23 +98,8 @@ public class FoodTruck implements Comparable<FoodTruck>{
         }
     }
 
-    public void loadImage(final Context context) {
-        new AsyncTask<Uri, Void, Bitmap>() {
-            @Override
-            protected Bitmap doInBackground(Uri... params) {
-                return BitemapNetworkAccessor.getThumbnailBitmapFromURI(params[0]);
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                mBm = bitmap;
-                context.sendBroadcast(new Intent(LOGO_DOWNLOADED));
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getLogo());
-    }
-
-    public Bitmap getLogoBm() {
-        return mBm;
+    public String getFullUrlForLogo() {
+        return NetworkConstants.SERVER_IP + mLogo.getPath();
     }
 
     public String getName() {

@@ -7,13 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.gb.ml.bitemap.BitemapListDataHolder;
 import com.gb.ml.bitemap.DetailActivity;
 import com.gb.ml.bitemap.R;
+import com.gb.ml.bitemap.network.NetworkConstants;
+import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 
 
@@ -57,8 +59,8 @@ public class FoodTruckList extends BaseList {
             if (convertView == null) {
                 convertView = LayoutInflater.from(getActivity())
                         .inflate(R.layout.food_truck_item, parent, false);
-
-                mVh = new ViewHolder((ImageView) convertView.findViewById(R.id.food_truck_logo),
+                mVh = new ViewHolder((NetworkImageView) convertView
+                        .findViewById(R.id.food_truck_logo),
                         (TextView) convertView.findViewById(R.id.food_truck_name),
                         (TextView) convertView.findViewById(R.id.food_truck_category));
                 convertView.setTag(mVh);
@@ -67,12 +69,8 @@ public class FoodTruckList extends BaseList {
             }
 
             final FoodTruck mFt = BitemapListDataHolder.getFoodTrucks().get(position);
-
-            if (mFt.getLogoBm() == null) {
-                mVh.mLogoView.setImageBitmap(mDefaultBm);
-            } else {
-                mVh.mLogoView.setImageBitmap(mFt.getLogoBm());
-            }
+            mVh.mLogoView.setImageUrl(mFt.getFullUrlForLogo(),
+                    VolleyNetworkAccessor.getInstance(getActivity()).getImageLoader());
             mVh.mFoodTruckNameView.setText(mFt.getName());
             mVh.mCategoryView.setText(mFt.getCategory());
             return convertView;
@@ -80,13 +78,14 @@ public class FoodTruckList extends BaseList {
 
         class ViewHolder {
 
-            ViewHolder(ImageView logoView, TextView foodTruckNameView, TextView categoryView) {
+            ViewHolder(NetworkImageView logoView, TextView foodTruckNameView,
+                    TextView categoryView) {
                 mLogoView = logoView;
                 mFoodTruckNameView = foodTruckNameView;
                 mCategoryView = categoryView;
             }
 
-            ImageView mLogoView;
+            NetworkImageView mLogoView;
 
             TextView mFoodTruckNameView, mCategoryView;
         }
