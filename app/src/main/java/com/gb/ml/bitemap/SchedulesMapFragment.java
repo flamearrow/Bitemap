@@ -92,7 +92,7 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
                 @Override
                 public void onInfoWindowClick(Marker marker) {
                     final Schedule schedule = BitemapListDataHolder
-                            .findScheduleFromId(Long.valueOf(marker.getTitle()));
+                            .getInstance().findScheduleFromId(Long.valueOf(marker.getTitle()));
                     final Intent i = new Intent(getActivity(), DetailActivity.class);
                     i.putExtra(DetailActivity.FOODTRUCK_ID, schedule.getFoodtruckId());
                     startActivity(i);
@@ -170,9 +170,9 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
         final LayoutInflater li = LayoutInflater.from(getActivity());
         final GridLayout view = (GridLayout) li.inflate(R.layout.map_info_window, null);
         final Schedule schedule = BitemapListDataHolder
-                .findScheduleFromId(Long.valueOf(marker.getTitle()));
+                .getInstance().findScheduleFromId(Long.valueOf(marker.getTitle()));
         final FoodTruck truck = BitemapListDataHolder
-                .findFoodtruckFromId(schedule.getFoodtruckId());
+                .getInstance().findFoodtruckFromId(schedule.getFoodtruckId());
         ((TextView) view.findViewById(R.id.map_info_name)).setText(truck.getName());
         final ImageView imageView = (ImageView) view.findViewById(R.id.map_info_logo);
         VolleyNetworkAccessor.getInstance(getActivity()).getImageLoader()

@@ -29,20 +29,6 @@ public class BitemapListDataHolder {
 
     public static final String NETWORK = "NETWORK";
 
-    private static ArrayList<Schedule> mSchedules;
-
-    private static List<FoodTruck> mFoodTrucks;
-
-    private static List<Event> mEvents;
-
-    private static Map<Long, FoodTruck> mFoodTruckMap;
-
-    private static Map<Long, Schedule> mScheduleMap;
-
-    private static int mListsReadyMode;
-
-    private static boolean hasNetwork;
-
     private static final int SCHEDULE_LIST_READY = 1 << 0;
 
     private static final int FOODTRUCK_LIST_READY = 1 << 1;
@@ -54,6 +40,49 @@ public class BitemapListDataHolder {
 
     private static final int DAYS_OF_SCHEDULE_TO_GET = 7;
 
+    private static BitemapListDataHolder mInstance;
+
+    private ArrayList<Schedule> mSchedules;
+
+    private List<FoodTruck> mFoodTrucks;
+
+    private List<Event> mEvents;
+
+    private Map<Long, FoodTruck> mFoodTruckMap;
+
+    private Map<Long, Schedule> mScheduleMap;
+
+    private int mListsReadyMode;
+
+    private boolean hasNetwork;
+
+    private Context mContext;
+
+    private static class InstanceNotYetReadyException extends RuntimeException {
+
+        public InstanceNotYetReadyException() {
+            super("BitemapListDataHolder instance is not initialized");
+        }
+    }
+
+    public synchronized static BitemapListDataHolder getInstance() {
+        if (mInstance == null) {
+            throw new InstanceNotYetReadyException();
+        }
+        return mInstance;
+    }
+
+    public synchronized static BitemapListDataHolder getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new BitemapListDataHolder(context);
+        }
+        return mInstance;
+    }
+
+    private BitemapListDataHolder(Context context) {
+        mContext = context;
+    }
+
     /**
      * Initialize mSchedules, mFoodTrucks and mEvents, for all three lists, do the following:
      * ) if there’s no network
@@ -64,22 +93,22 @@ public class BitemapListDataHolder {
      * ----) if not, issue a full pull request, clear DB, reinitialize db with current data
      * ----) if yes, load whatever we have in DB
      */
-    public static void syncDatabaseWithSever(Context context) {
+    public void syncDatabaseWithSever() {
         Log.d(TAG, "syncDatabaseWithServer");
-        if (hasNetworkConnection(context)) {
+        if (hasNetworkConnection(mContext)) {
             Log.d(TAG, "has network connection");
             if (dbIsUpToDate()) {
                 Log.d(TAG, "db is up to date! no more api will be issued");
-                loadListsFromDB(context);
+                loadListsFromDB(mContext);
             } else {
                 Log.d(TAG, "local db not up to date, issuing api requests...");
-                new DownloadFoodTrucks(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                new DownloadSchedules(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new DownloadFoodTrucks(mContext).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new DownloadSchedules(mContext).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 // TODO: new DownloadEvents().execute();
             }
         } else {
             Log.d(TAG, "no network connection, load whatever we have in db");
-            loadListsFromDB(context);
+            loadListsFromDB(mContext);
             // TODO: schedule a request when network connection is established
         }
 
@@ -91,14 +120,14 @@ public class BitemapListDataHolder {
     }
 
     // load whatever we have in db
-    private static void loadListsFromDB(Context context) {
+    private void loadListsFromDB(Context context) {
         new LoadFoodTrucksFromDB(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         new LoadSchedulesFromDB(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         // TODO: new LoadEventsFromDB().execute();
 
     }
 
-    private static boolean hasNetworkConnection(Context context) {
+    private boolean hasNetworkConnection(Context context) {
         ConnectivityManager connMgr = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -106,7 +135,7 @@ public class BitemapListDataHolder {
         return hasNetwork;
     }
 
-    private static class DownloadFoodTrucks extends AsyncTask<Void, Void, List<FoodTruck>> {
+    private class DownloadFoodTrucks extends AsyncTask<Void, Void, List<FoodTruck>> {
 
         private Context mContext;
 
@@ -129,7 +158,7 @@ public class BitemapListDataHolder {
         }
     }
 
-    private static class LoadFoodTrucksFromDB extends AsyncTask<Void, Void, List<FoodTruck>> {
+    private class LoadFoodTrucksFromDB extends AsyncTask<Void, Void, List<FoodTruck>> {
 
         Context mContext;
 
@@ -150,7 +179,7 @@ public class BitemapListDataHolder {
         }
     }
 
-    private static class DownloadSchedules extends AsyncTask<Void, Void, ArrayList<Schedule>> {
+    private class DownloadSchedules extends AsyncTask<Void, Void, ArrayList<Schedule>> {
 
         Context mContext;
 
@@ -173,7 +202,7 @@ public class BitemapListDataHolder {
         }
     }
 
-    private static class LoadSchedulesFromDB extends AsyncTask<Void, Void, ArrayList<Schedule>> {
+    private class LoadSchedulesFromDB extends AsyncTask<Void, Void, ArrayList<Schedule>> {
 
         Context mContext;
 
@@ -195,7 +224,7 @@ public class BitemapListDataHolder {
     }
 
     // Only send init_complete signal when all three lists are ready
-    private static synchronized void addModeAndCheckReady(int mode, Context context) {
+    private synchronized void addModeAndCheckReady(int mode, Context context) {
         mListsReadyMode |= mode;
 
         // All lists are ready, initialize the foodtruck map and send init_complete broadcast
@@ -221,19 +250,19 @@ public class BitemapListDataHolder {
         }
     }
 
-    public static ArrayList<Schedule> getSchedules() {
+    public ArrayList<Schedule> getSchedules() {
         return mSchedules;
     }
 
-    public static List<FoodTruck> getFoodTrucks() {
+    public List<FoodTruck> getFoodTrucks() {
         return mFoodTrucks;
     }
 
-    public static FoodTruck findFoodtruckFromId(long foodtruckId) {
+    public FoodTruck findFoodtruckFromId(long foodtruckId) {
         return mFoodTruckMap.get(foodtruckId);
     }
 
-    public static Schedule findScheduleFromId(long scheduleId) {
+    public Schedule findScheduleFromId(long scheduleId) {
         return mScheduleMap.get(scheduleId);
     }
 }

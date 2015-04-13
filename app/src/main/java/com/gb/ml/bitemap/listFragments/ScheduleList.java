@@ -97,11 +97,13 @@ public class ScheduleList extends BaseList {
                 mVh = (ViewHolder) convertView.getTag();
             }
             final Schedule mS = mSchedules.get(position);
-            final FoodTruck mFt = BitemapListDataHolder.findFoodtruckFromId(mS.getFoodtruckId());
+            final FoodTruck mFt = BitemapListDataHolder.getInstance().findFoodtruckFromId(
+                    mS.getFoodtruckId());
             mVh.mLogoView.setImageUrl(mFt.getFullUrlForLogo(),
                     VolleyNetworkAccessor.getInstance(getActivity()).getImageLoader());
             mVh.mFoodTruckNameView.setText(
-                    BitemapListDataHolder.findFoodtruckFromId(mS.getFoodtruckId()).getName());
+                    BitemapListDataHolder.getInstance().findFoodtruckFromId(mS.getFoodtruckId())
+                            .getName());
             mVh.mScheduleStart.setText(mS.getStartTimeString());
             mVh.mScheduleEnd.setText(mS.getEndTimeString());
 

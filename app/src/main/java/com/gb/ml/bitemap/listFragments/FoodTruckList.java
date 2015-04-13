@@ -39,12 +39,12 @@ public class FoodTruckList extends BaseList {
 
         @Override
         public int getCount() {
-            return BitemapListDataHolder.getFoodTrucks().size();
+            return BitemapListDataHolder.getInstance().getFoodTrucks().size();
         }
 
         @Override
         public Object getItem(int position) {
-            return BitemapListDataHolder.getFoodTrucks().get(position);
+            return BitemapListDataHolder.getInstance().getFoodTrucks().get(position);
         }
 
         @Override
@@ -68,7 +68,7 @@ public class FoodTruckList extends BaseList {
                 mVh = (ViewHolder) convertView.getTag();
             }
 
-            final FoodTruck mFt = BitemapListDataHolder.getFoodTrucks().get(position);
+            final FoodTruck mFt = BitemapListDataHolder.getInstance().getFoodTrucks().get(position);
             mVh.mLogoView.setImageUrl(mFt.getFullUrlForLogo(),
                     VolleyNetworkAccessor.getInstance(getActivity()).getImageLoader());
             mVh.mFoodTruckNameView.setText(mFt.getName());
@@ -99,7 +99,8 @@ public class FoodTruckList extends BaseList {
     AdapterView.OnItemClickListener createItemClickListener() {
         return new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final long truckId = BitemapListDataHolder.getFoodTrucks().get(position).getId();
+                final long truckId = BitemapListDataHolder.getInstance().getFoodTrucks()
+                        .get(position).getId();
                 final Intent i = new Intent(getActivity(), DetailActivity.class);
                 i.putExtra(DetailActivity.FOODTRUCK_ID, truckId);
                 startActivity(i);

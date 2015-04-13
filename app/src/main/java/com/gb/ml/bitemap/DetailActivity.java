@@ -88,7 +88,7 @@ public class DetailActivity extends ActionBarActivity {
         initializeFragments();
         initializeGallery();
         initializeSeeAllButton();
-        mTruck = BitemapListDataHolder.findFoodtruckFromId(mTruckId);
+        mTruck = BitemapListDataHolder.getInstance().findFoodtruckFromId(mTruckId);
         setTitle(mTruck.getName());
 
         ((NetworkImageView) findViewById(R.id.detail_logo))

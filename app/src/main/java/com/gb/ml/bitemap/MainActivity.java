@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BitemapListDataHolder.syncDatabaseWithSever(getApplicationContext());
+        BitemapListDataHolder.getInstance(getApplicationContext()).syncDatabaseWithSever();
     }
 
     @Override

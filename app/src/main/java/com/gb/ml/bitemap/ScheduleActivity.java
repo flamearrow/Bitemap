@@ -44,7 +44,7 @@ public class ScheduleActivity extends BitemapActionBarActivity {
         if (getFragmentManager().findFragmentByTag(LIST_FRAGMENT) == null) {
             final Bundle args = new Bundle();
             args.putParcelableArrayList(SchedulesMapFragment.SCHEDULES,
-                    BitemapListDataHolder.getSchedules());
+                    BitemapListDataHolder.getInstance().getSchedules());
             mSchedulesList = new ScheduleList();
             mSchedulesMap = new SchedulesMapFragment();
             mSchedulesList.setArguments(args);
