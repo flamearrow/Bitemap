@@ -37,6 +37,7 @@ public class BitemapListDataHolder {
 
     private static Map<Long, FoodTruck> mFoodTruckMap;
 
+    private static Map<Long, Schedule> mScheduleMap;
 
     private static int mListsReadyMode;
 
@@ -204,6 +205,11 @@ public class BitemapListDataHolder {
             for (FoodTruck ft : mFoodTrucks) {
                 mFoodTruckMap.put(ft.getId(), ft);
             }
+            mScheduleMap = new HashMap<>();
+            for (Schedule s : mSchedules) {
+                mScheduleMap.put(s.getId(), s);
+            }
+
             Log.d(TAG, "all done! send init_complete broadcast");
             Intent completeIntent = new Intent(INIT_COMPLETE);
             completeIntent.putExtra(NETWORK, hasNetwork);
@@ -225,5 +231,9 @@ public class BitemapListDataHolder {
 
     public static FoodTruck findFoodtruckFromId(long foodtruckId) {
         return mFoodTruckMap.get(foodtruckId);
+    }
+
+    public static Schedule findScheduleFromId(long scheduleId) {
+        return mScheduleMap.get(scheduleId);
     }
 }

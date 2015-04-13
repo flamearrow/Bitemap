@@ -3,6 +3,7 @@ package com.gb.ml.bitemap;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Criteria;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -29,7 +31,6 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -87,6 +88,16 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
             for (Schedule s : mScheduleList) {
                 mScheduleMarkerMap.put(s, mGoogleMap.addMarker(createMarker(s)));
             }
+            mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+                    final Schedule schedule = BitemapListDataHolder
+                            .findScheduleFromId(Long.valueOf(marker.getTitle()));
+                    final Intent i = new Intent(getActivity(), DetailActivity.class);
+                    i.putExtra(DetailActivity.FOODTRUCK_ID, schedule.getFoodtruckId());
+                    startActivity(i);
+                }
+            });
         }
     }
 
@@ -142,13 +153,7 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
     }
 
     private MarkerOptions createMarker(Schedule schedule) {
-        final FoodTruck truck = BitemapListDataHolder
-                .findFoodtruckFromId(schedule.getFoodtruckId());
-        return new MarkerOptions()
-                .title("" + truck.getId())
-                .snippet(schedule.getDateString() + FoodTruckConstants.AND
-                        + schedule.getTimeString())
-                .position(schedule.getLocation());
+        return new MarkerOptions().title("" + schedule.getId()).position(schedule.getLocation());
     }
 
     private LatLng getMyLocation() {
@@ -163,11 +168,13 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
     @Override
     public View getInfoWindow(final Marker marker) {
         final LayoutInflater li = LayoutInflater.from(getActivity());
-        final GridLayout ll = (GridLayout) li.inflate(R.layout.map_info_window, null);
-        final FoodTruck truck = BitemapListDataHolder.findFoodtruckFromId(
-                Long.valueOf(marker.getTitle()));
-        ((TextView) ll.findViewById(R.id.map_info_name)).setText(truck.getName());
-        final ImageView imageView = (ImageView) ll.findViewById(R.id.map_info_logo);
+        final GridLayout view = (GridLayout) li.inflate(R.layout.map_info_window, null);
+        final Schedule schedule = BitemapListDataHolder
+                .findScheduleFromId(Long.valueOf(marker.getTitle()));
+        final FoodTruck truck = BitemapListDataHolder
+                .findFoodtruckFromId(schedule.getFoodtruckId());
+        ((TextView) view.findViewById(R.id.map_info_name)).setText(truck.getName());
+        final ImageView imageView = (ImageView) view.findViewById(R.id.map_info_logo);
         VolleyNetworkAccessor.getInstance(getActivity()).getImageLoader()
                 .get(truck.getFullUrlForLogo(),
                         new ImageLoader.ImageListener() {
@@ -190,12 +197,9 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
                                 }
                             }
                         });
-
-        final String date = marker.getSnippet().split(FoodTruckConstants.AND)[0];
-        final String time = marker.getSnippet().split(FoodTruckConstants.AND)[1];
-        ((TextView) ll.findViewById(R.id.map_info_date)).setText(date);
-        ((TextView) ll.findViewById(R.id.map_info_time)).setText(time);
-        return ll;
+        ((TextView) view.findViewById(R.id.map_info_time)).setText(schedule.getTimeString());
+        ((TextView) view.findViewById(R.id.map_info_address)).setText(schedule.getAddress());
+        return view;
     }
 
     @Override

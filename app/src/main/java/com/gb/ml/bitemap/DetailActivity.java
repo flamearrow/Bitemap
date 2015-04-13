@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -157,7 +158,6 @@ public class DetailActivity extends ActionBarActivity {
             protected void onPostExecute(ArrayList<Uri> uris) {
                 mGalleryURIs = uris;
                 for (final Uri uri : uris) {
-
                     VolleyNetworkAccessor.getInstance(activity).getImageLoader()
                             .get(NetworkConstants.SERVER_IP + uri.getPath(),
                                     new ImageLoader.ImageListener() {
