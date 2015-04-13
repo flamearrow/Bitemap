@@ -1,11 +1,15 @@
 package com.gb.ml.bitemap;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 
 import com.gb.ml.bitemap.listFragments.ScheduleList;
 import com.gb.ml.bitemap.pojo.Schedule;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.Marker;
 
 /**
  * Schedules of each food truck
@@ -19,6 +23,8 @@ public class ScheduleActivity extends BitemapActionBarActivity {
     private Handler mHandler;
 
     private ScheduleList.OnScheduleClickListener mOnScheduleClickListener;
+
+    private GoogleMap.OnInfoWindowClickListener mOnInfoWindowClickListener;
 
     private static final String MAP_FRAGMENT = "MAP_FRAGMENT";
 
@@ -36,8 +42,28 @@ public class ScheduleActivity extends BitemapActionBarActivity {
                 switchMapList(null, schedule);
             }
         };
+        mOnInfoWindowClickListener = new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                final Schedule schedule = BitemapListDataHolder
+                        .getInstance().findScheduleFromId(Long.valueOf(marker.getTitle()));
+                final Intent i = new Intent(getMySelf(), DetailActivity.class);
+                i.putExtra(DetailActivity.FOODTRUCK_ID, schedule.getFoodtruckId());
+                startActivity(i);
+            }
+        };
         initializeFragments();
         mHandler = new Handler(getMainLooper());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSchedulesMap.setOnInfoWindowClickListenerOnMap(mOnInfoWindowClickListener);
+    }
+
+    private Activity getMySelf() {
+        return this;
     }
 
     private void initializeFragments() {

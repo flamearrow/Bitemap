@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -88,16 +87,7 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
             for (Schedule s : mScheduleList) {
                 mScheduleMarkerMap.put(s, mGoogleMap.addMarker(createMarker(s)));
             }
-            mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                @Override
-                public void onInfoWindowClick(Marker marker) {
-                    final Schedule schedule = BitemapListDataHolder
-                            .getInstance().findScheduleFromId(Long.valueOf(marker.getTitle()));
-                    final Intent i = new Intent(getActivity(), DetailActivity.class);
-                    i.putExtra(DetailActivity.FOODTRUCK_ID, schedule.getFoodtruckId());
-                    startActivity(i);
-                }
-            });
+
         }
     }
 
@@ -205,5 +195,9 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
     @Override
     public View getInfoContents(Marker marker) {
         return null;
+    }
+
+    public void setOnInfoWindowClickListenerOnMap(GoogleMap.OnInfoWindowClickListener listener) {
+        mGoogleMap.setOnInfoWindowClickListener(listener);
     }
 }

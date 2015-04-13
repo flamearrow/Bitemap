@@ -39,9 +39,6 @@ public class ScheduleList extends BaseList {
         mOnScheduleClickListenerList = new HashSet<>();
     }
 
-    public int getSize() {
-        return mOnScheduleClickListenerList.size();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
