@@ -96,7 +96,7 @@ public class DetailActivity extends ActionBarActivity {
 
         ((TextView) findViewById(R.id.detail_truck_name)).setText(mTruck.getName());
         ((TextView) findViewById(R.id.detail_category)).setText(mTruck.getCategory());
-
+        ((TextView) findViewById(R.id.detail_website)).setText(mTruck.getUrl());
         mHandler = new Handler(getMainLooper());
         mLayoutInflater = LayoutInflater.from(this);
     }

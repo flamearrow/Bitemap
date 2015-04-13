@@ -3,25 +3,26 @@
                 android:layout_height="fill_parent" android:id="@+id/activity_detail"
                 xmlns:android="http://schemas.android.com/apk/res/android">
     <GridLayout android:layout_width="wrap_content" android:layout_height="100dp"
-                android:columnCount="2" android:rowCount="2"
+                android:columnCount="2" android:rowCount="3"
                 android:layout_centerHorizontal="true" android:layout_alignParentTop="true"
-                android:id="@+id/detail_info">
+                android:id="@+id/detail_info" android:layout_alignParentLeft="true">
         <com.android.volley.toolbox.NetworkImageView android:id="@+id/detail_logo"
                                                      android:layout_columnSpan="1"
-                                                     android:layout_rowSpan="2"
-                                                     android:layout_width="70dp"
-                                                     android:layout_height="70dp"
+                                                     android:layout_rowSpan="3"
+                                                     android:layout_width="100dp"
+                                                     android:layout_height="100dp"
                                                      android:layout_margin="5dp"/>
         <TextView android:id="@+id/detail_truck_name" android:layout_columnSpan="1"
                   android:layout_rowSpan="1"
                   android:textStyle="bold"/>
         <TextView android:id="@+id/detail_category" android:layout_columnSpan="1"
                   android:layout_rowSpan="1"/>
+        <TextView android:id="@+id/detail_website" android:layout_columnSpan="1"
+                  android:layout_rowSpan="1"/>
     </GridLayout>
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-              android:text="@string/gallery" android:layout_marginLeft="20dp"
-              android:layout_below="@id/detail_info" android:id="@+id/gallery_banner"
-              android:textStyle="bold|italic"/>
+              android:text="@string/gallery" android:layout_marginLeft="10dp"
+              android:layout_below="@id/detail_info" android:id="@+id/gallery_banner"/>
     <HorizontalScrollView android:layout_width="fill_parent"
                           android:layout_height="wrap_content"
                           android:layout_below="@id/gallery_banner" android:id="@+id/gallery">
@@ -33,9 +34,8 @@
             android:layout_centerInParent="true" android:text="@string/see_all"
             android:id="@+id/btn_see_all_pics" android:layout_below="@id/gallery"/>
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-              android:text="@string/upcomming_schedules" android:layout_marginLeft="20dp"
-              android:layout_below="@id/btn_see_all_pics" android:id="@+id/upcoming_banner"
-              android:textStyle="bold|italic"/>
+              android:text="@string/upcomming_schedules" android:layout_marginLeft="10dp"
+              android:layout_below="@id/btn_see_all_pics" android:id="@+id/upcoming_banner"/>
     <FrameLayout android:id="@+id/schedules_container"
                  android:layout_width="match_parent"
                  android:layout_height="fill_parent"
