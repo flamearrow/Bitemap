@@ -103,6 +103,9 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
      * Enable zooming the map view to contain all markers, zoom is done after map is layed out.
      */
     public void zoomForAllMarkers() {
+        if (mScheduleMarkerMap.size() == 0) {
+            return;
+        }
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         for (Marker m : mScheduleMarkerMap.values()) {
             if (m.isInfoWindowShown()) {
