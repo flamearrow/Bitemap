@@ -210,6 +210,13 @@ public class DetailActivity extends ActionBarActivity {
                         mSchedulesMapFragment.enableMarkerForSchedule(scheduleToHighlight);
                     }
                 });
+            } else {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSchedulesMapFragment.zoomForAllMarkers();
+                    }
+                });
             }
         } else {
             getFragmentManager().beginTransaction().setCustomAnimations(
@@ -222,6 +229,13 @@ public class DetailActivity extends ActionBarActivity {
                     @Override
                     public void run() {
                         mSchedulesMapFragment.enableMarkerForSchedule(scheduleToHighlight);
+                    }
+                });
+            } else {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSchedulesMapFragment.zoomForAllMarkers();
                     }
                 });
             }

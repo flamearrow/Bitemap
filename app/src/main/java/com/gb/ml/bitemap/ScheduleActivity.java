@@ -84,6 +84,13 @@ public class ScheduleActivity extends BitemapActionBarActivity {
                         mSchedulesMap.enableMarkerForSchedule(scheduleToHighlight);
                     }
                 });
+            } else {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSchedulesMap.zoomForAllMarkers();
+                    }
+                });
             }
         }
     }

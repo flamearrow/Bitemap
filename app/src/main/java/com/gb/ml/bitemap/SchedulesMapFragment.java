@@ -1,5 +1,6 @@
 package com.gb.ml.bitemap;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,12 +8,14 @@ import android.graphics.BitmapFactory;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,10 +25,13 @@ import com.android.volley.toolbox.ImageLoader;
 import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -81,7 +87,6 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
             for (Schedule s : mScheduleList) {
                 mScheduleMarkerMap.put(s, mGoogleMap.addMarker(createMarker(s)));
             }
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getMyLocation(), 12));
         }
     }
 
@@ -92,6 +97,45 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
     public void enableMarkerForSchedule(Schedule schedule) {
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(schedule.getLocation(), 12));
         mScheduleMarkerMap.get(schedule).showInfoWindow();
+    }
+
+    /**
+     * Enable zooming the map view to contain all markers, zoom is done after map is layed out.
+     */
+    public void zoomForAllMarkers() {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker m : mScheduleMarkerMap.values()) {
+            if (m.isInfoWindowShown()) {
+                m.hideInfoWindow();
+            }
+            builder.include(m.getPosition());
+        }
+        LatLngBounds bounds = builder.build();
+        final CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 10);
+        try {
+            mGoogleMap.moveCamera(cu);
+        } catch (IllegalStateException e) {
+            final View mapView = getView();
+            if (mapView.getViewTreeObserver().isAlive()) {
+                mapView.getViewTreeObserver().addOnGlobalLayoutListener(
+                        new ViewTreeObserver.OnGlobalLayoutListener() {
+                            @SuppressWarnings("deprecation")
+                            @SuppressLint("NewApi")
+                            // We check which build version we are using.
+                            @Override
+                            public void onGlobalLayout() {
+                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                                    mapView.getViewTreeObserver()
+                                            .removeGlobalOnLayoutListener(this);
+                                } else {
+                                    mapView.getViewTreeObserver()
+                                            .removeOnGlobalLayoutListener(this);
+                                }
+                                mGoogleMap.moveCamera(cu);
+                            }
+                        });
+            }
+        }
     }
 
     private MarkerOptions createMarker(Schedule schedule) {
