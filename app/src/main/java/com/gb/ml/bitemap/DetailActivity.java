@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -126,7 +125,7 @@ public class DetailActivity extends ActionBarActivity {
         getFragmentManager().beginTransaction().hide(mSchedulesMapFragment).commit();
     }
 
-    private void addImageToGallery(Bitmap newImage) {
+    private void addImageToGallery(Bitmap newImage, final int index) {
         final ImageView iv = (ImageView) mLayoutInflater
                 .inflate(R.layout.gallery_preview_item, mGallery, false);
         iv.setImageBitmap(newImage);
@@ -134,8 +133,10 @@ public class DetailActivity extends ActionBarActivity {
         iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("mlgb", "you're clicking an view: " + v.getId());
-                Log.d("mlgb", "you're clicking an image view: " + iv.getId());
+                Intent i = new Intent(getApplicationContext(), FullScreenImageActivity.class);
+                i.putParcelableArrayListExtra(FoodTruckConstants.IMAGE_URIS, mGalleryURIs);
+                i.putExtra(FoodTruckConstants.POSITION, index);
+                startActivity(i);
             }
         });
         mGallery.addView(iv);
@@ -157,9 +158,10 @@ public class DetailActivity extends ActionBarActivity {
             @Override
             protected void onPostExecute(ArrayList<Uri> uris) {
                 mGalleryURIs = uris;
-                for (final Uri uri : uris) {
+                for (int i = 0; i < uris.size(); i++) {
+                    final int finalI = i;
                     VolleyNetworkAccessor.getInstance(activity).getImageLoader()
-                            .get(NetworkConstants.SERVER_IP + uri.getPath(),
+                            .get(NetworkConstants.SERVER_IP + uris.get(i).getPath(),
                                     new ImageLoader.ImageListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
@@ -170,7 +172,7 @@ public class DetailActivity extends ActionBarActivity {
                                         public void onResponse(ImageLoader.ImageContainer response,
                                                 boolean isImmediate) {
                                             if (response.getBitmap() != null) {
-                                                addImageToGallery(response.getBitmap());
+                                                addImageToGallery(response.getBitmap(), finalI);
                                             }
                                             if (!mSeeAllButton.isEnabled()) {
                                                 mSeeAllButton.setEnabled(true);
@@ -190,7 +192,7 @@ public class DetailActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), GridViewGalleryActivity.class);
-                i.putParcelableArrayListExtra(GridViewGalleryActivity.IMAGE_URIS, mGalleryURIs);
+                i.putParcelableArrayListExtra(FoodTruckConstants.IMAGE_URIS, mGalleryURIs);
                 startActivity(i);
             }
         });

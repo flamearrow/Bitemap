@@ -3,9 +3,9 @@ package com.gb.ml.bitemap;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,26 +18,22 @@ import android.widget.ImageView;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
 import com.gb.ml.bitemap.network.NetworkConstants;
 import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GridViewGalleryActivity extends Activity {
 
     private static final String TAG = "GridViewGalleryActivity";
 
-    public static final String IMAGE_URIS = "IMAGE_URIS";
-
-    // TODO: remove this after we have global lru cache
     private Map<Uri, Bitmap> mBitmapCache;
 
     private GridView mGridView;
 
-    private List<Uri> mUris;
+    private ArrayList<Uri> mUris;
 
     private int mColNum;
 
@@ -57,7 +53,7 @@ public class GridViewGalleryActivity extends Activity {
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        mUris = getIntent().getParcelableArrayListExtra(IMAGE_URIS);
+        mUris = getIntent().getParcelableArrayListExtra(FoodTruckConstants.IMAGE_URIS);
 
         mGridView = (GridView) findViewById(R.id.grid_view);
         mGridView.setAdapter(new GridViewGalleryAdapter());
@@ -144,6 +140,9 @@ public class GridViewGalleryActivity extends Activity {
             if (convertView == null) {
                 imageView = (ImageView) LayoutInflater.from(getApplicationContext())
                         .inflate(R.layout.gallery_item, parent, false);
+                OnImageClickListener ocl = new OnImageClickListener();
+                imageView.setTag(ocl);
+                imageView.setOnClickListener(ocl);
             } else {
                 imageView = (ImageView) convertView;
             }
@@ -152,7 +151,26 @@ public class GridViewGalleryActivity extends Activity {
             if (bm != null) {
                 imageView.setImageBitmap(bm);
             }
+            ((OnImageClickListener) imageView.getTag()).setPosition(position);
             return imageView;
+        }
+
+        class OnImageClickListener implements View.OnClickListener {
+
+            private int mPosition;
+
+            void setPosition(int position) {
+                mPosition = position;
+            }
+
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), FullScreenImageActivity.class);
+                i.putParcelableArrayListExtra(FoodTruckConstants.IMAGE_URIS, mUris);
+                i.putExtra(FoodTruckConstants.POSITION, mPosition);
+                startActivity(i);
+
+            }
         }
     }
 }
