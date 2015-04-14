@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.gb.ml.bitemap.BitemapListDataHolder;
-import com.gb.ml.bitemap.DetailActivity;
 import com.gb.ml.bitemap.R;
 import com.gb.ml.bitemap.SchedulesMapFragment;
 import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
@@ -20,8 +19,6 @@ import com.gb.ml.bitemap.pojo.Schedule;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -85,8 +82,8 @@ public class ScheduleList extends BaseList {
                         (NetworkImageView) (convertView
                                 .findViewById(R.id.food_truck_logo)),
                         (TextView) (convertView.findViewById(R.id.food_truck_name)),
-                        (TextView) (convertView.findViewById(R.id.schedule_start)),
-                        (TextView) (convertView.findViewById(R.id.schedule_end)));
+                        (TextView) (convertView.findViewById(R.id.schedule_time)),
+                        (TextView) (convertView.findViewById(R.id.schedule_address)));
                 convertView.setTag(mVh);
 
 
@@ -101,8 +98,8 @@ public class ScheduleList extends BaseList {
             mVh.mFoodTruckNameView.setText(
                     BitemapListDataHolder.getInstance().findFoodtruckFromId(mS.getFoodtruckId())
                             .getName());
-            mVh.mScheduleStart.setText(mS.getStartTimeString());
-            mVh.mScheduleEnd.setText(mS.getEndTimeString());
+            mVh.mScheduleTime.setText(mS.getTimeString());
+            mVh.mScheduleAddress.setText(mS.getAddress());
 
             return convertView;
         }
@@ -111,15 +108,15 @@ public class ScheduleList extends BaseList {
 
             NetworkImageView mLogoView;
 
-            TextView mFoodTruckNameView, mScheduleStart, mScheduleEnd;
+            TextView mFoodTruckNameView, mScheduleTime, mScheduleAddress;
 
             ViewHolder(NetworkImageView logoView, TextView foodTruckNameView,
                     TextView scheduleStart,
                     TextView scheduleEnd) {
                 mLogoView = logoView;
                 mFoodTruckNameView = foodTruckNameView;
-                mScheduleStart = scheduleStart;
-                mScheduleEnd = scheduleEnd;
+                mScheduleTime = scheduleStart;
+                mScheduleAddress = scheduleEnd;
             }
         }
     }
