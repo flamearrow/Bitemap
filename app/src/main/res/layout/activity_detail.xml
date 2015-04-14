@@ -24,7 +24,7 @@
               android:text="@string/gallery" android:layout_marginLeft="10dp"
               android:layout_below="@id/detail_info" android:id="@+id/gallery_banner"/>
     <HorizontalScrollView android:layout_width="fill_parent"
-                          android:layout_height="wrap_content"
+                          android:layout_height="80dp"
                           android:layout_below="@id/gallery_banner" android:id="@+id/gallery">
         <LinearLayout android:layout_width="wrap_content"
                       android:layout_height="wrap_content" android:id="@+id/gallery_id"
