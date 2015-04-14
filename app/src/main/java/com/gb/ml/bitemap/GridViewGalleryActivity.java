@@ -1,8 +1,6 @@
 package com.gb.ml.bitemap;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -22,7 +20,6 @@ import com.gb.ml.bitemap.network.NetworkConstants;
 import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 public class GridViewGalleryActivity extends Activity {
@@ -59,7 +56,6 @@ public class GridViewGalleryActivity extends Activity {
         mGridView.setAdapter(new GridViewGalleryAdapter());
         initilializeWidth();
         mGridView.setNumColumns(mColNum);
-        initializeMap();
     }
 
     // set screen width in portrait mode and screen height in landscape mode
@@ -76,45 +72,6 @@ public class GridViewGalleryActivity extends Activity {
                     - (LANDSCAPE_COLUMN + 1) * PADDING;
             mColNum = LANDSCAPE_COLUMN;
         }
-    }
-
-    private void initializeMap() {
-        RetainFragment retainFragment = RetainFragment
-                .findOrCreateRetainFragment(getFragmentManager());
-        if (retainFragment.mBitmapCache == null) {
-            mBitmapCache = new HashMap<>();
-            retainFragment.mBitmapCache = mBitmapCache;
-            for (Uri uri : mUris) {
-                mBitmapCache.put(uri, null);
-            }
-            pullImages();
-        }
-        mBitmapCache = retainFragment.mBitmapCache;
-    }
-
-    private void pullImages() {
-        for (final Uri uri : mBitmapCache.keySet()) {
-
-            VolleyNetworkAccessor.getInstance(this).getImageLoader()
-                    .get(NetworkConstants.SERVER_IP + uri.getPath(),
-                            new ImageLoader.ImageListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Log.w(TAG, "error loading image!");
-                                }
-
-                                @Override
-                                public void onResponse(ImageLoader.ImageContainer response,
-                                        boolean isImmediate) {
-                                    if (response.getBitmap() != null) {
-                                        mBitmapCache.put(uri, response.getBitmap());
-                                        ((BaseAdapter) mGridView.getAdapter())
-                                                .notifyDataSetChanged();
-                                    }
-                                }
-                            });
-        }
-
     }
 
     private class GridViewGalleryAdapter extends BaseAdapter {
@@ -135,22 +92,35 @@ public class GridViewGalleryActivity extends Activity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ImageView imageView;
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            final ImageView imageView;
             if (convertView == null) {
                 imageView = (ImageView) LayoutInflater.from(getApplicationContext())
                         .inflate(R.layout.gallery_item, parent, false);
+                imageView.setLayoutParams(new GridView.LayoutParams(mImageWidth, mImageWidth));
                 OnImageClickListener ocl = new OnImageClickListener();
                 imageView.setTag(ocl);
                 imageView.setOnClickListener(ocl);
             } else {
                 imageView = (ImageView) convertView;
             }
-            Bitmap bm = mBitmapCache.get(mUris.get(position));
-            imageView.setLayoutParams(new GridView.LayoutParams(mImageWidth, mImageWidth));
-            if (bm != null) {
-                imageView.setImageBitmap(bm);
-            }
+
+            VolleyNetworkAccessor.getInstance(getApplicationContext()).getImageLoader()
+                    .get(NetworkConstants.SERVER_IP + mUris.get(position).getPath(),
+                            new ImageLoader.ImageListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.w(TAG, "error loading image!");
+                                }
+
+                                @Override
+                                public void onResponse(ImageLoader.ImageContainer response,
+                                        boolean isImmediate) {
+                                    if (response.getBitmap() != null) {
+                                        imageView.setImageBitmap(response.getBitmap());
+                                    }
+                                }
+                            });
             ((OnImageClickListener) imageView.getTag()).setPosition(position);
             return imageView;
         }
@@ -173,27 +143,4 @@ public class GridViewGalleryActivity extends Activity {
             }
         }
     }
-}
-
-// Use this to buffer the bitmap map buffer
-class RetainFragment extends Fragment {
-
-    private static final String TAG = "RETAIN_FRAGMENT";
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
-
-    public static RetainFragment findOrCreateRetainFragment(FragmentManager fm) {
-        RetainFragment ret = (RetainFragment) fm.findFragmentByTag(TAG);
-        if (ret == null) {
-            ret = new RetainFragment();
-            fm.beginTransaction().add(ret, TAG).commit();
-        }
-        return ret;
-    }
-
-    Map<Uri, Bitmap> mBitmapCache;
 }
