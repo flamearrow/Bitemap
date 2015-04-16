@@ -1,10 +1,17 @@
 package com.gb.ml.bitemap;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import com.gb.ml.bitemap.listFragments.ScheduleList;
 import com.gb.ml.bitemap.pojo.Schedule;
@@ -14,7 +21,8 @@ import com.google.android.gms.maps.model.Marker;
 /**
  * Schedules of each food truck
  */
-public class ScheduleActivity extends BitemapActionBarActivity {
+public class ScheduleActivity extends BitemapActionBarActivity implements
+        AdapterView.OnItemSelectedListener {
 
     private ScheduleList mSchedulesList;
 
@@ -55,6 +63,36 @@ public class ScheduleActivity extends BitemapActionBarActivity {
         initializeFragments();
         mHandler = new Handler(getMainLooper());
     }
+
+    @Override
+    protected void categorySelect() {
+        final View layout = LayoutInflater.from(this)
+                .inflate(R.layout.date_category_filter, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        alertDialogBuilder.setView(layout);
+        alertDialogBuilder.setTitle("Pick a date and category..");
+        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.d("mlgb", "you clicked ok");
+            }
+        });
+
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+        Spinner categorySpinner = (Spinner) layout.findViewById(R.id.category_spinner);
+        Spinner dateSpinner = (Spinner) layout.findViewById(R.id.date_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter
+                .createFromResource(this, R.array.planets_array,
+                        android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(adapter);
+        dateSpinner.setAdapter(adapter);
+        categorySpinner.setOnItemSelectedListener(this);
+        dateSpinner.setOnItemSelectedListener(this);
+        alertDialog.show();
+    }
+
 
     @Override
     protected void onResume() {
@@ -119,5 +157,15 @@ public class ScheduleActivity extends BitemapActionBarActivity {
                 });
             }
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Log.d("mlgb", "you clicked item " + R.array.planets_array);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        Log.d("mlgb", "you didn't click any item");
     }
 }

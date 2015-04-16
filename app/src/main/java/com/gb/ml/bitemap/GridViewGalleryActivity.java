@@ -20,13 +20,10 @@ import com.gb.ml.bitemap.network.NetworkConstants;
 import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class GridViewGalleryActivity extends Activity {
 
     private static final String TAG = "GridViewGalleryActivity";
-
-    private Map<Uri, Bitmap> mBitmapCache;
 
     private GridView mGridView;
 

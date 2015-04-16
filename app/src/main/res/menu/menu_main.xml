@@ -1,7 +1,10 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_category" android:title="@string/menu_category"
+          app:showAsAction="ifRoom"
+          android:icon="@drawable/abc_ic_search_api_mtrl_alpha"/>
     <item android:id="@+id/menu_schedules" android:title="@string/menu_schedules_title"/>
     <item android:id="@+id/menu_all_trucks" android:title="@string/menu_all_trucks"/>
-    <item android:id="@+id/menu_category" android:title="@string/menu_category"/>
     <item android:id="@+id/menu_about" android:title="@string/menu_about"/>
     <item android:id="@+id/menu_clear_debug_db" android:title="@string/menu_clear_debug_db"/>
 </menu>

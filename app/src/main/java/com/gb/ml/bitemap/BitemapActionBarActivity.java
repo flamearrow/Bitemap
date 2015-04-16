@@ -34,6 +34,7 @@ public abstract class BitemapActionBarActivity extends ActionBarActivity {
                 break;
             case R.id.menu_category:
                 Toast.makeText(this, "category", Toast.LENGTH_SHORT).show();
+                categorySelect();
                 break;
             case R.id.menu_about:
                 Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
@@ -46,5 +47,9 @@ public abstract class BitemapActionBarActivity extends ActionBarActivity {
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    protected void categorySelect() {
+
     }
 }
