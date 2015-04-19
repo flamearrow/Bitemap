@@ -3,7 +3,6 @@ package com.gb.ml.bitemap;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Criteria;
@@ -84,11 +83,19 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
                     .getMap();
             mGoogleMap.setInfoWindowAdapter(this);
             mGoogleMap.setMyLocationEnabled(true);
-            for (Schedule s : mScheduleList) {
-                mScheduleMarkerMap.put(s, mGoogleMap.addMarker(createMarker(s)));
-            }
-
+            resetMarkers();
         }
+    }
+
+    private void resetMarkers() {
+        for (Marker m : mScheduleMarkerMap.values()) {
+            m.remove();
+        }
+        mScheduleMarkerMap.clear();
+        for (Schedule s : mScheduleList) {
+            mScheduleMarkerMap.put(s, mGoogleMap.addMarker(createMarker(s)));
+        }
+
     }
 
     /**
@@ -135,11 +142,23 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
                                     mapView.getViewTreeObserver()
                                             .removeOnGlobalLayoutListener(this);
                                 }
-                                mGoogleMap.moveCamera(cu);
+                                try {
+                                    mGoogleMap.moveCamera(cu);
+                                } catch (IllegalStateException e) {
+                                    // give up here
+                                    e.printStackTrace();
+                                    Log.w(TAG, "failed to adjust camera");
+                                }
                             }
                         });
             }
         }
+    }
+
+    public void updateList(List<Schedule> newSchedules) {
+        mScheduleList = newSchedules;
+        resetMarkers();
+        zoomForAllMarkers();
     }
 
     private MarkerOptions createMarker(Schedule schedule) {

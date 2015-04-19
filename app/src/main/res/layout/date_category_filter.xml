@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent" android:id="@+id/filter"
-              android:background="@color/material_blue_grey_800">
+              android:layout_height="match_parent" android:id="@+id/filter">
     <TextView android:layout_width="fill_parent" android:layout_height="wrap_content"
               android:text="@string/date" android:textColor="@color/opaque_red"/>
     <Spinner android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -12,5 +11,4 @@
               android:text="@string/menu_category" android:textColor="@color/opaque_red"/>
     <Spinner android:layout_width="fill_parent" android:layout_height="wrap_content"
              android:id="@+id/category_spinner"/>
-    <Button android:layout_width="fill_parent" android:layout_height="wrap_content"/>
 </LinearLayout>

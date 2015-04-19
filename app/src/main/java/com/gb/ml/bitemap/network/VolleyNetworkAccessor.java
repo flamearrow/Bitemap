@@ -51,8 +51,6 @@ public class VolleyNetworkAccessor {
         }
         return mInstance;
     }
-
-
 }
 
 /**

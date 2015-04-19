@@ -68,7 +68,7 @@ public class BitemapNetworkAccessor {
     public static ArrayList<Schedule> getSchedulesForDays(int days) {
         final Calendar start = Calendar.getInstance();
         final Calendar end = Calendar.getInstance();
-        end.add(Calendar.DAY_OF_MONTH, days);
+        end.add(Calendar.DAY_OF_YEAR, days);
         return getSchedules(start, end);
     }
 

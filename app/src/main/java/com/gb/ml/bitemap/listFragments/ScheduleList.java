@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.gb.ml.bitemap.BitemapListDataHolder;
+import com.gb.ml.bitemap.FoodTruckConstants;
 import com.gb.ml.bitemap.R;
 import com.gb.ml.bitemap.SchedulesMapFragment;
 import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
@@ -36,6 +37,10 @@ public class ScheduleList extends BaseList {
         mOnScheduleClickListenerList = new HashSet<>();
     }
 
+    public void updateList(ArrayList<Schedule> newSchedules) {
+        mSchedules = newSchedules;
+        ((BaseAdapter) getListAdapter()).notifyDataSetChanged();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,7 +103,8 @@ public class ScheduleList extends BaseList {
             mVh.mFoodTruckNameView.setText(
                     BitemapListDataHolder.getInstance().findFoodtruckFromId(mS.getFoodtruckId())
                             .getName());
-            mVh.mScheduleTime.setText(mS.getTimeString());
+            mVh.mScheduleTime
+                    .setText(mS.getDateString() + FoodTruckConstants.SPACE + mS.getTimeString());
             mVh.mScheduleAddress.setText(mS.getAddress());
 
             return convertView;

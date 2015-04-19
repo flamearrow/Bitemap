@@ -7,14 +7,25 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.gb.ml.bitemap.database.BitemapDBConnector;
 import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
+import com.gb.ml.bitemap.network.NetworkConstants;
+import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
 import com.gb.ml.bitemap.pojo.Event;
 import com.gb.ml.bitemap.pojo.FoodTruck;
 import com.gb.ml.bitemap.pojo.Schedule;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +40,8 @@ public class BitemapListDataHolder {
 
     public static final String NETWORK = "NETWORK";
 
+    public static final int DAYS_OF_SCHEDULE_TO_GET = 7;
+
     private static final int SCHEDULE_LIST_READY = 1 << 0;
 
     private static final int FOODTRUCK_LIST_READY = 1 << 1;
@@ -36,11 +49,14 @@ public class BitemapListDataHolder {
     // TODO: need to include EVENT_LIST_READY when event api is ready
     // private static final int EVENT_LIST_READY = 1 << 2;
 
-    private static final int ALL_LISTS_READY = SCHEDULE_LIST_READY | FOODTRUCK_LIST_READY;
+    private static final int CATEGORY_LIST_READY = 1 << 3;
 
-    private static final int DAYS_OF_SCHEDULE_TO_GET = 7;
+    private static final int ALL_LISTS_READY = SCHEDULE_LIST_READY | FOODTRUCK_LIST_READY
+            | CATEGORY_LIST_READY;
 
     private static BitemapListDataHolder mInstance;
+
+    private ArrayList<String> mCategory;
 
     private ArrayList<Schedule> mSchedules;
 
@@ -105,6 +121,8 @@ public class BitemapListDataHolder {
                 new DownloadFoodTrucks(mContext).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 new DownloadSchedules(mContext).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 // TODO: new DownloadEvents().execute();
+                // request category
+                requestCategory();
             }
         } else {
             Log.d(TAG, "no network connection, load whatever we have in db");
@@ -114,8 +132,45 @@ public class BitemapListDataHolder {
 
     }
 
+    private void requestCategory() {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,
+                NetworkConstants.CATEGORIES, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    String ret = (String) response.get(0);
+                    // This is an ugly hack
+                    //set('Asian','American','Indian','Chinese','Japanese','Mexican','Dessert',
+                    // 'Vietnamese','Hawaiian','BBQ','Seafood','South American','Mediterranean',
+                    // 'Vegan','Filipino','Thai','Korean','Other','European')
+                    mCategory = new ArrayList<>();
+                    mCategory.add(FoodTruckConstants.ALL);
+                    String sub = ret.substring(4, ret.indexOf(')'));
+                    String[] subs = sub.split(",");
+                    for (String category : subs) {
+                        mCategory.add(category.substring(1, category.length() - 1));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                addModeAndCheckReady(CATEGORY_LIST_READY, mContext);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Log.w(TAG, error.toString());
+            }
+        });
+        VolleyNetworkAccessor.getInstance(mContext).addToRequestQueue(jsonArrayRequest);
+    }
+
+    public ArrayList<String> getCategory() {
+        return mCategory;
+    }
+
     // TODO: initialize a peer request check if local db is in sync with remote db
-    private static boolean dbIsUpToDate() {
+    private boolean dbIsUpToDate() {
         return false;
     }
 
@@ -254,6 +309,28 @@ public class BitemapListDataHolder {
         return mSchedules;
     }
 
+    // return schedules in {@link i} days from today
+    public ArrayList<Schedule> getSchedulesOnDay(int i) {
+        if (i == 0) {
+            return mSchedules;
+        }
+        Calendar targetDay = Calendar.getInstance();
+        targetDay.set(Calendar.DAY_OF_YEAR, targetDay.get(Calendar.DAY_OF_YEAR) + i - 1);
+        ArrayList<Schedule> ret = new ArrayList<>();
+        for (Schedule s : mSchedules) {
+            if (sameDay(s.getStart(), targetDay)) {
+                ret.add(s);
+            }
+        }
+        Log.d("mlgb", "found " + ret.size() + " schedules");
+        return ret;
+    }
+
+    private boolean sameDay(Calendar day1, Calendar day2) {
+        return day1.get(Calendar.YEAR) == day2.get(Calendar.YEAR)
+                && day1.get(Calendar.DAY_OF_YEAR) == day2.get(Calendar.DAY_OF_YEAR);
+    }
+
     public List<FoodTruck> getFoodTrucks() {
         return mFoodTrucks;
     }
@@ -264,5 +341,18 @@ public class BitemapListDataHolder {
 
     public Schedule findScheduleFromId(long scheduleId) {
         return mScheduleMap.get(scheduleId);
+    }
+
+    public List<FoodTruck> getTruckCategory(String category) {
+        if (category.equals(FoodTruckConstants.ALL)) {
+            return mFoodTrucks;
+        }
+        List<FoodTruck> ret = new LinkedList<>();
+        for (FoodTruck ft : mFoodTrucks) {
+            if (ft.getCategory().contains(category)) {
+                ret.add(ft);
+            }
+        }
+        return ret;
     }
 }

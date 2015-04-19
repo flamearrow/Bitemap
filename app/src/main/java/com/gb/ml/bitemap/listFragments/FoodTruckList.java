@@ -1,5 +1,6 @@
 package com.gb.ml.bitemap.listFragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,15 +15,24 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.gb.ml.bitemap.BitemapListDataHolder;
 import com.gb.ml.bitemap.DetailActivity;
 import com.gb.ml.bitemap.R;
-import com.gb.ml.bitemap.network.NetworkConstants;
 import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
 import com.gb.ml.bitemap.pojo.FoodTruck;
+
+import java.util.List;
 
 
 /**
  * List of food truck stores, sorted by food truck name
  */
 public class FoodTruckList extends BaseList {
+
+    private List<FoodTruck> mFoodTrucks;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mFoodTrucks = BitemapListDataHolder.getInstance().getFoodTrucks();
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -39,12 +49,12 @@ public class FoodTruckList extends BaseList {
 
         @Override
         public int getCount() {
-            return BitemapListDataHolder.getInstance().getFoodTrucks().size();
+            return mFoodTrucks.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return BitemapListDataHolder.getInstance().getFoodTrucks().get(position);
+            return mFoodTrucks.get(position);
         }
 
         @Override
@@ -68,7 +78,7 @@ public class FoodTruckList extends BaseList {
                 mVh = (ViewHolder) convertView.getTag();
             }
 
-            final FoodTruck mFt = BitemapListDataHolder.getInstance().getFoodTrucks().get(position);
+            final FoodTruck mFt = mFoodTrucks.get(position);
             mVh.mLogoView.setImageUrl(mFt.getFullUrlForLogo(),
                     VolleyNetworkAccessor.getInstance(getActivity()).getImageLoader());
             mVh.mFoodTruckNameView.setText(mFt.getName());
@@ -92,6 +102,11 @@ public class FoodTruckList extends BaseList {
 
     }
 
+    public void updateCategory(String category) {
+        mFoodTrucks = BitemapListDataHolder.getInstance().getTruckCategory(category);
+        ((BaseAdapter) getListAdapter()).notifyDataSetChanged();
+    }
+
     /**
      * should open detail of a foodtruck
      */
@@ -99,8 +114,7 @@ public class FoodTruckList extends BaseList {
     AdapterView.OnItemClickListener createItemClickListener() {
         return new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final long truckId = BitemapListDataHolder.getInstance().getFoodTrucks()
-                        .get(position).getId();
+                final long truckId = mFoodTrucks.get(position).getId();
                 final Intent i = new Intent(getActivity(), DetailActivity.class);
                 i.putExtra(DetailActivity.FOODTRUCK_ID, truckId);
                 startActivity(i);

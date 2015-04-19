@@ -1,15 +1,12 @@
 package com.gb.ml.bitemap;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -18,11 +15,13 @@ import com.gb.ml.bitemap.pojo.Schedule;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+
 /**
  * Schedules of each food truck
  */
-public class ScheduleActivity extends BitemapActionBarActivity implements
-        AdapterView.OnItemSelectedListener {
+public class ScheduleActivity extends BitemapActionBarActivity {
 
     private ScheduleList mSchedulesList;
 
@@ -55,7 +54,7 @@ public class ScheduleActivity extends BitemapActionBarActivity implements
             public void onInfoWindowClick(Marker marker) {
                 final Schedule schedule = BitemapListDataHolder
                         .getInstance().findScheduleFromId(Long.valueOf(marker.getTitle()));
-                final Intent i = new Intent(getMySelf(), DetailActivity.class);
+                final Intent i = new Intent(ScheduleActivity.this, DetailActivity.class);
                 i.putExtra(DetailActivity.FOODTRUCK_ID, schedule.getFoodtruckId());
                 startActivity(i);
             }
@@ -72,27 +71,48 @@ public class ScheduleActivity extends BitemapActionBarActivity implements
 
         alertDialogBuilder.setView(layout);
         alertDialogBuilder.setTitle("Pick a date and category..");
+
+        final Spinner categorySpinner = (Spinner) layout.findViewById(R.id.category_spinner);
+        final Spinner dateSpinner = (Spinner) layout.findViewById(R.id.date_spinner);
+
+        categorySpinner.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item,
+                BitemapListDataHolder.getInstance().getCategory()));
+        dateSpinner.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item,
+                createDateArrayList(BitemapListDataHolder.DAYS_OF_SCHEDULE_TO_GET)));
+
         alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Log.d("mlgb", "you clicked ok");
+                ArrayList<Schedule> updatedSchedules = BitemapListDataHolder.getInstance()
+                        .getSchedulesOnDay(dateSpinner.getSelectedItemPosition());
+                mSchedulesList.updateList(updatedSchedules);
+                mSchedulesMap.updateList(updatedSchedules);
             }
         });
 
         final AlertDialog alertDialog = alertDialogBuilder.create();
-        Spinner categorySpinner = (Spinner) layout.findViewById(R.id.category_spinner);
-        Spinner dateSpinner = (Spinner) layout.findViewById(R.id.date_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(this, R.array.planets_array,
-                        android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categorySpinner.setAdapter(adapter);
-        dateSpinner.setAdapter(adapter);
-        categorySpinner.setOnItemSelectedListener(this);
-        dateSpinner.setOnItemSelectedListener(this);
         alertDialog.show();
     }
 
+    private ArrayList<String> createDateArrayList(int days) {
+        ArrayList<String> ret = new ArrayList<>(days + 2);
+        ret.add(FoodTruckConstants.ALL);
+        for (int i = 0; i <= days; i++) {
+            ret.add(getDate(i));
+        }
+        return ret;
+    }
+
+    // return a date string in position days from today
+    private String getDate(int position) {
+        Calendar targetDay = Calendar.getInstance();
+        targetDay.set(Calendar.DAY_OF_YEAR, targetDay.get(Calendar.DAY_OF_YEAR) + position);
+        String ret = (targetDay.get(Calendar.MONTH) + 1) + FoodTruckConstants.DASH + targetDay
+                .get(Calendar.DAY_OF_MONTH);
+        return ret;
+    }
 
     @Override
     protected void onResume() {
@@ -100,15 +120,11 @@ public class ScheduleActivity extends BitemapActionBarActivity implements
         mSchedulesMap.setOnInfoWindowClickListenerOnMap(mOnInfoWindowClickListener);
     }
 
-    private Activity getMySelf() {
-        return this;
-    }
-
     private void initializeFragments() {
         if (getFragmentManager().findFragmentByTag(LIST_FRAGMENT) == null) {
             final Bundle args = new Bundle();
             args.putParcelableArrayList(SchedulesMapFragment.SCHEDULES,
-                    BitemapListDataHolder.getInstance().getSchedules());
+                    BitemapListDataHolder.getInstance().getSchedulesOnDay(0));
             mSchedulesList = new ScheduleList();
             mSchedulesMap = new SchedulesMapFragment();
             mSchedulesList.setArguments(args);
@@ -157,15 +173,5 @@ public class ScheduleActivity extends BitemapActionBarActivity implements
                 });
             }
         }
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Log.d("mlgb", "you clicked item " + R.array.planets_array);
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        Log.d("mlgb", "you didn't click any item");
     }
 }

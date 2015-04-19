@@ -12,6 +12,8 @@ public class NetworkConstants {
 
     public static final String TRUCK_GALLERY = SERVER_IP + "/scripts/get_truck_img.php?truck=";
 
+    public static final String CATEGORIES = SERVER_IP + "/scripts/get_category.php";
+
     public static final String SLASH = "/";
 
     public static final String QUESTION_MARK = "?";
