@@ -1,5 +1,6 @@
 package com.gb.ml.bitemap;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -42,6 +43,8 @@ public class DetailActivity extends ActionBarActivity {
 
     private long mTruckId;
 
+    private int mButtonMoveDelta = -1;
+
     private FoodTruck mTruck;
 
     private Bitmap mDefaultBm;
@@ -59,6 +62,8 @@ public class DetailActivity extends ActionBarActivity {
     private ArrayList<Uri> mGalleryURIs;
 
     private Button mSeeAllButton;
+
+    private Button mSwitchButton;
 
     private ScheduleList.OnScheduleClickListener mOnScheduleClickListener
             = new ScheduleList.OnScheduleClickListener() {
@@ -87,6 +92,7 @@ public class DetailActivity extends ActionBarActivity {
         initializeFragments();
         initializeGallery();
         initializeSeeAllButton();
+        mSwitchButton = (Button) findViewById(R.id.detail_see_all);
         mTruck = BitemapListDataHolder.getInstance().findFoodtruckFromId(mTruckId);
         setTitle(mTruck.getName());
 
@@ -198,6 +204,31 @@ public class DetailActivity extends ActionBarActivity {
         });
     }
 
+    private void moveSwitchLeft() {
+        ObjectAnimator mover = ObjectAnimator
+                .ofFloat(mSwitchButton, "translationX", 0, 0 - getButtonMoveDelta());
+        mover.start();
+    }
+
+    private void moveSwitchRight() {
+        ObjectAnimator mover = ObjectAnimator
+                .ofFloat(mSwitchButton, "translationX", 0 - getButtonMoveDelta(), 0);
+        mover.start();
+    }
+
+    private int getButtonMoveDelta() {
+        if (mButtonMoveDelta < 0) {
+            int[] location = new int[2];
+            mSwitchButton.getLocationOnScreen(location);
+            int locationX = location[0];
+            int viewW = mSwitchButton.getWidth();
+            int rootW = mSwitchButton.getRootView().getWidth();
+            int margin = rootW - locationX - viewW;
+            mButtonMoveDelta = locationX - margin;
+        }
+        return mButtonMoveDelta;
+    }
+
     public void switchMapList(View v, final Schedule scheduleToHighlight) {
         if (mSchedulesMapFragment.isHidden()) {
             getFragmentManager().beginTransaction().setCustomAnimations(
@@ -220,27 +251,14 @@ public class DetailActivity extends ActionBarActivity {
                     }
                 });
             }
+            moveSwitchLeft();
         } else {
             getFragmentManager().beginTransaction().setCustomAnimations(
                     R.animator.card_flip_right_in, R.animator.card_flip_right_out,
                     R.animator.card_flip_left_in, R.animator.card_flip_left_out)
                     .hide(mSchedulesMapFragment)
                     .show(mScheduleList).commit();
-            if (scheduleToHighlight != null) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mSchedulesMapFragment.enableMarkerForSchedule(scheduleToHighlight);
-                    }
-                });
-            } else {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mSchedulesMapFragment.zoomForAllMarkers();
-                    }
-                });
-            }
+            moveSwitchRight();
         }
     }
 

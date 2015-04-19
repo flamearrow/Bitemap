@@ -1,5 +1,6 @@
 package com.gb.ml.bitemap;
 
+import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import com.gb.ml.bitemap.listFragments.ScheduleList;
@@ -27,11 +29,15 @@ public class ScheduleActivity extends BitemapActionBarActivity {
 
     private SchedulesMapFragment mSchedulesMap;
 
+    private Button mSwitchButton;
+
     private Handler mHandler;
 
     private ScheduleList.OnScheduleClickListener mOnScheduleClickListener;
 
     private GoogleMap.OnInfoWindowClickListener mOnInfoWindowClickListener;
+
+    private int mButtonMoveDelta = -1;
 
     private static final String MAP_FRAGMENT = "MAP_FRAGMENT";
 
@@ -61,6 +67,7 @@ public class ScheduleActivity extends BitemapActionBarActivity {
         };
         initializeFragments();
         mHandler = new Handler(getMainLooper());
+        mSwitchButton = (Button) findViewById(R.id.switch_button);
     }
 
     @Override
@@ -146,12 +153,38 @@ public class ScheduleActivity extends BitemapActionBarActivity {
         switchMapList(view, null);
     }
 
+    private void moveSwitchLeft() {
+        ObjectAnimator mover = ObjectAnimator
+                .ofFloat(mSwitchButton, "translationX", 0, 0 - getButtonMoveDelta());
+        mover.start();
+    }
+
+    private void moveSwitchRight() {
+        ObjectAnimator mover = ObjectAnimator
+                .ofFloat(mSwitchButton, "translationX", 0 - getButtonMoveDelta(), 0);
+        mover.start();
+    }
+
+    private int getButtonMoveDelta() {
+        if (mButtonMoveDelta < 0) {
+            int[] location = new int[2];
+            mSwitchButton.getLocationOnScreen(location);
+            int locationX = location[0];
+            int viewW = mSwitchButton.getWidth();
+            int rootW = mSwitchButton.getRootView().getWidth();
+            int margin = rootW - locationX - viewW;
+            mButtonMoveDelta = locationX - margin;
+        }
+        return mButtonMoveDelta;
+    }
+
     public void switchMapList(View view, final Schedule scheduleToHighlight) {
         if (mSchedulesList.isHidden()) {
             getFragmentManager().beginTransaction().setCustomAnimations(
                     R.animator.card_flip_right_in, R.animator.card_flip_right_out,
                     R.animator.card_flip_left_in, R.animator.card_flip_left_out)
                     .show(mSchedulesList).hide(mSchedulesMap).commit();
+            moveSwitchRight();
         } else {
             getFragmentManager().beginTransaction().setCustomAnimations(
                     R.animator.card_flip_right_in, R.animator.card_flip_right_out,
@@ -172,6 +205,7 @@ public class ScheduleActivity extends BitemapActionBarActivity {
                     }
                 });
             }
+            moveSwitchLeft();
         }
     }
 }

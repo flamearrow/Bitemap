@@ -322,7 +322,6 @@ public class BitemapListDataHolder {
                 ret.add(s);
             }
         }
-        Log.d("mlgb", "found " + ret.size() + " schedules");
         return ret;
     }
 
