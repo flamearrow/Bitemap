@@ -138,17 +138,9 @@ public class BitemapListDataHolder {
             @Override
             public void onResponse(JSONArray response) {
                 try {
-                    String ret = (String) response.get(0);
-                    // This is an ugly hack
-                    //set('Asian','American','Indian','Chinese','Japanese','Mexican','Dessert',
-                    // 'Vietnamese','Hawaiian','BBQ','Seafood','South American','Mediterranean',
-                    // 'Vegan','Filipino','Thai','Korean','Other','European')
                     mCategory = new ArrayList<>();
-                    mCategory.add(FoodTruckConstants.ALL);
-                    String sub = ret.substring(4, ret.indexOf(')'));
-                    String[] subs = sub.split(",");
-                    for (String category : subs) {
-                        mCategory.add(category.substring(1, category.length() - 1));
+                    for(int i = 0; i < response.length(); i++) {
+                        mCategory.add(response.getString(i));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
