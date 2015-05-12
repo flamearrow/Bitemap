@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.gb.ml.bitemap.network.BitemapNetworkAccessor;
 import com.gb.ml.bitemap.network.NetworkConstants;
 import com.gb.ml.bitemap.network.VolleyNetworkAccessor;
 
@@ -61,7 +62,8 @@ public class FullScreenImageActivity extends Activity {
                     .inflate(R.layout.full_screen_image, container, false);
             final ImageView iv = (ImageView) ll.findViewById(R.id.img);
             VolleyNetworkAccessor.getInstance(getApplicationContext()).getImageLoader().get(
-                    NetworkConstants.SERVER_IP + mUriList.get(position),
+                    BitemapNetworkAccessor.createFullImageUri(
+                            NetworkConstants.SERVER_IP + mUriList.get(position)),
                     new ImageLoader.ImageListener() {
                         @Override
                         public void onResponse(ImageLoader.ImageContainer response,

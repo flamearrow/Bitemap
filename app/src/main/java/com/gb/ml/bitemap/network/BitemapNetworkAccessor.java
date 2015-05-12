@@ -396,4 +396,8 @@ public class BitemapNetworkAccessor {
             e.printStackTrace();
         }
     }
+
+    public static String createFullImageUri(String thumbUri) {
+        return thumbUri.replace("thumb", "");
+    }
 }
