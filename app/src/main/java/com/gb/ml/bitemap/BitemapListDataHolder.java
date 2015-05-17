@@ -139,7 +139,8 @@ public class BitemapListDataHolder {
             public void onResponse(JSONArray response) {
                 try {
                     mCategory = new ArrayList<>();
-                    for(int i = 0; i < response.length(); i++) {
+                    mCategory.add("All");
+                    for (int i = 0; i < response.length(); i++) {
                         mCategory.add(response.getString(i));
                     }
                 } catch (JSONException e) {
@@ -315,6 +316,26 @@ public class BitemapListDataHolder {
             }
         }
         return ret;
+    }
+
+    public ArrayList<Schedule> getSchedulesWithCategory(int i, ArrayList<Schedule> schedules) {
+        // 0 is All
+        if (i == 0) {
+            return schedules;
+        }
+        String category = mCategory.get(i);
+        ArrayList<Schedule> ret = new ArrayList<>();
+        for (Schedule s : schedules) {
+            if (category.equals(findFoodtruckFromId(s.getFoodtruckId()).getCategory())) {
+                ret.add(s);
+            }
+        }
+        return ret;
+    }
+
+    public ArrayList<Schedule> getSchedulesOnDayAndCategory(int dayIndex, int categoryIndex) {
+        ArrayList<Schedule> ret = getSchedulesOnDay(dayIndex);
+        return getSchedulesWithCategory(categoryIndex, ret);
     }
 
     private boolean sameDay(Calendar day1, Calendar day2) {

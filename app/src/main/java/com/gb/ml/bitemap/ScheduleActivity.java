@@ -93,7 +93,8 @@ public class ScheduleActivity extends BitemapActionBarActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ArrayList<Schedule> updatedSchedules = BitemapListDataHolder.getInstance()
-                        .getSchedulesOnDay(dateSpinner.getSelectedItemPosition());
+                        .getSchedulesOnDayAndCategory(dateSpinner.getSelectedItemPosition(),
+                                categorySpinner.getSelectedItemPosition());
                 mSchedulesList.updateList(updatedSchedules);
                 mSchedulesMap.updateList(updatedSchedules);
             }
@@ -131,7 +132,7 @@ public class ScheduleActivity extends BitemapActionBarActivity {
         if (getFragmentManager().findFragmentByTag(LIST_FRAGMENT) == null) {
             final Bundle args = new Bundle();
             args.putParcelableArrayList(SchedulesMapFragment.SCHEDULES,
-                    BitemapListDataHolder.getInstance().getSchedulesOnDay(0));
+                    BitemapListDataHolder.getInstance().getSchedulesOnDay(1));
             mSchedulesList = new ScheduleList();
             mSchedulesMap = new SchedulesMapFragment();
             mSchedulesList.setArguments(args);
