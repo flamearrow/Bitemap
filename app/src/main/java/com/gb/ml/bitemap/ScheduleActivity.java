@@ -43,6 +43,10 @@ public class ScheduleActivity extends BitemapActionBarActivity {
 
     private static final String LIST_FRAGMENT = "LIST_FRAGMENT";
 
+    private int currentDateSelection = 1;
+
+    private int currentCategorySelection = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,16 +89,20 @@ public class ScheduleActivity extends BitemapActionBarActivity {
         categorySpinner.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item,
                 BitemapListDataHolder.getInstance().getCategory()));
+        categorySpinner.setSelection(currentCategorySelection);
         dateSpinner.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item,
                 createDateArrayList(BitemapListDataHolder.DAYS_OF_SCHEDULE_TO_GET)));
+        dateSpinner.setSelection(currentDateSelection);
 
         alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                currentDateSelection = dateSpinner.getSelectedItemPosition();
+                currentCategorySelection = categorySpinner.getSelectedItemPosition();
                 ArrayList<Schedule> updatedSchedules = BitemapListDataHolder.getInstance()
-                        .getSchedulesOnDayAndCategory(dateSpinner.getSelectedItemPosition(),
-                                categorySpinner.getSelectedItemPosition());
+                        .getSchedulesOnDayAndCategory(currentDateSelection,
+                                currentCategorySelection);
                 mSchedulesList.updateList(updatedSchedules);
                 mSchedulesMap.updateList(updatedSchedules);
             }
