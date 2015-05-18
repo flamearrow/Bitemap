@@ -326,7 +326,7 @@ public class BitemapListDataHolder {
         String category = mCategory.get(i);
         ArrayList<Schedule> ret = new ArrayList<>();
         for (Schedule s : schedules) {
-            if (category.equals(findFoodtruckFromId(s.getFoodtruckId()).getCategory())) {
+            if (findFoodtruckFromId(s.getFoodtruckId()).getCategory().contains(category)) {
                 ret.add(s);
             }
         }
