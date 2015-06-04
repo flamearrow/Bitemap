@@ -1,6 +1,7 @@
 package com.gb.ml.bitemap.listFragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +61,7 @@ public class ScheduleList extends BaseList {
         return new DetailScheduleAdaptor();
     }
 
-    private class DetailScheduleAdaptor extends BaseAdapter {
+    class DetailScheduleAdaptor extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -145,6 +146,6 @@ public class ScheduleList extends BaseList {
 
     public interface OnScheduleClickListener {
 
-        public void onScheduleClicked(Schedule schedule);
+        void onScheduleClicked(Schedule schedule);
     }
 }

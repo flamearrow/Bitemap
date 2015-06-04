@@ -26,5 +26,6 @@
     <string name="gallery">Gallery</string>
     <string name="see_all">see all</string>
     <string name="date">Date</string>
+    <string name="menu_use_icon_prev">Use Icon</string>
 
 </resources>

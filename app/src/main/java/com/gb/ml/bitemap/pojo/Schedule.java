@@ -26,11 +26,11 @@ public class Schedule implements Comparable<Schedule>, Parcelable {
 
     private LatLng mStreetLocation;
 
-    private static SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    public static SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-    private static SimpleDateFormat mFormatDate = new SimpleDateFormat("yyyy-MM-dd");
+    public static SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("yyyy-MM-dd");
 
-    private static SimpleDateFormat mFormatTime = new SimpleDateFormat("HH:mm");
+    public static SimpleDateFormat FORMAT_TIME = new SimpleDateFormat("HH:mm");
 
     private Schedule(long id, Calendar start, Calendar end, long foodtruckId, String address,
             double lat, double lng, double streetLat, double streetLng) {
@@ -224,19 +224,19 @@ public class Schedule implements Comparable<Schedule>, Parcelable {
     }
 
     public String getStartTimeString() {
-        return mFormat.format(getStart().getTime());
+        return FORMAT.format(getStart().getTime());
     }
 
     public String getEndTimeString() {
-        return mFormat.format(getEnd().getTime());
+        return FORMAT.format(getEnd().getTime());
     }
 
     public String getDateString() {
-        return mFormatDate.format(getStart().getTime());
+        return FORMAT_DATE.format(getStart().getTime());
     }
 
     public String getTimeString() {
-        return mFormatTime.format(getStart().getTime()) + FoodTruckConstants.TILT + mFormatTime
+        return FORMAT_TIME.format(getStart().getTime()) + FoodTruckConstants.TILT + FORMAT_TIME
                 .format(getEnd().getTime());
     }
 }

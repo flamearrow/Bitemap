@@ -6,7 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -62,16 +64,32 @@ public class ScheduleActivity extends BitemapActionBarActivity {
         mOnInfoWindowClickListener = new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                final Schedule schedule = BitemapListDataHolder
-                        .getInstance().findScheduleFromId(Long.valueOf(marker.getTitle()));
-                final Intent i = new Intent(ScheduleActivity.this, DetailActivity.class);
-                i.putExtra(DetailActivity.FOODTRUCK_ID, schedule.getFoodtruckId());
-                startActivity(i);
+                String[] titles = marker.getTitle().split(" ");
+                // single schedule
+                if (titles.length == 1) {
+                    final Schedule schedule = BitemapListDataHolder
+                            .getInstance().findScheduleFromId(Long.valueOf(titles[0]));
+                    final Intent i = new Intent(ScheduleActivity.this, DetailActivity.class);
+                    i.putExtra(DetailActivity.FOODTRUCK_ID, schedule.getFoodtruckId());
+                    startActivity(i);
+                }
+                // multiple schedules
+                else {
+                    Intent i = new Intent(ScheduleActivity.this, SubScheduleActivity.class);
+                    i.putExtra(SubScheduleActivity.SCHEDULE_ID, titles);
+                    Log.d("mlgb", "" + titles.length + " schedules");
+                    startActivity(i);
+                }
             }
         };
         initializeFragments();
         mHandler = new Handler(getMainLooper());
         mSwitchButton = (Button) findViewById(R.id.switch_button);
+    }
+
+    @Override
+    protected void useIconPreview() {
+        mSchedulesMap.flipUseIconPreview();
     }
 
     @Override
