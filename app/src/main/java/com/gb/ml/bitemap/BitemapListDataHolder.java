@@ -304,11 +304,8 @@ public class BitemapListDataHolder {
 
     // return schedules in {@link i} days from today
     public ArrayList<Schedule> getSchedulesOnDay(int i) {
-        if (i == 0) {
-            return mSchedules;
-        }
         Calendar targetDay = Calendar.getInstance();
-        targetDay.set(Calendar.DAY_OF_YEAR, targetDay.get(Calendar.DAY_OF_YEAR) + i - 1);
+        targetDay.set(Calendar.DAY_OF_YEAR, targetDay.get(Calendar.DAY_OF_YEAR) + i);
         ArrayList<Schedule> ret = new ArrayList<>();
         for (Schedule s : mSchedules) {
             if (sameDay(s.getStart(), targetDay)) {

@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -45,7 +44,7 @@ public class ScheduleActivity extends BitemapActionBarActivity {
 
     private static final String LIST_FRAGMENT = "LIST_FRAGMENT";
 
-    private int currentDateSelection = 1;
+    private int currentDateSelection = 0;
 
     private int currentCategorySelection = 0;
 
@@ -77,7 +76,6 @@ public class ScheduleActivity extends BitemapActionBarActivity {
                 else {
                     Intent i = new Intent(ScheduleActivity.this, SubScheduleActivity.class);
                     i.putExtra(SubScheduleActivity.SCHEDULE_ID, titles);
-                    Log.d("mlgb", "" + titles.length + " schedules");
                     startActivity(i);
                 }
             }
@@ -131,8 +129,7 @@ public class ScheduleActivity extends BitemapActionBarActivity {
     }
 
     private ArrayList<String> createDateArrayList(int days) {
-        ArrayList<String> ret = new ArrayList<>(days + 2);
-        ret.add(FoodTruckConstants.ALL);
+        ArrayList<String> ret = new ArrayList<>(days);
         for (int i = 0; i <= days; i++) {
             ret.add(getDate(i));
         }

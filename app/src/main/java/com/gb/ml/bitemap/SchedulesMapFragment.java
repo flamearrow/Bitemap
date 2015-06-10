@@ -22,6 +22,7 @@ import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -275,8 +276,10 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
         else {
             // if use gridView
             if (isUseIconPreview()) {
-                final GridView gridView = (GridView) li
+                final RelativeLayout layout = (RelativeLayout) li
                         .inflate(R.layout.map_info_preview_grid, null);
+                final GridView gridView = (GridView) layout.findViewById(R.id.map_info_grid_view);
+
                 Set<String> truckUrls = new HashSet<>();
                 for (String scheduelId : scheduleIds) {
                     truckUrls.add(BitemapListDataHolder.getInstance()
@@ -342,7 +345,7 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
                         return imageView;
                     }
                 });
-                return gridView;
+                return layout;
             }
             // else if text view
             else {
