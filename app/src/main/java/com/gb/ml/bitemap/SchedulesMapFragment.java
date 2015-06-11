@@ -274,117 +274,85 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
         }
         // multiple schedules
         else {
-            // if use gridView
-            if (isUseIconPreview()) {
-                final RelativeLayout layout = (RelativeLayout) li
-                        .inflate(R.layout.map_info_preview_grid, null);
-                final GridView gridView = (GridView) layout.findViewById(R.id.map_info_grid_view);
+            final RelativeLayout layout = (RelativeLayout) li
+                    .inflate(R.layout.map_info_preview_grid, null);
+            final TextView timeTv = (TextView) layout.findViewById(R.id.schedules_time);
+            final TextView addressTv = (TextView) layout.findViewById(R.id.schedules_address);
 
-                Set<String> truckUrls = new HashSet<>();
-                for (String scheduelId : scheduleIds) {
-                    truckUrls.add(BitemapListDataHolder.getInstance()
-                            .findFoodtruckFromId(
-                                    BitemapListDataHolder.getInstance().findScheduleFromId(
-                                            Long.valueOf(scheduelId)).getFoodtruckId())
-                            .getFullUrlForLogo());
-                }
-                final ArrayList<String> mTruckUris = new ArrayList<>();
-                int left = 9;
-                for (String url : truckUrls) {
-                    mTruckUris.add(url);
-                    if (left-- <= 0) {
-                        break;
-                    }
-                }
-                gridView.setAdapter(new BaseAdapter() {
-                    @Override
-                    public int getCount() {
-                        return mTruckUris.size();
-                    }
-
-                    @Override
-                    public Object getItem(int position) {
-                        return mTruckUris.get(position);
-                    }
-
-                    @Override
-                    public long getItemId(int position) {
-                        return position;
-                    }
-
-                    @Override
-                    public View getView(int position, View convertView, ViewGroup parent) {
-                        final ImageView imageView;
-                        if (convertView == null) {
-                            imageView = (ImageView) LayoutInflater.from(getActivity())
-                                    .inflate(R.layout.map_info_preview_item, parent, false);
-                        } else {
-                            imageView = (ImageView) convertView;
-                        }
-
-                        VolleyNetworkAccessor.getInstance(getActivity()).getImageLoader()
-                                .get(mTruckUris.get(position),
-                                        new ImageLoader.ImageListener() {
-                                            @Override
-                                            public void onErrorResponse(VolleyError error) {
-                                                Log.w(TAG, "error loading image!");
-                                                imageView.setImageResource(R.drawable.foreveralone);
-                                            }
-
-                                            @Override
-                                            public void onResponse(
-                                                    ImageLoader.ImageContainer response,
-                                                    boolean isImmediate) {
-                                                if (isImmediate && response.getBitmap() != null) {
-                                                    imageView.setImageBitmap(response.getBitmap());
-                                                } else if (!isImmediate) {
-                                                    marker.showInfoWindow();
-                                                }
-                                            }
-                                        });
-                        return imageView;
-                    }
-                });
-                return layout;
-            }
-            // else if text view
-            else {
-                final LinearLayout linearLayout = (LinearLayout) li
-                        .inflate(R.layout.map_info_preview_text, null);
-                String address = BitemapListDataHolder.getInstance()
-                        .findScheduleFromId(Long.valueOf(scheduleIds[0])).getAddress();
-                ((TextView) linearLayout.findViewById(R.id.preview_address)).setText(address);
-
-                Map<String, Integer> times = getTimeBlocks(scheduleIds);
-                for (String time : times.keySet()) {
-                    TextView tv = new TextView(this.getActivity());
-                    tv.setText(time.toString() + ": " + times.get(time));
-                    tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
-                    tv.setTextColor(getResources().getColor(R.color.white));
-                    tv.setLayoutParams(
-                            new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT));
-                    linearLayout.addView(tv);
-
-                }
-                return linearLayout;
-            }
-        }
-    }
-
-    private Map<String, Integer> getTimeBlocks(String[] scheduleIds) {
-        Map<String, Integer> ret = new HashMap<>();
-        for (String scheduleId : scheduleIds) {
             Schedule s = BitemapListDataHolder.getInstance()
-                    .findScheduleFromId(Long.valueOf(scheduleId));
-            String tb = createTimeString(s.getStart(), s.getEnd());
-            if (ret.containsKey(tb)) {
-                ret.put(tb, ret.get(tb) + 1);
-            } else {
-                ret.put(tb, 1);
+                    .findScheduleFromId(Long.valueOf(scheduleIds[0]));
+            timeTv.setText(createTimeString(s.getStart(), s.getEnd()));
+            addressTv.setText(s.getAddress());
+
+            final GridView gridView = (GridView) layout.findViewById(R.id.map_info_grid_view);
+            Set<String> truckUrls = new HashSet<>();
+            for (String scheduelId : scheduleIds) {
+                truckUrls.add(BitemapListDataHolder.getInstance()
+                        .findFoodtruckFromId(
+                                BitemapListDataHolder.getInstance().findScheduleFromId(
+                                        Long.valueOf(scheduelId)).getFoodtruckId())
+                        .getFullUrlForLogo());
             }
+            final ArrayList<String> mTruckUris = new ArrayList<>();
+            int left = 9;
+            for (String url : truckUrls) {
+                mTruckUris.add(url);
+                if (left-- <= 0) {
+                    break;
+                }
+            }
+            gridView.setAdapter(new BaseAdapter() {
+                @Override
+                public int getCount() {
+                    return mTruckUris.size();
+                }
+
+                @Override
+                public Object getItem(int position) {
+                    return mTruckUris.get(position);
+                }
+
+                @Override
+                public long getItemId(int position) {
+                    return position;
+                }
+
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    final ImageView imageView;
+                    if (convertView == null) {
+                        imageView = (ImageView) LayoutInflater.from(getActivity())
+                                .inflate(R.layout.map_info_preview_item, parent, false);
+                    } else {
+                        imageView = (ImageView) convertView;
+                    }
+
+                    VolleyNetworkAccessor.getInstance(getActivity()).getImageLoader()
+                            .get(mTruckUris.get(position),
+                                    new ImageLoader.ImageListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            Log.w(TAG, "error loading image!");
+                                            imageView.setImageResource(R.drawable.foreveralone);
+                                        }
+
+                                        @Override
+                                        public void onResponse(
+                                                ImageLoader.ImageContainer response,
+                                                boolean isImmediate) {
+                                            if (isImmediate && response.getBitmap() != null) {
+                                                imageView.setImageBitmap(response.getBitmap());
+                                            } else if (!isImmediate) {
+                                                marker.showInfoWindow();
+                                            }
+                                        }
+                                    });
+                    return imageView;
+                }
+            });
+            return layout;
+
         }
-        return ret;
     }
 
     private String createTimeString(Calendar start, Calendar end) {
@@ -394,7 +362,6 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
         sb.append(Schedule.FORMAT_TIME.format(start.getTime()));
         sb.append(" to ");
         sb.append(Schedule.FORMAT_TIME.format(end.getTime()));
-        sb.append(" trucks");
         return sb.toString();
     }
 
