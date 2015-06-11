@@ -79,6 +79,8 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
 
     private boolean mUseIconPreview = true;
 
+    private Marker currentSingleMarker;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +111,16 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
                     .getMap();
             mGoogleMap.setInfoWindowAdapter(this);
             mGoogleMap.setMyLocationEnabled(true);
+            mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                // detect when a marker is deselected
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    if (currentSingleMarker != null) {
+                        currentSingleMarker.setVisible(false);
+                        currentSingleMarker = null;
+                    }
+                }
+            });
             resetMarkers();
         }
     }
@@ -153,7 +165,10 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
      */
     public void enableMarkerForSchedule(Schedule schedule) {
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(schedule.getLocation(), 12));
-        mScheduleMarkerMap.get(schedule).setVisible(true);
+        if (!mScheduleMarkerMap.get(schedule).isVisible()) {
+            currentSingleMarker = mScheduleMarkerMap.get(schedule);
+            currentSingleMarker.setVisible(true);
+        }
         mScheduleMarkerMap.get(schedule).showInfoWindow();
     }
 

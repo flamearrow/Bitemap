@@ -42,17 +42,12 @@ public abstract class BitemapActionBarActivity extends ActionBarActivity {
                 BitemapDBConnector.getInstance(this).clearDatabase();
                 Toast.makeText(this, "Debug DB cleared!", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.menu_use_icon_preview:
-                useIconPreview();
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
     }
 
-    protected void useIconPreview() {
-        // Nothing
-    }
 
     protected void categorySelect() {
         // Nothing

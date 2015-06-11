@@ -86,11 +86,6 @@ public class ScheduleActivity extends BitemapActionBarActivity {
     }
 
     @Override
-    protected void useIconPreview() {
-        mSchedulesMap.flipUseIconPreview();
-    }
-
-    @Override
     protected void categorySelect() {
         final View layout = LayoutInflater.from(this)
                 .inflate(R.layout.date_category_filter, null);
