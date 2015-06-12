@@ -287,6 +287,12 @@ public class BitemapListDataHolder {
                 mScheduleMap.put(s.getId(), s);
             }
 
+            if (mFoodTruckMap.size() == 0) {
+                mScheduleMap.clear();
+                Log.d(TAG, "network is crappy, didn't receive data for foodtrucks");
+                hasNetwork = false;
+            }
+
             Log.d(TAG, "all done! send init_complete broadcast");
             Intent completeIntent = new Intent(INIT_COMPLETE);
             completeIntent.putExtra(NETWORK, hasNetwork);
