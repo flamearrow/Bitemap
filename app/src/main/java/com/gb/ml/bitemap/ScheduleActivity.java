@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Schedules of each food truck
@@ -114,6 +115,7 @@ public class ScheduleActivity extends BitemapActionBarActivity {
                 ArrayList<Schedule> updatedSchedules = BitemapListDataHolder.getInstance()
                         .getSchedulesOnDayAndCategory(currentDateSelection,
                                 currentCategorySelection);
+
                 mSchedulesList.updateList(updatedSchedules);
                 mSchedulesMap.updateList(updatedSchedules);
             }

@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -34,6 +35,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -97,6 +99,7 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
         Bundle schedules = getArguments();
         // TODO: do we need to perform a deep copy of schedule list?
         mScheduleList = schedules.getParcelableArrayList(SCHEDULES);
+
         initializeMap();
         if (mDefaultBm == null) {
             mDefaultBm = BitmapFactory.decodeResource(getResources(), R.drawable.foreveralone);
@@ -111,6 +114,25 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
                     .getMap();
             mGoogleMap.setInfoWindowAdapter(this);
             mGoogleMap.setMyLocationEnabled(true);
+            mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    float container_height = 900;
+                    Projection projection = mGoogleMap.getProjection();
+                    Point markerScreenPosition = projection.toScreenLocation(marker.getPosition());
+                    Point pointHalfScreenAbove = new Point(markerScreenPosition.x,
+                            (int) (markerScreenPosition.y - (container_height / 2)));
+
+                    LatLng aboveMarkerLatLng = projection.fromScreenLocation(pointHalfScreenAbove);
+
+                    marker.showInfoWindow();
+                    CameraUpdate center = CameraUpdateFactory.newLatLng(aboveMarkerLatLng);
+                    mGoogleMap.moveCamera(center);
+                    mGoogleMap.animateCamera(center);
+                    marker.showInfoWindow();
+                    return true;
+                }
+            });
             mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 // detect when a marker is deselected
                 @Override
@@ -139,9 +161,9 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
             if (mLocationTruckMap.containsKey(s.getLocation())) {
                 mLocationTruckMap.get(s.getLocation()).add(s.getId());
             } else {
-                Set<Long> truckIds = new HashSet<>();
-                truckIds.add(s.getFoodtruckId());
-                mLocationTruckMap.put(s.getLocation(), truckIds);
+                Set<Long> scheduleId = new HashSet<>();
+                scheduleId.add(s.getId());
+                mLocationTruckMap.put(s.getLocation(), scheduleId);
             }
             mScheduleMarkerMap.put(s, mGoogleMap.addMarker(createMarker(s)));
         }
@@ -237,15 +259,6 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
             idsBuilder.append(id + " ");
         }
         return new MarkerOptions().title(idsBuilder.toString()).position(latLng);
-    }
-
-    private LatLng getMyLocation() {
-        LocationManager service = (LocationManager) getActivity()
-                .getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        String provider = service.getBestProvider(criteria, false);
-        Location location = service.getLastKnownLocation(provider);
-        return new LatLng(location.getLatitude(), location.getLongitude());
     }
 
     @Override
