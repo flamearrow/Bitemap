@@ -14,6 +14,14 @@ public class NetworkConstants {
 
     public static final String CATEGORIES = SERVER_IP + "/scripts/get_category.php";
 
+    public static final String POST_COMMENTS = SERVER_IP + "/scripts/submit_comment.php";
+
+    public static final String POST_PARAM_NAME = "name";
+
+    public static final String POST_PARAM_EMAIL = "email";
+
+    public static final String POST_PARAM_COMMENT = "comment";
+
     public static final String SLASH = "/";
 
     public static final String QUESTION_MARK = "?";

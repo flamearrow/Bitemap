@@ -35,6 +35,11 @@ public abstract class BitemapActionBarActivity extends ActionBarActivity {
             case R.id.menu_category:
                 categorySelect();
                 break;
+            case R.id.menu_feedback:
+                if (!(this instanceof FeedbackActivity)) {
+                    startActivity(new Intent(this, FeedbackActivity.class));
+                }
+                break;
             case R.id.menu_about:
                 Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
                 break;

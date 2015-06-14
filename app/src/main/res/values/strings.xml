@@ -27,5 +27,11 @@
     <string name="see_all">see all</string>
     <string name="date">Date</string>
     <string name="menu_use_icon_prev">Use Icon</string>
+    <string name="feedback">Feedback</string>
+    <string name="tell_us">   Tell us what you think!</string>
+    <string name="name">name:  </string>
+    <string name="email">email:  </string>
+    <string name="comments">comments:  </string>
+    <string name="submit">submit</string>
 
 </resources>
