@@ -30,6 +30,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -113,19 +114,18 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
             mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-                    float container_height = 900;
-                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), MARKER_ZOOM_IN));
+                    float container_height = getView().getHeight();
                     Projection projection = mGoogleMap.getProjection();
                     Point markerScreenPosition = projection.toScreenLocation(marker.getPosition());
                     Point pointHalfScreenAbove = new Point(markerScreenPosition.x,
-                            (int) (markerScreenPosition.y - (container_height / 2)));
+                            (int) (markerScreenPosition.y - (container_height / 18)));
 
                     LatLng aboveMarkerLatLng = projection.fromScreenLocation(pointHalfScreenAbove);
 
                     marker.showInfoWindow();
-                    CameraUpdate center = CameraUpdateFactory.newLatLng(aboveMarkerLatLng);
-                    mGoogleMap.moveCamera(center);
-                    mGoogleMap.animateCamera(center);
+                    CameraPosition center = new CameraPosition.Builder().target(aboveMarkerLatLng).zoom(
+                            MARKER_ZOOM_IN).build();
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(center));
                     return true;
                 }
             });
