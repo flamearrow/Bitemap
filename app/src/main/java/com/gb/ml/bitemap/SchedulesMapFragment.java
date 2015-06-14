@@ -2,18 +2,13 @@ package com.gb.ml.bitemap;
 
 import android.annotation.SuppressLint;
 import android.app.Fragment;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +17,6 @@ import android.widget.BaseAdapter;
 import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -55,6 +49,8 @@ import java.util.Set;
 public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWindowAdapter {
 
     private static final String TAG = "SchedulesMapFragment";
+
+    private static final int MARKER_ZOOM_IN = 12;
 
     public static final String SCHEDULES = "SCHEDULES";
 
@@ -118,6 +114,7 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
                 @Override
                 public boolean onMarkerClick(Marker marker) {
                     float container_height = 900;
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), MARKER_ZOOM_IN));
                     Projection projection = mGoogleMap.getProjection();
                     Point markerScreenPosition = projection.toScreenLocation(marker.getPosition());
                     Point pointHalfScreenAbove = new Point(markerScreenPosition.x,
@@ -129,7 +126,6 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
                     CameraUpdate center = CameraUpdateFactory.newLatLng(aboveMarkerLatLng);
                     mGoogleMap.moveCamera(center);
                     mGoogleMap.animateCamera(center);
-                    marker.showInfoWindow();
                     return true;
                 }
             });
@@ -186,7 +182,7 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
      * on UI thread
      */
     public void enableMarkerForSchedule(Schedule schedule) {
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(schedule.getLocation(), 12));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(schedule.getLocation(), MARKER_ZOOM_IN));
         if (!mScheduleMarkerMap.get(schedule).isVisible()) {
             currentSingleMarker = mScheduleMarkerMap.get(schedule);
             currentSingleMarker.setVisible(true);
