@@ -309,9 +309,7 @@ public class BitemapListDataHolder {
     }
 
     // return schedules in {@link i} days from today
-    public ArrayList<Schedule> getSchedulesOnDay(int i) {
-        Calendar targetDay = Calendar.getInstance();
-        targetDay.set(Calendar.DAY_OF_YEAR, targetDay.get(Calendar.DAY_OF_YEAR) + i);
+    public ArrayList<Schedule> getSchedulesOnDay(Calendar targetDay) {
         ArrayList<Schedule> ret = new ArrayList<>();
         for (Schedule s : mSchedules) {
             if (sameDay(s.getStart(), targetDay)) {
@@ -320,6 +318,16 @@ public class BitemapListDataHolder {
         }
         return ret;
     }
+
+    public boolean hasSchedule(Calendar day) {
+        for(Schedule s : mSchedules) {
+            if(s.getStart().get(Calendar.DAY_OF_YEAR) == day.get(Calendar.DAY_OF_YEAR)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public ArrayList<Schedule> getSchedulesWithCategory(int i, ArrayList<Schedule> schedules) {
         // 0 is All
@@ -336,8 +344,8 @@ public class BitemapListDataHolder {
         return ret;
     }
 
-    public ArrayList<Schedule> getSchedulesOnDayAndCategory(int dayIndex, int categoryIndex) {
-        ArrayList<Schedule> ret = getSchedulesOnDay(dayIndex);
+    public ArrayList<Schedule> getSchedulesOnDayAndCategory(Calendar targetDay, int categoryIndex) {
+        ArrayList<Schedule> ret = getSchedulesOnDay(targetDay);
         return getSchedulesWithCategory(categoryIndex, ret);
     }
 

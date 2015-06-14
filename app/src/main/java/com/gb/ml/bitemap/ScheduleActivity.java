@@ -112,10 +112,14 @@ public class ScheduleActivity extends BitemapActionBarActivity {
             public void onClick(DialogInterface dialog, int which) {
                 currentDateSelection = dateSpinner.getSelectedItemPosition();
                 currentCategorySelection = categorySpinner.getSelectedItemPosition();
-                ArrayList<Schedule> updatedSchedules = BitemapListDataHolder.getInstance()
-                        .getSchedulesOnDayAndCategory(currentDateSelection,
-                                currentCategorySelection);
 
+                String[] date = ((String) dateSpinner.getSelectedItem()).split(FoodTruckConstants.DASH);
+                Calendar targetDay = Calendar.getInstance();
+                targetDay.set(Calendar.YEAR, Integer.parseInt(date[0]));
+                targetDay.set(Calendar.MONTH, Integer.parseInt(date[1]) - 1);
+                targetDay.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date[2]));
+                ArrayList<Schedule> updatedSchedules = BitemapListDataHolder.getInstance()
+                        .getSchedulesOnDayAndCategory(targetDay, currentCategorySelection);
                 mSchedulesList.updateList(updatedSchedules);
                 mSchedulesMap.updateList(updatedSchedules);
             }
@@ -128,18 +132,25 @@ public class ScheduleActivity extends BitemapActionBarActivity {
     private ArrayList<String> createDateArrayList(int days) {
         ArrayList<String> ret = new ArrayList<>(days);
         for (int i = 0; i <= days; i++) {
-            ret.add(getDate(i));
+            Calendar day = getDay(i);
+            if (BitemapListDataHolder.getInstance().hasSchedule(day)) {
+                ret.add(getDate(day));
+            }
         }
         return ret;
     }
 
-    // return a date string in position days from today
-    private String getDate(int position) {
+    Calendar getDay(int position) {
         Calendar targetDay = Calendar.getInstance();
-        targetDay.set(Calendar.DAY_OF_YEAR, targetDay.get(Calendar.DAY_OF_YEAR) + position);
-        String ret = (targetDay.get(Calendar.MONTH) + 1) + FoodTruckConstants.DASH + targetDay
-                .get(Calendar.DAY_OF_MONTH);
-        return ret;
+        targetDay.add(Calendar.DAY_OF_YEAR, position);
+        return targetDay;
+    }
+
+    // return a date string in position days from today
+    private String getDate(Calendar targetDay) {
+        return targetDay.get(Calendar.YEAR) + FoodTruckConstants.DASH + (targetDay.get(Calendar.MONTH) + 1)
+                + FoodTruckConstants.DASH + targetDay.get(
+                Calendar.DAY_OF_MONTH);
     }
 
     @Override
@@ -151,8 +162,10 @@ public class ScheduleActivity extends BitemapActionBarActivity {
     private void initializeFragments() {
         if (getFragmentManager().findFragmentByTag(LIST_FRAGMENT) == null) {
             final Bundle args = new Bundle();
+            Calendar targetDay = Calendar.getInstance();
+            targetDay.add(Calendar.DAY_OF_YEAR, 1);
             args.putParcelableArrayList(SchedulesMapFragment.SCHEDULES,
-                    BitemapListDataHolder.getInstance().getSchedulesOnDay(1));
+                    BitemapListDataHolder.getInstance().getSchedulesOnDay(targetDay));
             mSchedulesList = new ScheduleList();
             mSchedulesMap = new SchedulesMapFragment();
             mSchedulesList.setArguments(args);
