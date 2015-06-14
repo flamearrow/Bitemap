@@ -93,17 +93,15 @@ public class ScheduleActivity extends BitemapActionBarActivity {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
         alertDialogBuilder.setView(layout);
-        alertDialogBuilder.setTitle("Pick a date and category..");
 
         final Spinner categorySpinner = (Spinner) layout.findViewById(R.id.category_spinner);
         final Spinner dateSpinner = (Spinner) layout.findViewById(R.id.date_spinner);
-
         categorySpinner.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item,
+                R.layout.spinner_text_view,
                 BitemapListDataHolder.getInstance().getCategory()));
         categorySpinner.setSelection(currentCategorySelection);
         dateSpinner.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item,
+                R.layout.spinner_text_view,
                 createDateArrayList(BitemapListDataHolder.DAYS_OF_SCHEDULE_TO_GET)));
         dateSpinner.setSelection(currentDateSelection);
 

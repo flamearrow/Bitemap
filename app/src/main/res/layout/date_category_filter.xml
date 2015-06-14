@@ -3,12 +3,14 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent" android:id="@+id/filter">
-    <TextView android:layout_width="fill_parent" android:layout_height="wrap_content"
-              android:text="@string/date" android:textColor="@color/opaque_red"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:text="@string/date" android:layout_marginTop="5dp" android:textSize="20dp"
+              android:layout_gravity="center_horizontal"/>
     <Spinner android:layout_width="fill_parent" android:layout_height="wrap_content"
              android:id="@+id/date_spinner"/>
-    <TextView android:layout_width="fill_parent" android:layout_height="wrap_content"
-              android:text="@string/menu_category" android:textColor="@color/opaque_red"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:text="@string/menu_category" android:layout_marginTop="5dp"
+              android:textSize="20dp" android:layout_gravity="center_horizontal"/>
     <Spinner android:layout_width="fill_parent" android:layout_height="wrap_content"
              android:id="@+id/category_spinner"/>
 </LinearLayout>

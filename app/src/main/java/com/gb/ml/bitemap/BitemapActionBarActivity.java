@@ -13,9 +13,13 @@ import com.gb.ml.bitemap.database.BitemapDBConnector;
  */
 public abstract class BitemapActionBarActivity extends ActionBarActivity {
 
+    protected int getMenuId() {
+        return R.menu.menu_main;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(getMenuId(), menu);
         return true;
     }
 
@@ -35,13 +39,18 @@ public abstract class BitemapActionBarActivity extends ActionBarActivity {
             case R.id.menu_category:
                 categorySelect();
                 break;
+            case R.id.menu_feedback:
+                if (!(this instanceof FeedbackActivity)) {
+                    startActivity(new Intent(this, FeedbackActivity.class));
+                }
+                break;
             case R.id.menu_about:
                 Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.menu_clear_debug_db:
-                BitemapDBConnector.getInstance(this).clearDatabase();
-                Toast.makeText(this, "Debug DB cleared!", Toast.LENGTH_SHORT).show();
-                break;
+//            case R.id.menu_clear_debug_db:
+//                BitemapDBConnector.getInstance(this).clearDatabase();
+//                Toast.makeText(this, "Debug DB cleared!", Toast.LENGTH_SHORT).show();
+//                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
