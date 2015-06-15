@@ -6,5 +6,4 @@
     <item android:id="@+id/menu_schedules" android:title="@string/menu_schedules_title"/>
     <item android:id="@+id/menu_all_trucks" android:title="@string/menu_all_trucks"/>
     <item android:id="@+id/menu_about" android:title="@string/menu_about"/>
-    <item android:id="@+id/menu_feedback" android:title="@string/feedback"/>
 </menu>

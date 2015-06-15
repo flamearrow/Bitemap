@@ -33,5 +33,13 @@
     <string name="email">email:  </string>
     <string name="comments">comments:  </string>
     <string name="submit">submit</string>
+    <string name="how_context">The Food Trucks schedules are collected by both our automatic food
+        trucks radar system and ourselves manullay, food truck enthusiasts!
+    </string>
+    <string name="how_title">How does TheBiteMap collect infomations</string>
+    <string name="what_context">TheBiteMap is a Food Truck Map that allows you to plan your next
+        bite. We know you love food trucks.
+    </string>
+    <string name="what_title">What is TheBiteMap</string>
 
 </resources>
