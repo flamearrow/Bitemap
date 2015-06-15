@@ -40,7 +40,7 @@ public class AllFoodTrucksActivity extends BitemapActionBarActivity {
         alertDialogBuilder.setTitle(R.string.menu_category);
         final Spinner categorySpinner = (Spinner) layout.findViewById(R.id.category_spinner);
         categorySpinner.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item,
+                R.layout.spinner_text_view,
                 BitemapListDataHolder.getInstance().getCategory()));
         alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
