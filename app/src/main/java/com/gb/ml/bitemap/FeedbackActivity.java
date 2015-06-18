@@ -1,5 +1,6 @@
 package com.gb.ml.bitemap;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -103,7 +104,17 @@ public class FeedbackActivity extends BitemapActionBarActivity {
             params.put(NetworkConstants.POST_PARAM_NAME, mName);
             params.put(NetworkConstants.POST_PARAM_EMAIL, mEmail);
             params.put(NetworkConstants.POST_PARAM_COMMENT, mComments);
+            params.put(NetworkConstants.POST_CLIENT, "android");
+            params.put(NetworkConstants.POST_CLIENT_DETAIL, buildDetail());
             return params;
+        }
+
+        private String buildDetail() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("release: " + Build.VERSION.RELEASE);
+            sb.append(", version: " + Build.VERSION.SDK_INT);
+            sb.append(", codename: " + Build.VERSION.CODENAME);
+            return sb.toString();
         }
 
         @Override

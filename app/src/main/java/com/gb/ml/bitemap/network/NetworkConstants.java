@@ -22,6 +22,11 @@ public class NetworkConstants {
 
     public static final String POST_PARAM_COMMENT = "comment";
 
+    public static final String POST_CLIENT = "client";
+
+    public static final String POST_CLIENT_DETAIL = "client_detail";
+
+
     public static final String SLASH = "/";
 
     public static final String QUESTION_MARK = "?";
