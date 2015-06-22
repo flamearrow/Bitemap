@@ -25,12 +25,12 @@ public class MainActivity extends Activity {
             } else {
                 Log.d(TAG, "No network connection, will load data from local database");
             }
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    startActivity(new Intent(MainActivity.this, ScheduleActivity.class));
-                }
-            }, SPLASH_DELAY);
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    startActivity(new Intent(MainActivity.this, ScheduleActivity.class));
+//                }
+//            }, SPLASH_DELAY);
         }
     };
 
