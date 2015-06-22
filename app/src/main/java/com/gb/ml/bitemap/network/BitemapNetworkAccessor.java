@@ -398,6 +398,6 @@ public class BitemapNetworkAccessor {
     }
 
     public static String createFullImageUri(String thumbUri) {
-        return thumbUri.replace("thumb", "");
+        return thumbUri.replace("thumb", "reduced");
     }
 }
