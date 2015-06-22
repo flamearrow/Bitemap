@@ -208,12 +208,14 @@ public class DetailActivity extends ActionBarActivity {
         ObjectAnimator mover = ObjectAnimator
                 .ofFloat(mSwitchButton, "translationX", 0, 0 - getButtonMoveDelta());
         mover.start();
+        mSwitchButton.setBackgroundResource(R.drawable.switch_list);
     }
 
     private void moveSwitchRight() {
         ObjectAnimator mover = ObjectAnimator
                 .ofFloat(mSwitchButton, "translationX", 0 - getButtonMoveDelta(), 0);
         mover.start();
+        mSwitchButton.setBackgroundResource(R.drawable.switch_map);
     }
 
     private int getButtonMoveDelta() {
