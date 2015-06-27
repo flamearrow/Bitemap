@@ -10,7 +10,7 @@
         <item>Uranus</item>
         <item>Neptune</item>
     </string-array>
-    <string name="app_name">Bitemap</string>
+    <string name="app_name">the Bitemap</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="mlgb">mlgb</string>
@@ -36,11 +36,11 @@
     <string name="how_context">The Food Trucks schedules are collected by both our automatic food
         trucks radar system and ourselves manullay, food truck enthusiasts!
     </string>
-    <string name="how_title">How does TheBiteMap collect infomations</string>
-    <string name="what_context">TheBiteMap is a Food Truck Map that allows you to plan your next
+    <string name="how_title">How does the BiteMap collect infomations</string>
+    <string name="what_context">the BiteMap is a Food Truck Map that allows you to plan your next
         bite. We know you love food trucks.
     </string>
-    <string name="what_title">What is TheBiteMap</string>
-    <string name="version">Bitemap v0.9</string>
+    <string name="what_title">What is the BiteMap</string>
+    <string name="version">the Bitemap v0.9</string>
 
 </resources>

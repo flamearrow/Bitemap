@@ -3,9 +3,9 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent" android:weightSum="1">
-    <ImageView android:layout_width="77dp" android:layout_height="71dp"
+    <ImageView android:layout_width="150dp" android:layout_height="150dp"
                android:src="@drawable/app_logo_truck" android:layout_gravity="center_horizontal"
-               android:layout_weight="0.26"/>
+               android:layout_weight="1"/>
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
               android:text="@string/version" android:layout_gravity="center_horizontal"/>
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
