@@ -54,7 +54,7 @@ public class BitemapListDataHolder {
     private static final int ALL_LISTS_READY = SCHEDULE_LIST_READY | FOODTRUCK_LIST_READY
             | CATEGORY_LIST_READY;
 
-    private static BitemapListDataHolder mInstance;
+    private static BitemapListDataHolder sInstance;
 
     private ArrayList<String> mCategory;
 
@@ -81,18 +81,17 @@ public class BitemapListDataHolder {
         }
     }
 
-    public synchronized static BitemapListDataHolder getInstance() {
-        if (mInstance == null) {
-            throw new InstanceNotYetReadyException();
+    public synchronized static BitemapListDataHolder getsInstance(Context context) {
+        if (sInstance == null) {
+            initialize(context);
         }
-        return mInstance;
+        return sInstance;
     }
 
-    public synchronized static BitemapListDataHolder getInstance(Context context) {
-        if (mInstance == null) {
-            mInstance = new BitemapListDataHolder(context);
+    public synchronized static void initialize(Context context) {
+        if (sInstance == null) {
+            sInstance = new BitemapListDataHolder(context.getApplicationContext());
         }
-        return mInstance;
     }
 
     private BitemapListDataHolder(Context context) {

@@ -45,7 +45,7 @@ public abstract class BitemapActionBarActivity extends ActionBarActivity {
                 }
                 break;
 //            case R.id.menu_clear_debug_db:
-//                BitemapDBConnector.getInstance(this).clearDatabase();
+//                BitemapDBConnector.getsInstance(this).clearDatabase();
 //                Toast.makeText(this, "Debug DB cleared!", Toast.LENGTH_SHORT).show();
 //                break;
             default:

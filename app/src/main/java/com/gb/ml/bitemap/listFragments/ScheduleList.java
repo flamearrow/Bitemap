@@ -1,7 +1,6 @@
 package com.gb.ml.bitemap.listFragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,12 +96,12 @@ public class ScheduleList extends BaseList {
                 mVh = (ViewHolder) convertView.getTag();
             }
             final Schedule mS = mSchedules.get(position);
-            final FoodTruck mFt = BitemapListDataHolder.getInstance().findFoodtruckFromId(
+            final FoodTruck mFt = BitemapListDataHolder.getsInstance(getActivity()).findFoodtruckFromId(
                     mS.getFoodtruckId());
             mVh.mLogoView.setImageUrl(mFt.getFullUrlForLogo(),
                     VolleyNetworkAccessor.getInstance(getActivity()).getImageLoader());
             mVh.mFoodTruckNameView.setText(
-                    BitemapListDataHolder.getInstance().findFoodtruckFromId(mS.getFoodtruckId())
+                    BitemapListDataHolder.getsInstance(getActivity()).findFoodtruckFromId(mS.getFoodtruckId())
                             .getName());
             mVh.mScheduleTime
                     .setText(mS.getDateString() + FoodTruckConstants.SPACE + mS.getTimeString());

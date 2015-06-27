@@ -226,7 +226,7 @@ public class BitemapDBConnector {
      */
     public ArrayList<Schedule> getSchedulesForTruck(long foodTruckId) {
         final ArrayList<Schedule> ret = new ArrayList<>();
-        for (Schedule s : BitemapListDataHolder.getInstance().getSchedules()) {
+        for (Schedule s : BitemapListDataHolder.getsInstance(mContext).getSchedules()) {
             if (s.getFoodtruckId() == foodTruckId) {
                 ret.add(s);
             }

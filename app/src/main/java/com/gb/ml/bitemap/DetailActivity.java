@@ -93,7 +93,7 @@ public class DetailActivity extends ActionBarActivity {
         initializeGallery();
         initializeSeeAllButton();
         mSwitchButton = (Button) findViewById(R.id.detail_see_all);
-        mTruck = BitemapListDataHolder.getInstance().findFoodtruckFromId(mTruckId);
+        mTruck = BitemapListDataHolder.getsInstance(getApplicationContext()).findFoodtruckFromId(mTruckId);
         setTitle(mTruck.getName());
 
         ((NetworkImageView) findViewById(R.id.detail_logo))
@@ -108,7 +108,7 @@ public class DetailActivity extends ActionBarActivity {
     }
 
     private void initializeFragments() {
-        ArrayList<Schedule> schedules = BitemapDBConnector.getInstance(this)
+        ArrayList<Schedule> schedules = BitemapDBConnector.getInstance(getApplicationContext())
                 .getSchedulesForTruck(mTruckId);
         if (getFragmentManager().findFragmentByTag(MAP_FRAGMENT) == null) {
             final Bundle args = new Bundle();

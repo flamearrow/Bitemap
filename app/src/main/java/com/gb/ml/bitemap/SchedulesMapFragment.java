@@ -265,9 +265,9 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
         if (scheduleIds.length == 1) {
             final GridLayout view = (GridLayout) li.inflate(R.layout.map_info_window, null);
             final Schedule schedule = BitemapListDataHolder
-                    .getInstance().findScheduleFromId(Long.valueOf(scheduleIds[0]));
+                    .getsInstance(getActivity()).findScheduleFromId(Long.valueOf(scheduleIds[0]));
             final FoodTruck truck = BitemapListDataHolder
-                    .getInstance().findFoodtruckFromId(schedule.getFoodtruckId());
+                    .getsInstance(getActivity()).findFoodtruckFromId(schedule.getFoodtruckId());
             ((TextView) view.findViewById(R.id.map_info_name)).setText(truck.getName());
             final ImageView imageView = (ImageView) view.findViewById(R.id.map_info_logo);
             VolleyNetworkAccessor.getInstance(getActivity()).getImageLoader()
@@ -303,7 +303,7 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
             final TextView timeTv = (TextView) layout.findViewById(R.id.schedules_time);
             final TextView addressTv = (TextView) layout.findViewById(R.id.schedules_address);
 
-            Schedule s = BitemapListDataHolder.getInstance()
+            Schedule s = BitemapListDataHolder.getsInstance(getActivity())
                     .findScheduleFromId(Long.valueOf(scheduleIds[0]));
             timeTv.setText(createTimeString(s.getStart(), s.getEnd()));
             addressTv.setText(s.getAddress());
@@ -311,9 +311,9 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
             final GridView gridView = (GridView) layout.findViewById(R.id.map_info_grid_view);
             Set<String> truckUrls = new HashSet<>();
             for (String scheduelId : scheduleIds) {
-                truckUrls.add(BitemapListDataHolder.getInstance()
+                truckUrls.add(BitemapListDataHolder.getsInstance(getActivity())
                         .findFoodtruckFromId(
-                                BitemapListDataHolder.getInstance().findScheduleFromId(
+                                BitemapListDataHolder.getsInstance(getActivity()).findScheduleFromId(
                                         Long.valueOf(scheduelId)).getFoodtruckId())
                         .getFullUrlForLogo());
             }

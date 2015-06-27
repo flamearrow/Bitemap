@@ -33,7 +33,7 @@ public class MapActivity extends Activity implements OnMapReadyCallback {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(schedule.getLocation(), 13));
         googleMap.addMarker(
                 new MarkerOptions()
-                        .title(BitemapListDataHolder.getInstance().findFoodtruckFromId(
+                        .title(BitemapListDataHolder.getsInstance(getApplicationContext()).findFoodtruckFromId(
                                 schedule.getFoodtruckId()).getName())
                         .snippet(schedule.getStartTimeString() + " to " + schedule
                                 .getEndTimeString()).position(schedule.getLocation()))

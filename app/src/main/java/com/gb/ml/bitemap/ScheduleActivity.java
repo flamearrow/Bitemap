@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -20,7 +19,6 @@ import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * Schedules of each food truck
@@ -68,7 +66,7 @@ public class ScheduleActivity extends BitemapActionBarActivity {
                 // single schedule
                 if (titles.length == 1) {
                     final Schedule schedule = BitemapListDataHolder
-                            .getInstance().findScheduleFromId(Long.valueOf(titles[0]));
+                            .getsInstance(getApplicationContext()).findScheduleFromId(Long.valueOf(titles[0]));
                     final Intent i = new Intent(ScheduleActivity.this, DetailActivity.class);
                     i.putExtra(DetailActivity.FOODTRUCK_ID, schedule.getFoodtruckId());
                     startActivity(i);
@@ -98,7 +96,7 @@ public class ScheduleActivity extends BitemapActionBarActivity {
         final Spinner dateSpinner = (Spinner) layout.findViewById(R.id.date_spinner);
         categorySpinner.setAdapter(new ArrayAdapter<>(this,
                 R.layout.spinner_text_view,
-                BitemapListDataHolder.getInstance().getCategory()));
+                BitemapListDataHolder.getsInstance(getApplicationContext()).getCategory()));
         categorySpinner.setSelection(currentCategorySelection);
         dateSpinner.setAdapter(new ArrayAdapter<>(this,
                 R.layout.spinner_text_view,
@@ -116,7 +114,7 @@ public class ScheduleActivity extends BitemapActionBarActivity {
                 targetDay.set(Calendar.YEAR, Integer.parseInt(date[0]));
                 targetDay.set(Calendar.MONTH, Integer.parseInt(date[1]) - 1);
                 targetDay.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date[2]));
-                ArrayList<Schedule> updatedSchedules = BitemapListDataHolder.getInstance()
+                ArrayList<Schedule> updatedSchedules = BitemapListDataHolder.getsInstance(getApplicationContext())
                         .getSchedulesOnDayAndCategory(targetDay, currentCategorySelection);
                 mSchedulesList.updateList(updatedSchedules);
                 mSchedulesMap.updateList(updatedSchedules);
@@ -131,7 +129,7 @@ public class ScheduleActivity extends BitemapActionBarActivity {
         ArrayList<String> ret = new ArrayList<>(days);
         for (int i = 0; i <= days; i++) {
             Calendar day = getDay(i);
-            if (BitemapListDataHolder.getInstance().hasSchedule(day)) {
+            if (BitemapListDataHolder.getsInstance(getApplicationContext()).hasSchedule(day)) {
                 ret.add(getDate(day));
             }
         }
@@ -163,7 +161,7 @@ public class ScheduleActivity extends BitemapActionBarActivity {
             Calendar targetDay = Calendar.getInstance();
             targetDay.add(Calendar.DAY_OF_YEAR, 1);
             args.putParcelableArrayList(SchedulesMapFragment.SCHEDULES,
-                    BitemapListDataHolder.getInstance().getSchedulesOnDay(targetDay));
+                    BitemapListDataHolder.getsInstance(getApplicationContext()).getSchedulesOnDay(targetDay));
             mSchedulesList = new ScheduleList();
             mSchedulesMap = new SchedulesMapFragment();
             mSchedulesList.setArguments(args);

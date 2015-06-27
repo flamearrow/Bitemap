@@ -33,7 +33,7 @@ public class SubScheduleActivity extends BitemapActionBarActivity {
     private ArrayList<Schedule> createSchedules(String[] ids) {
         ArrayList<Schedule> schedules = new ArrayList<>();
         for (String s : ids) {
-            schedules.add(BitemapListDataHolder.getInstance().findScheduleFromId(Long.valueOf(s)));
+            schedules.add(BitemapListDataHolder.getsInstance(getApplicationContext()).findScheduleFromId(Long.valueOf(s)));
         }
         return schedules;
     }

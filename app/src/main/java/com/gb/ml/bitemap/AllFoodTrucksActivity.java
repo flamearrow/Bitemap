@@ -3,7 +3,6 @@ package com.gb.ml.bitemap;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -41,7 +40,7 @@ public class AllFoodTrucksActivity extends BitemapActionBarActivity {
         final Spinner categorySpinner = (Spinner) layout.findViewById(R.id.category_spinner);
         categorySpinner.setAdapter(new ArrayAdapter<>(this,
                 R.layout.spinner_text_view,
-                BitemapListDataHolder.getInstance().getCategory()));
+                BitemapListDataHolder.getsInstance(getApplicationContext()).getCategory()));
         alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

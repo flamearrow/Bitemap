@@ -31,7 +31,7 @@ public class FoodTruckList extends BaseList {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mFoodTrucks = BitemapListDataHolder.getInstance().getFoodTrucks();
+        mFoodTrucks = BitemapListDataHolder.getsInstance(getActivity()).getFoodTrucks();
     }
 
     @Override
@@ -103,7 +103,7 @@ public class FoodTruckList extends BaseList {
     }
 
     public void updateCategory(String category) {
-        mFoodTrucks = BitemapListDataHolder.getInstance().getTruckCategory(category);
+        mFoodTrucks = BitemapListDataHolder.getsInstance(getActivity()).getTruckCategory(category);
         ((BaseAdapter) getListAdapter()).notifyDataSetChanged();
     }
 
