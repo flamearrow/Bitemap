@@ -2,6 +2,7 @@ package com.gb.ml.bitemap;
 
 import android.annotation.SuppressLint;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -106,9 +107,11 @@ public class SchedulesMapFragment extends Fragment implements GoogleMap.InfoWind
 
     private void initializeMap() {
         if (mGoogleMap == null) {
-            mGoogleMap = ((MapFragment) getChildFragmentManager().findFragmentById(
-                    R.id.schedules_map))
-                    .getMap();
+            Fragment f = getChildFragmentManager().findFragmentById(R.id.schedules_map);
+            if(f == null) {
+                f = getFragmentManager().findFragmentById(R.id.schedules_map);
+            }
+            mGoogleMap = ((MapFragment)f).getMap();
             mGoogleMap.setInfoWindowAdapter(this);
             mGoogleMap.setMyLocationEnabled(true);
             mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
