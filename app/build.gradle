@@ -23,7 +23,7 @@ android {
         applicationId "com.gb.ml.bitemap"
         minSdkVersion 17
         targetSdkVersion 21
-        versionCode 1
+        versionCode 1.01
         versionName "0.9"
     }
     buildTypes {
