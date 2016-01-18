@@ -42,5 +42,6 @@
     </string>
     <string name="what_title">What is the BiteMap</string>
     <string name="version">the Bitemap v0.9</string>
+    <string name="google_maps_key">AIzaSyBLsH21NkHeNI24Pur-fK1WBUiRKSHOoE4</string>
 
 </resources>
