@@ -160,8 +160,10 @@ public class ScheduleActivity extends BitemapActionBarActivity {
             final Bundle args = new Bundle();
             Calendar targetDay = Calendar.getInstance();
             targetDay.add(Calendar.DAY_OF_YEAR, 1);
+//            args.putParcelableArrayList(SchedulesMapFragment.SCHEDULES,
+//                    BitemapListDataHolder.getsInstance(getApplicationContext()).getSchedulesOnDay(targetDay));
             args.putParcelableArrayList(SchedulesMapFragment.SCHEDULES,
-                    BitemapListDataHolder.getsInstance(getApplicationContext()).getSchedulesOnDay(targetDay));
+                    BitemapListDataHolder.getsInstance(getApplicationContext()).getSchedules());
             mSchedulesList = new ScheduleList();
             mSchedulesMap = new SchedulesMapFragment();
             mSchedulesList.setArguments(args);

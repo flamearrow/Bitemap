@@ -257,6 +257,8 @@ public class BitemapDBConnector {
         return ret;
     }
 
+
+
     /**
      * load test data into database
      */

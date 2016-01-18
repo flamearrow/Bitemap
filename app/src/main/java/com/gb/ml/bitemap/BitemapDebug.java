@@ -32,6 +32,8 @@ public class BitemapDebug {
 
     private static final String COLON = ":";
 
+    private static int DEBUG_ID_BASE = 0;
+
     private static FoodTruck parseFoodTruck(String inputLine) {
         String[] fields = inputLine.split(SPLITER);
         FoodTruck ret = new FoodTruck.Builder().setId(Long.parseLong(fields[0])).setName(fields[1])
@@ -97,8 +99,8 @@ public class BitemapDebug {
         // no id for schedule at the moment
         // not supporting street view lat and lng at the moment
 
-        Schedule s = new Schedule.Builder().setId(0).setStart(start).setEnd(end).setFoodtruckId(
-                fr.getId()).setAddress(address).setLat(Double.parseDouble(fields[5]))
+        Schedule s = new Schedule.Builder().setId(DEBUG_ID_BASE++).setStart(start).setEnd(end)
+                .setFoodtruckId(fr.getId()).setAddress(address).setLat(Double.parseDouble(fields[5]))
                 .setLng(Double.parseDouble(fields[6])).setStreetLat(0).setStreetLng(0).build();
         return s;
     }
